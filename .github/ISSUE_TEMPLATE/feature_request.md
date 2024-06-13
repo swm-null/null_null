@@ -3,7 +3,7 @@ name: Feature request
 about: Suggest an idea for this project
 title: "[FEATURE]"
 labels: feat
-assignees: r4pidstart
+assignees: gee2450, r4pidstart, BaeJinho4028
 
 ---
 
