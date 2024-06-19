@@ -58,7 +58,10 @@ def format_contexts(docs: list[Document]):
     ret=", ".join(f"{doc.page_content} (id: {doc.metadata['memo_id']})" for doc in docs)
     return ret
 
-output_parser=JsonOutputParser(pydantic_object=list[str])
+class Memo_List:
+    ids: list[str]
+
+output_parser=JsonOutputParser(pydantic_object=Memo_List)
 format_instructions=output_parser.get_format_instructions()
 
 similarity_search_chain = (
@@ -69,9 +72,9 @@ similarity_search_chain = (
 )
 
 def search_similar_memos(query: str) -> list[str]:
-    chain_res: list[str]=similarity_search_chain.invoke(query)
+    chain_res: Memo_List=similarity_search_chain.invoke(query)
 
-    for id in chain_res:
+    for id in chain_res.ids:
         if id not in memo_id:
             raise Exception("Failed to get memo ids. result:", chain_res)
-    return chain_res
+    return chain_res.ids
