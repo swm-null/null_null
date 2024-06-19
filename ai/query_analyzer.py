@@ -31,7 +31,7 @@ def query_analyzer(query: str) -> str:
     )
     ret=str(res.choices[0].message.content)
 
-    if ret not in Query_Type:
+    if ret not in Query_Type.__members__.keys():
         raise Exception("Failed to analyze the query. result:", ret)
     
     return ret
