@@ -8,7 +8,7 @@ from langchain_core.output_parsers import StrOutputParser
 from langchain_core.documents.base import Document
 
 # just examples -------------
-tags=["정치", "경제", "사회", "문화", "과학", "예술", "체육", "법률"]
+tags=["정치", "경제", "사회", "문화", "과학", "예술", "체육", "법률", "미분류"]
 tags_id=[str(x+100) for x in range(len(tags))]
 # ---------------------------
 
@@ -17,7 +17,6 @@ load_dotenv()
 MILVUS_URI=os.getenv("MILVUS_URI")
 if MILVUS_URI == None:
     raise Exception("Invalid MILVUS_URI")
-
 
 llm = ChatOpenAI(
     model="gpt-4o",
@@ -38,17 +37,15 @@ prompt=PromptTemplate.from_template("""
 You're the assistant who listens to your customers' requests and tells them in which tag they can find this information.
 
 I'll give you the name of each tag, and you tell me where to find this information.
-The answer is just the 'id' of the tag, no other information.
+The answer is just the name of the tag, no other information.
 If you can't find it, print 'No tag'.
 
 Lists of tag: {context}
 Customer's request: {query}
-                                    
-Remember to return the tag's ID, not its name.
 """)
 
 def format_docs(docs: list[Document]):
-    ret=", ".join(f"{doc.page_content} (id: {doc.metadata['tag_id']})" for doc in docs)
+    ret=", ".join(f"{doc.page_content}" for doc in docs)
     return ret
 
 find_tag_id_chain = (
@@ -58,11 +55,11 @@ find_tag_id_chain = (
     | StrOutputParser()
 )
 
-def find_tag_id(query: str) -> str:
+def find_tag_name(query: str) -> str:
     chain_res=find_tag_id_chain.invoke(query)
     if chain_res == "No tag":
         return "No tag"
-    elif chain_res not in tags_id:
-        raise Exception("Failed to get tag id. result:", chain_res)
+    elif chain_res not in tags:
+        raise Exception("Failed to get tag name. result:", chain_res)
     else:
         return chain_res
