@@ -22,16 +22,17 @@ async def get_user_query(query: str):
     query=query
     query_type=qa.query_analyzer(query)
 
+    return_content:Optional[str | list[str]]=None
+    if query_type == qa.Query_Type.regex.name:
+        return_content=rg.get_regex(query)
+    elif query_type == qa.Query_Type.find_tag.name:
+        return_content=tf.find_tag_id(query)
+    # elif query_type == qa.Query_Type.similarity_search.name:
+    #     return_content=ss.search_similar_memos(query)
+
     print("user query:", query)
     print("query_type", query_type)
-
-    return_content:Optional[str | list[str]]=None
-    if query_type == qa.Query_Type.regex:
-        return_content=rg.get_regex(query)
-    elif query_type == qa.Query_Type.find_tag:
-        return_content=tf.find_tag_id(query)
-    # elif query_type == qa.Query_Type.similarity_search:
-    #     return_content=ss.search_similar_memos(query)
+    print("return_content:", return_content)
 
     return {
         "type": query_type,
