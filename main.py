@@ -1,12 +1,12 @@
+# from database import connection
 from typing import Optional
 from fastapi import FastAPI
 from pydantic import BaseModel
-from database import connection
 from pymilvus import MilvusClient
 from ai import query_analyzer as qa
 from ai import regex_generator as rg
 from ai import tag_finder as tf
-# from ai import similarity_search as ss
+from ai import similarity_search as ss
 
 app = FastAPI()
 
@@ -22,13 +22,19 @@ async def get_user_query(query: str):
     query=query
     query_type=qa.query_analyzer(query)
 
-    return_content:Optional[str | list[str]]=None
-    if query_type == qa.Query_Type.regex.name:
-        return_content=rg.get_regex(query)
-    elif query_type == qa.Query_Type.find_tag.name:
-        return_content=tf.find_tag_id(query)
-    # elif query_type == qa.Query_Type.similarity_search.name:
-    #     return_content=ss.search_similar_memos(query)
+    return_content:str | list[str] | int=0
+    try:
+        if query_type == qa.Query_Type.regex.name:
+            query_type=2
+            return_content=rg.get_regex(query)
+        elif query_type == qa.Query_Type.find_tag.name:
+            query_type=3
+            return_content=tf.find_tag_name(query)
+        elif query_type == qa.Query_Type.similarity_search.name:
+            query_type=1
+            return_content=ss.search_similar_memos(query)
+    except:
+        pass
 
     print("user query:", query)
     print("query_type", query_type)
