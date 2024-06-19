@@ -22,7 +22,7 @@ async def get_user_query(query: str):
     query=query
     query_type=qa.query_analyzer(query)
 
-    return_content:str | list[str] | int=0
+    return_content:Optional[str | list[str]]=None
     try:
         if query_type == qa.Query_Type.regex.name:
             query_type=2
@@ -34,7 +34,7 @@ async def get_user_query(query: str):
             query_type=1
             return_content=ss.search_similar_memos(query)
     except:
-        pass
+        query_type=0
 
     print("user query:", query)
     print("query_type", query_type)
