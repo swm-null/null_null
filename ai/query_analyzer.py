@@ -22,7 +22,7 @@ def query_analyzer(query: str) -> str:
 
                 -- Rules -- 
                 If the sentence is a request to find information that fits a specific pattern, print 'regex'
-                If the request is to find what categorization the sentence belongs to, print 'find_tag'.
+                If you're asking to find tags related to a specific field, print 'find_tag'.
                 If the sentence asks to find something, print 'similarity_search'.
                 If none of the above is true, print 'unspecified'.
             """},
