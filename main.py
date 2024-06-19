@@ -5,6 +5,7 @@ from database import connection
 from pymilvus import MilvusClient
 from ai import query_analyzer as qa
 from ai import regex_generator as rg
+from ai import tag_finder as tf
 
 app = FastAPI()
 
@@ -26,6 +27,8 @@ async def get_user_query(user_query: User_Query):
     return_content:Optional[str]=None
     if query_type == qa.Query_Type.regex:
         return_content=rg.get_regex(query)
+    elif query_type == qa.Query_Type.find_tag:
+        return_content=tf.find_tag_id(query)
 
     return {
         "type": query_type,
