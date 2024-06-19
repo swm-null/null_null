@@ -6,6 +6,7 @@ from langchain_core.prompts import PromptTemplate
 from langchain_core.runnables import RunnablePassthrough
 from langchain_core.output_parsers import JsonOutputParser
 from langchain_core.documents.base import Document
+from langchain_core.pydantic_v1 import BaseModel, Field
 
 # just examples -------------
 memos=[
@@ -58,8 +59,8 @@ def format_contexts(docs: list[Document]):
     ret=", ".join(f"{doc.page_content} (id: {doc.metadata['memo_id']})" for doc in docs)
     return ret
 
-class Memo_List:
-    ids: list[str]
+class Memo_List(BaseModel):
+    ids: list[str] = Field(description="list of memo ids")
 
 output_parser=JsonOutputParser(pydantic_object=Memo_List)
 format_instructions=output_parser.get_format_instructions()
