@@ -8,7 +8,7 @@ from langchain_core.output_parsers import StrOutputParser
 from langchain_core.documents.base import Document
 
 # just examples -------------
-tags=["정치", "경제", "사회", "문화", "과학", "예술", "체육"]
+tags=["정치", "경제", "사회", "문화", "과학", "예술", "체육", "법률"]
 tags_id=[str(x+100) for x in range(len(tags))]
 # ---------------------------
 
@@ -43,6 +43,8 @@ If you can't find it, print 'No tag'.
 
 Lists of tag: {context}
 Customer's request: {query}
+                                    
+Remember to return the tag's ID, not its name.
 """)
 
 def format_docs(docs: list[Document]):
