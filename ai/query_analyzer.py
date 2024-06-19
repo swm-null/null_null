@@ -8,6 +8,7 @@ load_dotenv()
 class Query_Type(Enum):
     regex = "regex",
     find_tag = "find_tag",
+    similarity_search = "similarity_search"
     unspecified = "unspecified",
 
 def query_analyzer(query: str) -> str:
@@ -21,7 +22,8 @@ def query_analyzer(query: str) -> str:
 
                 -- Rules -- 
                 If the sentence is a request to find information that fits a specific pattern, print 'regex'
-                If the sentence is a request to find information, print 'find_tag'.
+                If the request is to find what categorization the sentence belongs to, print 'find_tag'.
+                If the sentence asks to find something, print 'similarity_search'.
                 If none of the above is true, print 'unspecified'.
             """},
             {"role": "user", "content": query}
