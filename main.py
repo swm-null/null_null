@@ -4,6 +4,7 @@ from pydantic import BaseModel
 from database import connection
 from pymilvus import MilvusClient
 from ai import query_analyzer as qa
+from ai import regex_generator as rg
 
 app = FastAPI()
 
@@ -19,7 +20,16 @@ class User_Query:
 
 @app.get("/user_query")
 async def get_user_query(user_query: User_Query):
-    analyzed_result=qa.query_analyzer(user_query.content)
-    
+    query=User_Query.content
+    query_type=qa.query_analyzer(query)
+
+    return_content:Optional[str]=None
+    if query_type == qa.Query_Type.regex:
+        return_content=rg.get_regex(query)
+
+    return {
+        "type": query_type,
+        "content": return_content
+    }
 
 

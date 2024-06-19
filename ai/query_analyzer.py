@@ -1,9 +1,14 @@
 import openai
 import os
 from dotenv import load_dotenv
+from enum import Enum
 
 load_dotenv()
-openai.api_key=os.getenv("OPENAI_API_KEY")
+
+class Query_Type(Enum):
+    regex = "regex",
+    tag = "tag",
+    unspecified = "unspecified",
 
 def query_analyzer(query: str) -> str:
     res=openai.chat.completions.create(
@@ -22,9 +27,9 @@ def query_analyzer(query: str) -> str:
             {"role": "user", "content": query}
         ],
     )
-    ret=res.choices[0].message.content
-    
-    if ret not in ["regex", "tag", "unspecified"]:
-        raise Exception("Failed query analysis. result:", ret)
+    ret=str(res.choices[0].message.content)
+
+    if ret not in Query_Type:
+        raise Exception("Failed to analyze the query. result:", ret)
     
     return ret
