@@ -17,13 +17,13 @@ app = FastAPI()
 async def default():
     return "yes. it works."
 
-class User_Query(BaseModel):
-    content: str
-
 @app.get("/user_query/")
-async def get_user_query(user_query: User_Query):
-    query=User_Query.content
+async def get_user_query(query: str):
+    query=query
     query_type=qa.query_analyzer(query)
+
+    print("user query:", query)
+    print("query_type", query_type)
 
     return_content:Optional[str | list[str]]=None
     if query_type == qa.Query_Type.regex:
