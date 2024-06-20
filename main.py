@@ -7,6 +7,7 @@ from ai import query_analyzer as qa
 from ai import regex_generator as rg
 from ai import tag_finder as tf
 from ai import similarity_search as ss
+import traceback
 
 app = FastAPI()
 
@@ -30,10 +31,14 @@ async def get_user_query(query: str):
         elif query_type == qa.Query_Type.find_tag.name:
             query_type=3
             return_content=tf.find_tag_name(query)
-        elif query_type == qa.Query_Type.similarity_search.name:
+            if len(return_content) == 0:
+                query_type=qa.Query_Type.similarity_search.name
+
+        if query_type == qa.Query_Type.similarity_search.name:
             query_type=1
             return_content=ss.search_similar_memos(query)
     except:
+        print(traceback.format_exc())
         query_type=0
 
     print("user query:", query)
