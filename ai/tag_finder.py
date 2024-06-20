@@ -8,7 +8,7 @@ from langchain_core.output_parsers import StrOutputParser
 from langchain_core.documents.base import Document
 
 # just examples -------------
-tags=["정치", "경제", "사회", "문화", "과학", "예술", "체육", "법률", "미분류"]
+tags=["정치", "경제", "사회", "문화", "과학", "예술", "체육", "법률", "번호"]
 tags_id=[str(x+100) for x in range(len(tags))]
 # ---------------------------
 
@@ -24,15 +24,17 @@ llm = ChatOpenAI(
 )
 
 embeddings=OpenAIEmbeddings(model="text-embedding-3-small")
-vectorstore=Milvus.from_texts(
+vectorstore_for_tag=Milvus.from_texts(
     texts=tags,
     embedding=embeddings,
     connection_args={
         "uri": MILVUS_URI,
     },
-    ids=tags_id
+    ids=tags_id,
+    drop_old=True,
+    collection_name="tags"
 )
-retriever=vectorstore.as_retriever()
+retriever=vectorstore_for_tag.as_retriever()
 prompt=PromptTemplate.from_template("""
 You're the assistant who listens to your customers' requests and tells them in which tag they can find this information.
 
