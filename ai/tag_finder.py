@@ -9,7 +9,7 @@ from langchain_core.documents.base import Document
 
 # just examples -------------
 tags=["정치", "경제", "사회", "문화", "과학", "예술", "체육", "법률", "번호"]
-tags_id=[str(x+100) for x in range(len(tags))]
+tags_id=[str(x+101) for x in range(len(tags))]
 # ---------------------------
 
 load_dotenv()
@@ -57,11 +57,11 @@ find_tag_id_chain = (
     | StrOutputParser()
 )
 
-def find_tag_name(query: str) -> str:
+def find_tag_name(query: str) -> list[str]:
     chain_res=find_tag_id_chain.invoke(query)
     if chain_res == "No tag":
-        return "No tag"
+        return []
     elif chain_res not in tags:
         raise Exception("Failed to get tag name. result:", chain_res)
     else:
-        return chain_res
+        return [chain_res]
