@@ -24,7 +24,7 @@ memos=[
     "010-1234-3456",
     "02-1323-2929",
 ]
-memo_ids=[str(x+100) for x in range(len(memos))]
+memo_ids=[str(x+101) for x in range(len(memos))]
 # ---------------------------
 
 load_dotenv()
@@ -70,7 +70,7 @@ Customer's question: {query}
 
 {format} 
 """,
-partial_variables={"format": format_instructions})
+partial_variables={"format": format_instructions}) 
 
 def format_contexts(docs: list[Document]):
     ret="\n".join(f"{doc.page_content} (id: {doc.metadata['pk']})" for doc in docs)
