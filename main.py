@@ -52,6 +52,38 @@ async def get_user_query(query: str):
         "content": return_content
     }
 
+@app.get("/user_query_with_processed_output/")
+async def get_user_query_with_processed_output(query: str):
+    query=query
+    query_type=qa.query_analyzer(query)
+
+    return_content:Optional[str | list[str]]=None
+    try:
+        if query_type == qa.Query_Type.regex.name:
+            query_type=2
+            return_content=rg.get_regex(query)
+        elif query_type == qa.Query_Type.find_tag.name:
+            query_type=3
+            return_content=tf.find_tag_name(query)
+            if len(return_content) == 0:
+                query_type=qa.Query_Type.similarity_search.name
+
+        if query_type == qa.Query_Type.similarity_search.name:
+            query_type=1
+            return_content=ss.search_similar_memos_with_processed_output(query)
+    except:
+        print(traceback.format_exc())
+        query_type=0
+
+    print("user query:", query)
+    print("query_type", query_type)
+    print("return_content:", return_content)
+
+    return {
+        "type": query_type,
+        "content": return_content
+    }
+
 def run():
     LOGGING_CONFIG["formatters"]["default"]["fmt"] = "%(asctime)s [%(name)s] %(levelprefix)s %(message)s"
     uvicorn.run(app)

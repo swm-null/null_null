@@ -4,7 +4,7 @@ from langchain_openai import OpenAIEmbeddings, ChatOpenAI
 from langchain_milvus import Milvus
 from langchain_core.prompts import PromptTemplate
 from langchain_core.runnables import RunnablePassthrough
-from langchain_core.output_parsers import JsonOutputParser
+from langchain_core.output_parsers import JsonOutputParser, StrOutputParser
 from langchain_core.documents.base import Document
 from langchain_core.pydantic_v1 import BaseModel, Field
 
@@ -95,3 +95,22 @@ def search_similar_memos(query: str) -> list[str]:
         if id not in memo_ids:
             raise Exception("Failed to get memo ids. result:", chain_res)
     return chain_res['memo_ids']
+
+def search_similar_memos_with_processed_output(query: str) -> str:
+    chain_res: Memo_List=similarity_search_chain.invoke(query)
+
+    new_context='\n'.join(memos[int(i)-101] for i in chain_res['memo_ids'])
+    output_processing_prompt=PromptTemplate.from_template("""
+    You need to find the answer to the user's question.
+
+    I've included some notes that might help you answer it. Please make the best use of these notes.
+
+    Notes: {context}
+    The user's question: {query}
+    """, 
+    partial_variables={"context": new_context})
+
+    output_processing_chain={"query": RunnablePassthrough()} | output_processing_prompt | llm | StrOutputParser()
+    
+    return output_processing_chain.invoke(query)
+
