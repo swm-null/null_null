@@ -27,7 +27,9 @@ async def get_user_query(query: str):
 
     return_content:Optional[str | list[str]]=None
     try:
+        ## todo case 문정리
         if query_type == qa.Query_Type.regex.name:
+            ## todo type을 String
             query_type=2
             return_content=rg.get_regex(query)
         elif query_type == qa.Query_Type.find_tag.name:

@@ -73,8 +73,8 @@ Customer's question: {query}
 partial_variables={"format": format_instructions}) 
 
 def format_contexts(docs: list[Document]):
-    ret="\n".join(f"{doc.page_content} (id: {doc.metadata['pk']})" for doc in docs)
-    return ret
+    return "\n".join(f"{doc.page_content} (id: {doc.metadata['pk']})" for doc in docs)
+    # return ret
 
 similarity_search_chain = (
     {
@@ -89,6 +89,7 @@ similarity_search_chain = (
 def search_similar_memos(query: str) -> list[str]:
     chain_res: Memo_List=similarity_search_chain.invoke(query)
 
+# todo print to logging
     print(chain_res['memo_ids'])
 
     for id in chain_res['memo_ids']:
