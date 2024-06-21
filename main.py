@@ -8,6 +8,8 @@ from ai import regex_generator as rg
 from ai import tag_finder as tf
 from ai import similarity_search as ss
 import traceback
+import uvicorn
+from uvicorn.config import LOGGING_CONFIG
 
 app = FastAPI()
 
@@ -50,4 +52,9 @@ async def get_user_query(query: str):
         "content": return_content
     }
 
+def run():
+    LOGGING_CONFIG["formatters"]["default"]["fmt"] = "%(asctime)s [%(name)s] %(levelprefix)s %(message)s"
+    uvicorn.run(app)
 
+if __name__ == '__main__':
+    run()
