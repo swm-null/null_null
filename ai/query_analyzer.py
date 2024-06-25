@@ -2,9 +2,8 @@ import openai
 import os
 from dotenv import load_dotenv
 from enum import Enum
+from logger import logger as lg
 
-
-## todo package 나누기
 load_dotenv()
 
 class Query_Type(Enum):
