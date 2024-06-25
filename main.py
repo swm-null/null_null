@@ -35,19 +35,17 @@ async def get_user_query(query: str):
     query_type=qa.query_analyzer(query)
 
     return_content:Optional[str | list[str]]=None
+
     try:
-        ## todo case 문정리
         if query_type == qa.Query_Type.regex.name:
-            ## todo type을 String
             query_type=2
             return_content=rg.get_regex(query)
+
         elif query_type == qa.Query_Type.find_tag.name:
             query_type=3
             return_content=tf.find_tag_name(query)
-            if len(return_content) == 0:
-                query_type=qa.Query_Type.similarity_search.name
 
-        if query_type == qa.Query_Type.similarity_search.name:
+        if query_type == qa.Query_Type.similarity_search.name or return_content==None:
             query_type=1
             return_content=ss.search_similar_memos(query)
     except:
