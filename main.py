@@ -20,25 +20,29 @@ app = FastAPI()
 async def default():
     return "yes. it works."
 
+query_function_map={
+    qa.Query_Type.regex.name: (rg.get_regex, 2),
+    qa.Query_Type.find_tag.name: (tf.find_tag_name, 3),
+    qa.Query_Type.similarity_search.name: (ss.search_similar_memos, 1)
+}
+
 @app.get("/user_query/")
 async def get_user_query(query: str):
     query=query
     query_type=qa.query_analyzer(query)
 
     return_content:Optional[str | list[str]]=None
+
     try:
-        ## todo case 문정리
         if query_type == qa.Query_Type.regex.name:
-            ## todo type을 String
             query_type=2
             return_content=rg.get_regex(query)
+
         elif query_type == qa.Query_Type.find_tag.name:
             query_type=3
             return_content=tf.find_tag_name(query)
-            if len(return_content) == 0:
-                query_type=qa.Query_Type.similarity_search.name
 
-        if query_type == qa.Query_Type.similarity_search.name:
+        if query_type == qa.Query_Type.similarity_search.name or return_content==None:
             query_type=1
             return_content=ss.search_similar_memos(query)
     except:
@@ -64,6 +68,7 @@ async def get_user_query_with_processed_output(query: str):
         if query_type == qa.Query_Type.regex.name:
             query_type=2
             return_content=rg.get_regex(query)
+
         elif query_type == qa.Query_Type.find_tag.name:
             query_type=3
             return_content=tf.find_tag_name(query)
