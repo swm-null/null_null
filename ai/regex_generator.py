@@ -2,6 +2,7 @@ import openai
 import os
 from dotenv import load_dotenv
 import re
+from logger import logger as lg
 
 load_dotenv()
 
