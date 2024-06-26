@@ -30,7 +30,11 @@ async def startup_event():
 async def default():
     return "yes. it works."
 
-@app.get("/user_query/")
+class Res_get_user_query(BaseModel):
+    type: int
+    content: list[str]
+
+@app.get("/user_query/", response_model=Res_get_user_query)
 async def get_user_query(query: str):
     query_type=qa.query_analyzer(query)
 
@@ -59,21 +63,32 @@ async def get_user_query(query: str):
         "content": return_content
     }
 
-class T_add_memo(BaseModel):
+class Arg_add_memo(BaseModel):
     query: str
 
-@app.post("/add_memo/")
-async def add_memo(body: T_add_memo):
+class Res_add_memo(BaseModel):
+    memo_id: str
+    tags: list[str]
+
+@app.post("/add_memo/", response_model=Res_add_memo)
+async def add_memo(body: Arg_add_memo):
     tags=qe.query_extractor(body.query)
 
     tag_name_list: list[str]=[tag_name for tag_name, tag_id in tags]
     tag_id_list: list[str]=[tag_id for tag_name, tag_id in tags]
-    
+
     # TODO: separate db logics
-    res=database.collections.memo_store.add_documents([Document(page_content=body.query, tags=tag_id_list)])
-    lg.logger.info("[ADD_MEMO]", res)
+    from langchain_openai import OpenAIEmbeddings
+    embeddings=OpenAIEmbeddings(model="text-embedding-3-small")
+    memo_id: str=database.collections.memo_store.add_documents([
+        Document(page_content=body.query, tags=tag_id_list, vector=embeddings.embed_query(body.query))
+    ])[0]
+    lg.logger.info(f"[ADD_MEMO] content: {body.query} / tags: {tags}")
     
-    return tag_name_list
+    return {
+        "memo_id": str(memo_id),
+        "tags": tag_name_list,
+    }
 
 if __name__ == '__main__':
     uvicorn.run(app)
