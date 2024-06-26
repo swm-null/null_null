@@ -3,20 +3,20 @@ from typing import Optional
 from fastapi import FastAPI
 from pydantic import BaseModel
 from pymilvus import MilvusClient
-from ai import query_analyzer as qa
-from ai import regex_generator as rg
-from ai import tag_finder as tf
-from ai import similarity_search as ss
+from ai.for_search import query_analyzer as qa
+from ai.for_search import regex_generator as rg
+from ai.for_search import tag_finder as tf
+from ai.for_search import similarity_search as ss
+from ai.for_save import query_extractor as qe
 from logger import logger as lg
 import traceback
 import uvicorn, uvicorn.logging
 import logging, logging.handlers
 import datetime
+import database.collections
+from langchain_core.documents.base import Document
 
 app = FastAPI()
-
-# def get_db() -> MilvusClient:
-#     return connection.db_client
 
 @app.on_event("startup")
 async def startup_event():
@@ -30,7 +30,11 @@ async def startup_event():
 async def default():
     return "yes. it works."
 
-@app.get("/user_query/")
+class Res_get_user_query(BaseModel):
+    type: int
+    content: list[str]
+
+@app.get("/user_query/", response_model=Res_get_user_query)
 async def get_user_query(query: str):
     query_type=qa.query_analyzer(query)
 
@@ -57,6 +61,33 @@ async def get_user_query(query: str):
     return {
         "type": query_type,
         "content": return_content
+    }
+
+class Arg_add_memo(BaseModel):
+    query: str
+
+class Res_add_memo(BaseModel):
+    memo_id: str
+    tags: list[str]
+
+@app.post("/add_memo/", response_model=Res_add_memo)
+async def add_memo(body: Arg_add_memo):
+    tags=qe.query_extractor(body.query)
+
+    tag_name_list: list[str]=[tag_name for tag_name, tag_id in tags]
+    tag_id_list: list[str]=[tag_id for tag_name, tag_id in tags]
+
+    # TODO: separate db logics
+    from langchain_openai import OpenAIEmbeddings
+    embeddings=OpenAIEmbeddings(model="text-embedding-3-small")
+    memo_id: str=database.collections.memo_store.add_documents([
+        Document(page_content=body.query, tags=tag_id_list, vector=embeddings.embed_query(body.query))
+    ])[0]
+    lg.logger.info(f"[ADD_MEMO] content: {body.query} / tags: {tags}")
+    
+    return {
+        "memo_id": str(memo_id),
+        "tags": tag_name_list,
     }
 
 if __name__ == '__main__':

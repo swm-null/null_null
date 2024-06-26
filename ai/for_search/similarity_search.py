@@ -8,25 +8,7 @@ from langchain_core.output_parsers import JsonOutputParser, StrOutputParser
 from langchain_core.documents.base import Document
 from langchain_core.pydantic_v1 import BaseModel, Field
 from logger import logger as lg
-
-# just examples -------------
-memos=[
-    "CBO는 미국의 국가부채 비율이 현재 96%에서 2030년까지 106%에 이르며 제2차 세계대전 때보다 높아질 것으로 예상했다.", 
-    "국내총생산(GDP) 대비 미국의 국가부채 비율은 30년 후 166%에 이를 것으로 전망된다.", 
-    "미국 정부의 누적 부채 규모는 34조7000억달러 수준이다.",
-    "점유란 물건에 대한 사실상의 지배상태를 의미하며 직접점유와 간접점유로 나뉜다. 피아노, 금반지, 가방 등과 같은 대부분의 동산의 소유권을 공시하는 기능을 수행한다.", 
-    "소유란 어떤 물건을 사용, 수익, 처분할 수 있는 권리를 가진 상태이다.", 
-    "직접점유는 물건을 빌려쓰거나 보관하고 있는 것을 포함하여 물건을 물리적으로 지배하는 상태를 말한다.", 
-    "반환청구권은 물건을 빌려쓰거나 보관하는 사람에게 그 물건의 반환을 청구할 수 있는 권리이다.",
-    "간접점유는 반환청구권을 가진 상태이다.",
-    "010101-3213423",
-    "020401-3281723",
-    "010-3022-2487",
-    "010-1234-3456",
-    "02-1323-2929",
-]
-memo_ids=[str(x+101) for x in range(len(memos))]
-# ---------------------------
+from database.collections import memo_store
 
 load_dotenv()
 
@@ -40,16 +22,7 @@ llm = ChatOpenAI(
 )
 
 embeddings=OpenAIEmbeddings(model="text-embedding-3-small")
-vectorstore_for_memo=Milvus.from_texts(
-    texts=memos,
-    embedding=embeddings,
-    connection_args={
-        "uri": MILVUS_URI,
-    },
-    ids=memo_ids,
-    drop_old=True,
-    collection_name="memos"
-)
+vectorstore_for_memo=memo_store
 retriever=vectorstore_for_memo.as_retriever(kwargs={"k": 10})
 
 class Memo_List(BaseModel):
@@ -92,26 +65,28 @@ def search_similar_memos(query: str) -> list[str]:
 
     lg.logger.info(f"retrived ids: {chain_res['memo_ids']}")
 
-    for id in chain_res['memo_ids']:
-        if id not in memo_ids:
-            raise Exception("Failed to get memo ids. result:", chain_res)
+    # TODO: memo_id validation
+    # for id in chain_res['memo_ids']:
+    #     if id not in memo_ids:
+    #         raise Exception("Failed to get memo ids. result:", chain_res)
     return chain_res['memo_ids']
 
-def search_similar_memos_with_processed_output(query: str) -> str:
-    chain_res: Memo_List=similarity_search_chain.invoke(query)
+# TODO
+# def search_similar_memos_with_processed_output(query: str) -> str:
+#     chain_res: Memo_List=similarity_search_chain.invoke(query)
 
-    new_context='\n'.join(memos[int(i)-101] for i in chain_res['memo_ids'])
-    output_processing_prompt=PromptTemplate.from_template("""
-    You need to find the answer to the user's question.
+#     new_context='\n'.join(memos[int(i)-101] for i in chain_res['memo_ids'])
+#     output_processing_prompt=PromptTemplate.from_template("""
+#     You need to find the answer to the user's question.
 
-    I've included some notes that might help you answer it. Please make the best use of these notes.
+#     I've included some notes that might help you answer it. Please make the best use of these notes.
 
-    Notes: {context}
-    The user's question: {query}
-    """, 
-    partial_variables={"context": new_context})
+#     Notes: {context}
+#     The user's question: {query}
+#     """, 
+#     partial_variables={"context": new_context})
 
-    output_processing_chain={"query": RunnablePassthrough()} | output_processing_prompt | llm | StrOutputParser()
+#     output_processing_chain={"query": RunnablePassthrough()} | output_processing_prompt | llm | StrOutputParser()
     
-    return output_processing_chain.invoke(query)
+#     return output_processing_chain.invoke(query)
 

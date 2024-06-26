@@ -8,11 +8,7 @@ from langchain_core.output_parsers import StrOutputParser
 from langchain_core.documents.base import Document
 from logger import logger as lg
 from typing import Optional
-
-# just examples -------------
-tags=["정치", "경제", "사회", "문화", "과학", "예술", "체육", "법률", "번호"]
-tags_id=[str(x+101) for x in range(len(tags))]
-# ---------------------------
+from database.collections import tag_store
 
 load_dotenv()
 
@@ -26,16 +22,7 @@ llm = ChatOpenAI(
 )
 
 embeddings=OpenAIEmbeddings(model="text-embedding-3-small")
-vectorstore_for_tag=Milvus.from_texts(
-    texts=tags,
-    embedding=embeddings,
-    connection_args={
-        "uri": MILVUS_URI,
-    },
-    ids=tags_id,
-    drop_old=True,
-    collection_name="tags"
-)
+vectorstore_for_tag=tag_store
 retriever=vectorstore_for_tag.as_retriever()
 prompt=PromptTemplate.from_template("""
 You're the assistant who listens to your customers' requests and tells them in which tag they can find this information.
@@ -64,7 +51,8 @@ def find_tag_name(query: str) -> Optional[list[str]]:
     
     if chain_res == "No tag":
         return None
-    elif chain_res not in tags:
-        raise Exception("Failed to get tag name. result:", chain_res)
+    # TODO: tag validation
+    # elif chain_res not in tags:
+        # raise Exception("Failed to get tag name. result:", chain_res)
     else:
         return [chain_res]
