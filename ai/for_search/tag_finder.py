@@ -8,11 +8,7 @@ from langchain_core.output_parsers import StrOutputParser
 from langchain_core.documents.base import Document
 from logger import logger as lg
 from typing import Optional
-
-# just examples -------------
-tags=["정치", "경제", "사회", "문화", "과학", "예술", "체육", "법률", "번호"]
-tags_id=[str(x+101) for x in range(len(tags))]
-# ---------------------------
+from database.collections import tag_store
 
 load_dotenv()
 
@@ -55,7 +51,8 @@ def find_tag_name(query: str) -> Optional[list[str]]:
     
     if chain_res == "No tag":
         return None
-    elif chain_res not in tags:
-        raise Exception("Failed to get tag name. result:", chain_res)
+    # TODO: tag validation
+    # elif chain_res not in tags:
+        # raise Exception("Failed to get tag name. result:", chain_res)
     else:
         return [chain_res]

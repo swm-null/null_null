@@ -53,6 +53,7 @@ one_level_chain=(
     | StrOutputParser()
 )
 
+# [(tag_name, tag_id)...]
 def query_extractor(query: str, country: str="Korea") -> list[tuple[str, str]]:
     chain_res: str=one_level_chain.invoke({"query": query, "country": country})
     lg.logger.info(f'[QE] chain result: {chain_res} for "{query}"')
