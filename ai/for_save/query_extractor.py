@@ -31,12 +31,15 @@ vectorstore_for_tag=Milvus(
 
 # one level extractor
 prompt=PromptTemplate.from_template("""
+You're an expert at analyzing and organizing sentences.
+Given a sentence, you pick a tag if it's strongly related to an existing tag, or create a new tag if you don't think it's relevant, to help organize the sentence.
 
-                                    
-List of tags:
-{tag_list}                       
+I'll give you a sentence to analyze and a list of existing tags.
+Return only the tag name.
+
+Sentence: {query}              
+List of tags: {tag_list}                       
 """)
-
 
 def format_contexts(docs: list[Document]) -> str:
     return ", ".join(f"{doc.page_content} (id: {doc.metadata['pk']})" for doc in docs)
