@@ -26,16 +26,7 @@ llm = ChatOpenAI(
 )
 
 embeddings=OpenAIEmbeddings(model="text-embedding-3-small")
-vectorstore_for_tag=Milvus.from_texts(
-    texts=tags,
-    embedding=embeddings,
-    connection_args={
-        "uri": MILVUS_URI,
-    },
-    ids=tags_id,
-    drop_old=True,
-    collection_name="tags"
-)
+vectorstore_for_tag=tag_store
 retriever=vectorstore_for_tag.as_retriever()
 prompt=PromptTemplate.from_template("""
 You're the assistant who listens to your customers' requests and tells them in which tag they can find this information.

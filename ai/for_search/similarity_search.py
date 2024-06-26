@@ -40,16 +40,7 @@ llm = ChatOpenAI(
 )
 
 embeddings=OpenAIEmbeddings(model="text-embedding-3-small")
-vectorstore_for_memo=Milvus.from_texts(
-    texts=memos,
-    embedding=embeddings,
-    connection_args={
-        "uri": MILVUS_URI,
-    },
-    ids=memo_ids,
-    drop_old=True,
-    collection_name="memos"
-)
+vectorstore_for_memo=memo_store
 retriever=vectorstore_for_memo.as_retriever(kwargs={"k": 10})
 
 class Memo_List(BaseModel):
