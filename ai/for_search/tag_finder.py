@@ -6,6 +6,8 @@ from langchain_core.prompts import PromptTemplate
 from langchain_core.runnables import RunnablePassthrough
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.documents.base import Document
+from logger import logger as lg
+from typing import Optional
 
 # just examples -------------
 tags=["정치", "경제", "사회", "문화", "과학", "예술", "체육", "법률", "번호"]
@@ -57,10 +59,11 @@ find_tag_id_chain = (
     | StrOutputParser()
 )
 
-def find_tag_name(query: str) -> list[str]:
+def find_tag_name(query: str) -> Optional[list[str]]:
     chain_res=find_tag_id_chain.invoke(query)
+    
     if chain_res == "No tag":
-        return []
+        return None
     elif chain_res not in tags:
         raise Exception("Failed to get tag name. result:", chain_res)
     else:

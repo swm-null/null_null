@@ -7,6 +7,7 @@ from langchain_core.runnables import RunnablePassthrough
 from langchain_core.output_parsers import JsonOutputParser, StrOutputParser
 from langchain_core.documents.base import Document
 from langchain_core.pydantic_v1 import BaseModel, Field
+from logger import logger as lg
 
 # just examples -------------
 memos=[
@@ -89,8 +90,7 @@ similarity_search_chain = (
 def search_similar_memos(query: str) -> list[str]:
     chain_res: Memo_List=similarity_search_chain.invoke(query)
 
-# todo print to logging
-    print(chain_res['memo_ids'])
+    lg.logger.info(f"retrived ids: {chain_res['memo_ids']}")
 
     for id in chain_res['memo_ids']:
         if id not in memo_ids:
