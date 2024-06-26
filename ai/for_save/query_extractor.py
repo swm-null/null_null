@@ -9,6 +9,7 @@ from langchain_core.runnables import RunnablePassthrough
 from langchain_core.output_parsers import StrOutputParser
 from logger import logger as lg
 from database.collections import tag_store
+from operator import itemgetter
 
 load_dotenv()
 
@@ -27,12 +28,13 @@ vectorstore_for_tag=tag_store
 prompt=PromptTemplate.from_template("""
 You're an expert at analyzing and organizing sentences.
 Given a sentence, you pick a tag if it's strongly related to an existing tag, or create a new tag if you don't think it's relevant, to help organize the sentence.
+Tags are for big fields like economy and society.
 I'll tell you which country this sentence is used in, so you can categorize it in that country's context and generate tag in their language.
 
 I'll give you a sentence to analyze and a list of existing tags.
 Return only the tag name.
 
-Country: {country}
+Country: Korea
 Sentence: {query}              
 List of tags: {tag_list}                       
 """)
@@ -46,7 +48,6 @@ one_level_chain=(
     {
         "query": RunnablePassthrough(),
         "tag_list": retriever | format_contexts, # get the existing similar tags from db using embedding search
-        "country": RunnablePassthrough(),
     }
     | prompt
     | llm
@@ -55,7 +56,7 @@ one_level_chain=(
 
 # [(tag_name, tag_id)...]
 def query_extractor(query: str, country: str="Korea") -> list[tuple[str, str]]:
-    chain_res: str=one_level_chain.invoke({"query": query, "country": country})
+    chain_res: str=one_level_chain.invoke(query)
     lg.logger.info(f'[QE] chain result: {chain_res} for "{query}"')
 
     # check whether the tag in the database
