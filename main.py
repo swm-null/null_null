@@ -38,7 +38,7 @@ class Res_get_user_query(BaseModel):
 async def get_user_query(query: str):
     query_type=qa.query_analyzer(query)
 
-    return_content:Optional[str | list[str]]=None
+    return_content: Optional[list[str]]=None
 
     try:
         if query_type == qa.Query_Type.regex.name:
@@ -64,7 +64,7 @@ async def get_user_query(query: str):
     }
 
 class Arg_add_memo(BaseModel):
-    query: str
+    content: str
 
 class Res_add_memo(BaseModel):
     memo_id: str
@@ -72,7 +72,7 @@ class Res_add_memo(BaseModel):
 
 @app.post("/add_memo/", response_model=Res_add_memo)
 async def add_memo(body: Arg_add_memo):
-    tags=qe.query_extractor(body.query)
+    tags=qe.query_extractor(body.content)
 
     tag_name_list: list[str]=[tag_name for tag_name, tag_id in tags]
     tag_id_list: list[str]=[tag_id for tag_name, tag_id in tags]
@@ -81,9 +81,9 @@ async def add_memo(body: Arg_add_memo):
     from langchain_openai import OpenAIEmbeddings
     embeddings=OpenAIEmbeddings(model="text-embedding-3-small")
     memo_id: str=database.collections.memo_store.add_documents([
-        Document(page_content=body.query, tags=tag_id_list, vector=embeddings.embed_query(body.query))
+        Document(page_content=body.content, tags=tag_id_list, vector=embeddings.embed_query(body.content))
     ])[0]
-    lg.logger.info(f"[ADD_MEMO] content: {body.query} / tags: {tags}")
+    lg.logger.info(f"[ADD_MEMO] content: {body.content} / tags: {tags}")
     
     return {
         "memo_id": str(memo_id),
