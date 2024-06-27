@@ -90,5 +90,22 @@ async def add_memo(body: Arg_add_memo):
         "tags": tag_name_list,
     }
 
+@app.post("/_drop_all_db_and_reload/")
+def _drop_all_db_and_reload():
+    from drop_all_collections import drop_db
+    drop_db()
+    import os
+    import signal
+    os.kill(os.getpid(), signal.SIGINT)
+
+@app.post("/_reload/")
+def _reload():
+    from drop_all_collections import drop_db
+    drop_db()
+    import os
+    import signal
+    os.kill(os.getpid(), signal.SIGINT)
+
 if __name__ == '__main__':
     uvicorn.run(app)
+

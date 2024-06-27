@@ -7,24 +7,25 @@ TAG_NAME="tags"
 
 embeddings=OpenAIEmbeddings(model="text-embedding-3-small")
 
-memo_store=Milvus(
-    embedding_function=embeddings,
-    collection_name=MEMO_NAME,
-    connection_args={
-        "uri": connection.MILVUS_URI,
-        # "db_name": connection.DB_NAME,
-    },
-    auto_id=True,
-    drop_old=True,
-)
+def drop_db():
+    memo_store=Milvus(
+        embedding_function=embeddings,
+        collection_name=MEMO_NAME,
+        connection_args={
+            "uri": connection.MILVUS_URI,
+            # "db_name": connection.DB_NAME,
+        },
+        auto_id=True,
+        drop_old=True,
+    )
 
-tag_store=Milvus(
-    embedding_function=embeddings,
-    collection_name=TAG_NAME,
-    connection_args={
-        "uri": connection.MILVUS_URI,
-        # "db_name": connection.DB_NAME,
-    },
-    auto_id=True,
-    drop_old=True,
-) 
+    tag_store=Milvus(
+        embedding_function=embeddings,
+        collection_name=TAG_NAME,
+        connection_args={
+            "uri": connection.MILVUS_URI,
+            # "db_name": connection.DB_NAME,
+        },
+        auto_id=True,
+        drop_old=True,
+    ) 
