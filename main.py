@@ -2,7 +2,6 @@
 from typing import Optional
 from fastapi import FastAPI
 from pydantic import BaseModel
-from pymilvus import MilvusClient
 from ai.for_search import query_analyzer as qa
 from ai.for_search import regex_generator as rg
 from ai.for_search import tag_finder as tf
