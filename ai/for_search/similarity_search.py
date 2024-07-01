@@ -39,7 +39,7 @@ You're an assistant who finds notes that have what the user asked for.
 I'll give you candidate notes that might be the right answer. Then you find the note that contains the user's request among these candidates.
 There can be multiple correct answers, not just one, and you return the 'id' of each note.
 
-Memos: {context}
+Memos: [{context}]
 Customer's question: {query}
 
 {format} 
