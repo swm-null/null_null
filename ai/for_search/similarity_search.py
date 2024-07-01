@@ -47,7 +47,9 @@ Customer's question: {query}
 partial_variables={"format": format_instructions}) 
 
 def format_contexts(docs: list[Document]):
-    return "\n".join(f"{doc.page_content} (id: {doc.metadata['pk']})" for doc in docs)
+    memos="\n".join(f"{doc.page_content} (id: {doc.metadata['pk']})" for doc in docs)
+    lg.logger.info(f"[SS] retrived contexts: {memos}")
+    return memos
     # return ret
 
 similarity_search_chain = (
@@ -63,7 +65,7 @@ similarity_search_chain = (
 def search_similar_memos(query: str) -> list[str]:
     chain_res: Memo_List=similarity_search_chain.invoke(query)
 
-    lg.logger.info(f"retrived ids: {chain_res['memo_ids']}")
+    lg.logger.info(f"[SS] chain res: {chain_res['memo_ids']}")
 
     # TODO: memo_id validation
     # for id in chain_res['memo_ids']:
