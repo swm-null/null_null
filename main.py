@@ -69,9 +69,12 @@ async def get_user_query_with_processed(query: str):
     response=await get_user_query(query)
 
     if response["type"]==1: # similarity search
+        processed_result: str=ss.process_result(query, response["content"])
+        lg.logger.info("processed result: %s", processed_result)
+        
         return {
             "type": response["type"],
-            "content": [ss.process_result(query, response["content"])]
+            "content": [processed_result]
         }
     else:
         return response

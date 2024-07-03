@@ -73,6 +73,7 @@ def process_result(query: str, selected_list: list[str]) -> str:
     # TODO: improve this dumb way after change the db
     all_memos: list[Document]=vectorstore_for_memo.similarity_search("", k=10000)
     new_context='\n'.join(memo.page_content for memo in all_memos if str(memo.metadata['pk']) in selected_list)
+    lg.logger.info("nl processing context:\n%s", new_context)
 
     output_processing_prompt=PromptTemplate.from_template("""
     You need to find the answer to the user's question.
