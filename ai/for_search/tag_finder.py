@@ -10,6 +10,11 @@ from logger import logger as lg
 from typing import Optional
 from database.collections import tag_store
 
+llm = ChatOpenAI(
+    model="gpt-4o",
+    temperature=0,
+)
+
 vectorstore_for_tag=tag_store
 retriever=vectorstore_for_tag.as_retriever()
 prompt=PromptTemplate.from_template("""
