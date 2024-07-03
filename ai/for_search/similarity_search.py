@@ -10,18 +10,11 @@ from langchain_core.pydantic_v1 import BaseModel, Field
 from logger import logger as lg
 from database.collections import memo_store
 
-load_dotenv()
-
-MILVUS_URI=os.getenv("MILVUS_URI")
-if MILVUS_URI == None:
-    raise Exception("Invalid MILVUS_URI")
-
 llm = ChatOpenAI(
     model="gpt-4o",
     temperature=0,
 )
 
-embeddings=OpenAIEmbeddings(model="text-embedding-3-small")
 vectorstore_for_memo=memo_store
 retriever=vectorstore_for_memo.as_retriever(kwargs={"k": 10})
 
@@ -50,7 +43,6 @@ def format_contexts(docs: list[Document]):
     memos="\n".join(f"{doc.page_content} (id: {doc.metadata['pk']})" for doc in docs)
     lg.logger.info(f"[SS] retrived contexts: {memos}")
     return memos
-    # return ret
 
 similarity_search_chain = (
     {
@@ -67,10 +59,13 @@ def search_similar_memos(query: str) -> list[str]:
 
     lg.logger.info(f"[SS] chain res: {chain_res['memo_ids']}")
 
-    # TODO: memo_id validation
-    # for id in chain_res['memo_ids']:
-    #     if id not in memo_ids:
-    #         raise Exception("Failed to get memo ids. result:", chain_res)
+    # TODO: improve this dumb way after change the db
+    all_memos: list[Document]=vectorstore_for_memo.similarity_search("", k=10000)
+
+    for id in chain_res['memo_ids']:
+        if not any(id==str(memo.metadata['pk']) for memo in all_memos):
+            raise Exception("[SS] Failed to get memo ids. result:", chain_res)
+            
     return chain_res['memo_ids']
 
 # TODO

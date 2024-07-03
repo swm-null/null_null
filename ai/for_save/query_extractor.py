@@ -13,16 +13,11 @@ from operator import itemgetter
 
 load_dotenv()
 
-MILVUS_URI=os.getenv("MILVUS_URI")
-if MILVUS_URI == None:
-    raise Exception("Invalid MILVUS_URI")
-
 llm = ChatOpenAI(
     model="gpt-4o",
     temperature=0,
 )
 
-embeddings=OpenAIEmbeddings(model="text-embedding-3-small")
 vectorstore_for_tag=tag_store
 # one level extractor
 prompt=PromptTemplate.from_template("""

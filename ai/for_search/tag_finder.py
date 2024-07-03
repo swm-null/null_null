@@ -10,18 +10,11 @@ from logger import logger as lg
 from typing import Optional
 from database.collections import tag_store
 
-load_dotenv()
-
-MILVUS_URI=os.getenv("MILVUS_URI")
-if MILVUS_URI == None:
-    raise Exception("Invalid MILVUS_URI")
-
 llm = ChatOpenAI(
     model="gpt-4o",
     temperature=0,
 )
 
-embeddings=OpenAIEmbeddings(model="text-embedding-3-small")
 vectorstore_for_tag=tag_store
 retriever=vectorstore_for_tag.as_retriever()
 prompt=PromptTemplate.from_template("""
@@ -51,8 +44,10 @@ def find_tag_name(query: str) -> Optional[list[str]]:
     
     if chain_res == "No tag":
         return None
-    # TODO: tag validation
-    # elif chain_res not in tags:
-        # raise Exception("Failed to get tag name. result:", chain_res)
+    
+    # TODO: improve this dumb way after change the db
+    all_tags: list[Document]=vectorstore_for_tag.similarity_search("", k=10000)
+    if any(chain_res==tag.page_content for tag in all_tags) == False:
+        raise Exception("[TF] Failed to get tag name. result:", chain_res)
     else:
         return [chain_res]
