@@ -10,18 +10,6 @@ from logger import logger as lg
 from typing import Optional
 from database.collections import tag_store
 
-load_dotenv()
-
-MILVUS_URI=os.getenv("MILVUS_URI")
-if MILVUS_URI == None:
-    raise Exception("Invalid MILVUS_URI")
-
-llm = ChatOpenAI(
-    model="gpt-4o",
-    temperature=0,
-)
-
-embeddings=OpenAIEmbeddings(model="text-embedding-3-small")
 vectorstore_for_tag=tag_store
 retriever=vectorstore_for_tag.as_retriever()
 prompt=PromptTemplate.from_template("""
