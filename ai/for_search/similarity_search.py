@@ -61,8 +61,9 @@ def search_similar_memos(query: str) -> list[str]:
 
     # TODO: improve this dumb way after change the db
     all_memos: list[Document]=vectorstore_for_memo.similarity_search("", k=10000)
+
     for id in chain_res['memo_ids']:
-        if any(id==memo.metadata['pk'] for memo in all_memos) == False:
+        if not any(id==str(memo.metadata['pk']) for memo in all_memos):
             raise Exception("[SS] Failed to get memo ids. result:", chain_res)
             
     return chain_res['memo_ids']
