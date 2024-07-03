@@ -62,6 +62,18 @@ async def get_user_query(query: str):
         "content": return_content
     }
 
+@app.get("/user_query_with_processed/", response_model=Res_get_user_query)
+async def get_user_query_with_processed(query: str):
+    response=await get_user_query(query)
+
+    if response["type"]==1: # similarity search
+        return {
+            "type": response["type"],
+            "content": [ss.process_result(query, response["content"])]
+        }
+    else:
+        return response
+
 class Arg_add_memo(BaseModel):
     content: str
 

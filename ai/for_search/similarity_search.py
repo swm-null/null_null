@@ -68,22 +68,24 @@ def search_similar_memos(query: str) -> list[str]:
             
     return chain_res['memo_ids']
 
-# TODO
-# def search_similar_memos_with_processed_output(query: str) -> str:
-#     chain_res: Memo_List=similarity_search_chain.invoke(query)
+def process_result(query: str, selected_list: list[str]) -> str:
+    # selected_list: list[str]=search_similar_memos(query)
 
-#     new_context='\n'.join(memos[int(i)-101] for i in chain_res['memo_ids'])
-#     output_processing_prompt=PromptTemplate.from_template("""
-#     You need to find the answer to the user's question.
+    # TODO: improve this dumb way after change the db
+    all_memos: list[Document]=vectorstore_for_memo.similarity_search("", k=10000)
+    new_context='\n'.join(memo.page_content for memo in all_memos if str(memo.metadata['pk']) in selected_list)
 
-#     I've included some notes that might help you answer it. Please make the best use of these notes.
+    output_processing_prompt=PromptTemplate.from_template("""
+    You need to find the answer to the user's question.
 
-#     Notes: {context}
-#     The user's question: {query}
-#     """, 
-#     partial_variables={"context": new_context})
+    I've included some notes that might help you answer it. Please make the best use of these notes.
 
-#     output_processing_chain={"query": RunnablePassthrough()} | output_processing_prompt | llm | StrOutputParser()
+    Notes: {context}
+    The user's question: {query}
+    """, 
+    partial_variables={"context": new_context})
+
+    output_processing_chain={"query": RunnablePassthrough()} | output_processing_prompt | llm | StrOutputParser()
     
-#     return output_processing_chain.invoke(query)
+    return output_processing_chain.invoke(query)
 
