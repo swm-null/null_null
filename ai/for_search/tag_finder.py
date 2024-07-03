@@ -51,8 +51,10 @@ def find_tag_name(query: str) -> Optional[list[str]]:
     
     if chain_res == "No tag":
         return None
-    # TODO: tag validation
-    # elif chain_res not in tags:
-        # raise Exception("Failed to get tag name. result:", chain_res)
+    
+    # TODO: improve this dumb way after change the db
+    all_tags: list[Document]=vectorstore_for_tag.similarity_search("", k=10000)
+    if any(chain_res==tag.page_content for tag in all_tags) == False:
+        raise Exception("[TF] Failed to get tag name. result:", chain_res)
     else:
         return [chain_res]
