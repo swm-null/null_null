@@ -70,7 +70,6 @@ def search_similar_memos(query: str) -> list[str]:
 
 def process_result(query: str, selected_list: list[str]) -> str:
     # selected_list: list[str]=search_similar_memos(query)
-
     # TODO: improve this dumb way after change the db
     all_memos: list[Document]=vectorstore_for_memo.similarity_search("", k=10000)
     new_context='\n'.join(memo.page_content for memo in all_memos if str(memo.metadata['pk']) in selected_list)
@@ -79,6 +78,7 @@ def process_result(query: str, selected_list: list[str]) -> str:
     You need to find the answer to the user's question.
 
     I've included some notes that might help you answer it. Please make the best use of these notes.
+    If it's a question you can't answer, print that you can't answer it.
 
     Notes: {context}
     The user's question: {query}
