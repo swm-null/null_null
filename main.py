@@ -29,6 +29,8 @@ async def startup_event():
 async def default():
     return "yes. it works."
 
+# ------------
+
 class Res_get_user_query(BaseModel):
     type: int
     content: list[str]
@@ -81,6 +83,8 @@ class Res_add_memo(BaseModel):
     memo_id: str
     tags: list[str]
 
+# ------------
+
 @app.post("/add_memo/", response_model=Res_add_memo)
 async def add_memo(body: Arg_add_memo):
     tags=qe.query_extractor(body.content)
@@ -100,6 +104,8 @@ async def add_memo(body: Arg_add_memo):
         "memo_id": str(memo_id),
         "tags": tag_name_list,
     }
+
+# ------------
 
 @app.post("/_drop_all_db_and_reload/")
 def _drop_all_db_and_reload():
