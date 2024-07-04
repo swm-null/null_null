@@ -54,27 +54,57 @@ similarity_search_chain = (
     | JsonOutputParser()
 )
 
+def memo_validation(memos: Memo_List) -> bool:
+    # TODO: improve this dumb way after change the db
+    all_memos: list[Document]=vectorstore_for_memo.similarity_search("", k=10000)
+
+    for id in memos['memo_ids']:
+        if not any(id==str(memo.metadata['pk']) for memo in all_memos):
+            raise Exception("[SS] Failed to get memo ids. result:", memos)
+    return True
+        
+def similarity_search(query: str) -> tuple[str, list[str]]:
+    similar_memos: Memo_List=similarity_search_chain.invoke(query)
+    lg.logger.info(f"[SS] similar_memos:\n{similar_memos['memo_ids']}")
+    
+    memo_validation(similar_memos)
+
+    # TODO: improve so babo approach
+    all_memos: list[Document]=vectorstore_for_memo.similarity_search("", k=10000)
+    generated_context: str='\n'.join(memo.page_content for memo in all_memos if str(memo.metadata['pk']) in similar_memos.memo_ids)
+    
+    lg.logger.info("[SS] generated context:\n%s", generated_context)
+
+    output_processing_prompt=PromptTemplate.from_template("""
+    You need to find the answer to the user's question.
+
+    I've included some notes that might help you answer it. Please make the best use of these notes.
+    If it's a question you can't answer, print that you can't answer it.
+
+    Notes: {context}
+    The user's question: {query}
+    """, 
+    partial_variables={"context": generated_context})
+
+    output_processing_chain={"query": RunnablePassthrough()} | output_processing_prompt | llm | StrOutputParser()
+    return (output_processing_chain.invoke(query), similar_memos.memo_ids)
+
+# deprecated
 def search_similar_memos(query: str) -> list[str]:
     chain_res: Memo_List=similarity_search_chain.invoke(query)
 
     lg.logger.info(f"[SS] chain res: {chain_res['memo_ids']}")
-
-    # TODO: improve this dumb way after change the db
-    all_memos: list[Document]=vectorstore_for_memo.similarity_search("", k=10000)
-
-    for id in chain_res['memo_ids']:
-        if not any(id==str(memo.metadata['pk']) for memo in all_memos):
-            raise Exception("[SS] Failed to get memo ids. result:", chain_res)
+    memo_validation(chain_res)
             
     return chain_res['memo_ids']
 
+# deprecated
 def process_result(query: str, selected_list: list[str]) -> str:
-    # selected_list: list[str]=search_similar_memos(query)
     # TODO: improve this dumb way after change the db
     all_memos: list[Document]=vectorstore_for_memo.similarity_search("", k=10000)
     new_context='\n'.join(memo.page_content for memo in all_memos if str(memo.metadata['pk']) in selected_list)
     lg.logger.info("nl processing context:\n%s", new_context)
-
+    
     output_processing_prompt=PromptTemplate.from_template("""
     You need to find the answer to the user's question.
 
@@ -87,6 +117,5 @@ def process_result(query: str, selected_list: list[str]) -> str:
     partial_variables={"context": new_context})
 
     output_processing_chain={"query": RunnablePassthrough()} | output_processing_prompt | llm | StrOutputParser()
-    
     return output_processing_chain.invoke(query)
 
