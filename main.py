@@ -50,7 +50,7 @@ async def search(body: Arg_search):
             return_content.regex=rg.get_regex(body.query)
     
         elif return_content.type == qa.Query_Type.tags:
-            return_content.tags=tf.find_tag_name(body.query)
+            return_content.tags=tf.find_tag_ids(body.query)
             # if the tag search result is None
             if return_content.tags == None:
                 # then trying similarity search
