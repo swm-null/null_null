@@ -6,7 +6,7 @@ from logger import logger as lg
 
 load_dotenv()
 
-def get_regex(q: str, country: str="korea") -> list[str]:
+def get_regex(q: str, country: str="korea") -> str:
     res=openai.chat.completions.create(
         model="gpt-4o",
         messages=[
@@ -35,4 +35,4 @@ def get_regex(q: str, country: str="korea") -> list[str]:
     except:
         raise Exception("Failed to get regex. result:", ret)
     
-    return [ret]
+    return ret
