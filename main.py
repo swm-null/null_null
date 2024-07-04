@@ -29,6 +29,8 @@ async def startup_event():
 async def default():
     return "yes. it works."
 
+# ------------
+
 class Res_get_user_query(BaseModel):
     type: int
     content: list[str]
@@ -62,12 +64,29 @@ async def get_user_query(query: str):
         "content": return_content
     }
 
+@app.get("/user_query_with_processed/", response_model=Res_get_user_query)
+async def get_user_query_with_processed(query: str):
+    response=await get_user_query(query)
+
+    if response["type"]==1: # similarity search
+        processed_result: str=ss.process_result(query, response["content"])
+        lg.logger.info("processed result: %s", processed_result)
+        
+        return {
+            "type": response["type"],
+            "content": [processed_result]
+        }
+    else:
+        return response
+
 class Arg_add_memo(BaseModel):
     content: str
 
 class Res_add_memo(BaseModel):
     memo_id: str
     tags: list[str]
+
+# ------------
 
 @app.post("/add_memo/", response_model=Res_add_memo)
 async def add_memo(body: Arg_add_memo):
@@ -88,6 +107,8 @@ async def add_memo(body: Arg_add_memo):
         "memo_id": str(memo_id),
         "tags": tag_name_list,
     }
+
+# ------------
 
 @app.post("/_drop_all_db_and_reload/")
 def _drop_all_db_and_reload():
