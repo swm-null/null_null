@@ -118,4 +118,3 @@ def process_result(query: str, selected_list: list[str]) -> str:
 
     output_processing_chain={"query": RunnablePassthrough()} | output_processing_prompt | llm | StrOutputParser()
     return output_processing_chain.invoke(query)
-
