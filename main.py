@@ -1,6 +1,6 @@
 # from database import connection
-from typing import Optional
-from fastapi import FastAPI
+from typing import Optional, Literal
+from fastapi import FastAPI, status
 from pydantic import BaseModel
 from ai.for_search import query_analyzer as qa
 from ai.for_search import regex_generator as rg
@@ -29,13 +29,50 @@ async def startup_event():
 async def default():
     return "yes. it works."
 
-# ------------
+class Arg_search(BaseModel):
+    query: str
 
+class Res_search(BaseModel):
+    # type: Literal["similarity", "tag", "regex", "unspecified"]="unspecified"
+    type: qa.Query_Type
+    processed_message: Optional[str]=None
+    ids: Optional[list[str]]=None
+    regex: Optional[str]=None
+    tags: Optional[list[str]]=None
+
+@app.post("/search/", response_model=Res_search)
+async def search(body: Arg_search):
+    return_content: Res_search=Res_search(
+        type=qa.query_analyzer(body.query)
+    )
+
+    try:
+        if return_content.type == qa.Query_Type.regex:
+            return_content.regex=rg.get_regex(body.query)
+    
+        elif return_content.type == qa.Query_Type.find_tag:
+            return_content.tags=tf.find_tag_name(body.query)
+            # if the tag search result is None
+            if return_content.tags == None:
+                # then trying similarity search
+                return_content.type = qa.Query_Type.similarity_search
+            
+        if return_content.type == qa.Query_Type.similarity_search:
+            return_content.processed_message, return_content.ids=ss.similarity_search(body.query)
+    except:
+        lg.logger.error(traceback.format_exc())
+        return_content.type=qa.Query_Type.unspecified
+
+    lg.logger.info("[/search] query: %s / query type: %s \n%s", body.query, return_content.type, str(return_content))
+
+    return return_content
+
+# ------------
 class Res_get_user_query(BaseModel):
     type: int
     content: list[str]
 
-@app.get("/user_query/", response_model=Res_get_user_query)
+@app.get("/user_query/", response_model=Res_get_user_query, deprecated=True)
 async def get_user_query(query: str):
     query_type=qa.query_analyzer(query)
 
@@ -44,8 +81,8 @@ async def get_user_query(query: str):
     try:
         if query_type == qa.Query_Type.regex.name:
             query_type=2
-            return_content=rg.get_regex(query)
-
+            return_content=[rg.get_regex(query)]
+            
         elif query_type == qa.Query_Type.find_tag.name:
             query_type=3
             return_content=tf.find_tag_name(query)
@@ -64,7 +101,7 @@ async def get_user_query(query: str):
         "content": return_content
     }
 
-@app.get("/user_query_with_processed/", response_model=Res_get_user_query)
+@app.get("/user_query_with_processed/", response_model=Res_get_user_query, deprecated=True)
 async def get_user_query_with_processed(query: str):
     response=await get_user_query(query)
 
@@ -79,6 +116,7 @@ async def get_user_query_with_processed(query: str):
     else:
         return response
 
+# ------------
 class Arg_add_memo(BaseModel):
     content: str
 
@@ -86,9 +124,7 @@ class Res_add_memo(BaseModel):
     memo_id: str
     tags: list[str]
 
-# ------------
-
-@app.post("/add_memo/", response_model=Res_add_memo)
+@app.post("/add_memo/", response_model=Res_add_memo, status_code=status.HTTP_201_CREATED)
 async def add_memo(body: Arg_add_memo):
     tags=qe.query_extractor(body.content)
 
