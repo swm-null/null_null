@@ -78,15 +78,15 @@ async def get_user_query(query: str):
     return_content: Optional[list[str]]=None
 
     try:
-        if query_type == qa.Query_Type.regex.name:
+        if query_type == qa.Query_Type.regex:
             query_type=2
             return_content=[rg.get_regex(query)]
             
-        elif query_type == qa.Query_Type.tags.name:
+        elif query_type == qa.Query_Type.tags:
             query_type=3
             return_content=tf.find_tag_name(query)
 
-        if query_type == qa.Query_Type.similarity.name or return_content==None:
+        if query_type == qa.Query_Type.similarity or return_content==None:
             query_type=1
             return_content=ss.search_similar_memos(query)
     except:
@@ -163,4 +163,3 @@ def _reload():
 
 if __name__ == '__main__':
     uvicorn.run(app)
-
