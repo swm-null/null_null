@@ -33,8 +33,7 @@ class Arg_search(BaseModel):
     query: str
 
 class Res_search(BaseModel):
-    # type: Literal["similarity", "tag", "regex", "unspecified"]="unspecified"
-    type: qa.Query_Type
+    type: qa.Query_Type=qa.Query_Type.unspecified
     processed_message: Optional[str]=None
     ids: Optional[list[str]]=None
     regex: Optional[str]=None
@@ -42,28 +41,28 @@ class Res_search(BaseModel):
 
 @app.post("/search/", response_model=Res_search)
 async def search(body: Arg_search):
-    return_content: Res_search=Res_search(
-        type=qa.query_analyzer(body.query)
-    )
+    return_content: Res_search=Res_search()
 
     try:
+        return_content.type=qa.query_analyzer(body.query)
+
         if return_content.type == qa.Query_Type.regex:
             return_content.regex=rg.get_regex(body.query)
     
-        elif return_content.type == qa.Query_Type.find_tag:
+        elif return_content.type == qa.Query_Type.tags:
             return_content.tags=tf.find_tag_name(body.query)
             # if the tag search result is None
             if return_content.tags == None:
                 # then trying similarity search
-                return_content.type = qa.Query_Type.similarity_search
+                return_content.type = qa.Query_Type.similarity
             
-        if return_content.type == qa.Query_Type.similarity_search:
+        if return_content.type == qa.Query_Type.similarity:
             return_content.processed_message, return_content.ids=ss.similarity_search(body.query)
     except:
         lg.logger.error(traceback.format_exc())
         return_content.type=qa.Query_Type.unspecified
 
-    lg.logger.info("[/search] query: %s / query type: %s \n%s", body.query, return_content.type, str(return_content))
+    lg.logger.info("[/search] query: %s / query type: %s \n%s", body.query, return_content.type, return_content)
 
     return return_content
 
@@ -83,11 +82,11 @@ async def get_user_query(query: str):
             query_type=2
             return_content=[rg.get_regex(query)]
             
-        elif query_type == qa.Query_Type.find_tag.name:
+        elif query_type == qa.Query_Type.tags.name:
             query_type=3
             return_content=tf.find_tag_name(query)
 
-        if query_type == qa.Query_Type.similarity_search.name or return_content==None:
+        if query_type == qa.Query_Type.similarity.name or return_content==None:
             query_type=1
             return_content=ss.search_similar_memos(query)
     except:
