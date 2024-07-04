@@ -71,7 +71,7 @@ def similarity_search(query: str) -> tuple[str, list[str]]:
 
     # TODO: improve so babo approach
     all_memos: list[Document]=vectorstore_for_memo.similarity_search("", k=10000)
-    generated_context: str='\n'.join(memo.page_content for memo in all_memos if str(memo.metadata['pk']) in similar_memos.memo_ids)
+    generated_context: str='\n'.join(memo.page_content for memo in all_memos if str(memo.metadata['pk']) in similar_memos['memo_ids'])
     
     lg.logger.info("[SS] generated context:\n%s", generated_context)
 
@@ -87,7 +87,7 @@ def similarity_search(query: str) -> tuple[str, list[str]]:
     partial_variables={"context": generated_context})
 
     output_processing_chain={"query": RunnablePassthrough()} | output_processing_prompt | llm | StrOutputParser()
-    return (output_processing_chain.invoke(query), similar_memos.memo_ids)
+    return (output_processing_chain.invoke(query), similar_memos['memo_ids'])
 
 # deprecated
 def search_similar_memos(query: str) -> list[str]:
