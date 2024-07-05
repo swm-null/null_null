@@ -52,14 +52,14 @@ async def search(body: Arg_search):
         if return_content.type == qa.Query_Type.similarity:
             return_content.processed_message, return_content.ids=ss.similarity_search(body.query)
     except:
-        lg.logger.error(traceback.format_exc())
+        logging.error("[/search] %s", traceback.format_exc())
         return_content.type=qa.Query_Type.unspecified
 
-    lg.logger.info("[/search] query: %s / query type: %s \n%s", body.query, return_content.type, return_content)
+    logging.info("[/search] query: %s / query type: %s \nreturn: %s", body.query, return_content.type, return_content)
 
     return return_content
 
-# ------------
+# ------------ deprecated
 class Res_get_user_query(BaseModel):
     type: int
     content: list[str]
@@ -83,10 +83,10 @@ async def get_user_query(query: str):
             query_type=1
             return_content=ss.search_similar_memos(query)
     except:
-        lg.logger.error(traceback.format_exc())
+        logging.error("[/user_query] %s", traceback.format_exc())
         query_type=0
 
-    lg.logger.info("user query: %s / query type: %s / %s", query, query_type, str(return_content))
+    logging.info("[/user_query] user query: %s / query type: %s \nreturn: %s", query, query_type, return_content)
 
     return {
         "type": query_type,
@@ -99,7 +99,7 @@ async def get_user_query_with_processed(query: str):
 
     if response["type"]==1: # similarity search
         processed_result: str=ss.process_result(query, response["content"])
-        lg.logger.info("processed result: %s", processed_result)
+        logging.info("processed result: %s", processed_result)
         
         return {
             "type": response["type"],
@@ -108,7 +108,7 @@ async def get_user_query_with_processed(query: str):
     else:
         return response
 
-# ------------
+# ------------deprecated
 class Arg_add_memo(BaseModel):
     content: str
 
@@ -129,7 +129,7 @@ async def add_memo(body: Arg_add_memo):
     memo_id: str=database.collections.memo_store.add_documents([
         Document(page_content=body.content, tags=tag_id_list, vector=embeddings.embed_query(body.content))
     ])[0]
-    lg.logger.info(f"[ADD_MEMO] content: {body.content} / tags: {tags}")
+    logging.info(f"[/add_memo] content: {body.content} / tags: {tags}")
     
     return {
         "memo_id": str(memo_id),
@@ -137,7 +137,6 @@ async def add_memo(body: Arg_add_memo):
     }
 
 # ------------
-
 @app.post("/_drop_all_db_and_reload/")
 def _drop_all_db_and_reload():
     from drop_all_collections import drop_db

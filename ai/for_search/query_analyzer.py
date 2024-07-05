@@ -1,8 +1,8 @@
 import openai
+import logging
 from dotenv import load_dotenv
 from enum import Enum
 from typing import Literal
-from logger import logger as lg
 
 load_dotenv()
 
@@ -31,7 +31,7 @@ def query_analyzer(query: str) -> Query_Type:
         ],
     )
 
-    lg.logger.info("[QA] analyzed query type: %s", res.choices[0].message.content)
+    logging.info("[QA] analyzed query type: %s", res.choices[0].message.content)
 
     ret=res.choices[0].message.content
 
