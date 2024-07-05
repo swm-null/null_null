@@ -12,8 +12,8 @@ import uvicorn, uvicorn.logging
 import database.collections
 from langchain_core.documents.base import Document
 from sentry_sdk.integrations.asgi import SentryAsgiMiddleware
-from logger import sentry_init
 import logging
+from logger import access_logger, exec_logger, sentry_init
 
 app = FastAPI()
 app.add_middleware(SentryAsgiMiddleware)
