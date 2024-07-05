@@ -7,23 +7,16 @@ from ai.for_search import regex_generator as rg
 from ai.for_search import tag_finder as tf
 from ai.for_search import similarity_search as ss
 from ai.for_save import query_extractor as qe
-from logger import logger as lg
 import traceback
 import uvicorn, uvicorn.logging
-import logging, logging.handlers
-import datetime
 import database.collections
 from langchain_core.documents.base import Document
+from sentry_sdk.integrations.asgi import SentryAsgiMiddleware
+from logger import sentry_init
+import logging
 
 app = FastAPI()
-
-@app.on_event("startup")
-async def startup_event():
-    logger = logging.getLogger("uvicorn.access")
-    now = str(datetime.datetime.now()).split('.')[0].replace(' ', '_')
-    handler = logging.handlers.TimedRotatingFileHandler(f'./logs/access/access_log_{now}.log', when='midnight', interval=1, backupCount=1)
-    handler.setFormatter(logging.Formatter("%(asctime)s - %(levelname)s - %(message)s"))
-    logger.addHandler(handler)
+app.add_middleware(SentryAsgiMiddleware)
     
 @app.get("/")
 async def default():
