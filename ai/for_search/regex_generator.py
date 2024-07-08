@@ -2,7 +2,7 @@ import openai
 import os
 from dotenv import load_dotenv
 import re
-from logger import logger as lg
+import logging
 
 load_dotenv()
 
@@ -29,6 +29,7 @@ def get_regex(q: str, country: str="korea") -> str:
         temperature=0,
     )
     ret=str(res.choices[0].message.content)
+    logging.info("[RG] regex result: %s", ret)
     
     try:
         re.compile(ret) # check the returned regex

@@ -6,7 +6,7 @@ from langchain_core.prompts import PromptTemplate
 from langchain_core.runnables import RunnablePassthrough
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.documents.base import Document
-from logger import logger as lg
+import logging
 from typing import Optional
 from database.collections import tag_store
 
@@ -44,7 +44,7 @@ def find_tag_ids(query: str) -> Optional[list[str]]:
     tag_ids=find_tag_ids_chain.invoke(query)
 
     if tag_ids.strip() == "No tag":
-        lg.logger.info("[TF] No tags found.")
+        logging.info("[TF] No tags found.")
         return None
     
     # TODO: improve this dumb way after change the db
@@ -52,7 +52,7 @@ def find_tag_ids(query: str) -> Optional[list[str]]:
     if any(tag_ids==str(tag.metadata['pk']) for tag in all_tags) == False:
         raise Exception("[TF] Failed to get tag ids. result:", tag_ids)
     else:
-        lg.logger.info("[TF] Found the tags. result: [%s]", tag_ids)
+        logging.info("[TF] Found the tags. result: [%s]", tag_ids)
         return [tag_ids]
     
 # deprecated function
