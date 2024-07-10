@@ -1,15 +1,11 @@
-import openai
-import os
 import logging
 from dotenv import load_dotenv
 from langchain_openai import OpenAIEmbeddings, ChatOpenAI
-from langchain_milvus import Milvus
 from langchain_core.prompts import PromptTemplate
 from langchain_core.documents.base import Document
 from langchain_core.runnables import RunnablePassthrough
 from langchain_core.output_parsers import StrOutputParser
 from database.collections import tag_store
-from operator import itemgetter
 
 load_dotenv()
 
@@ -35,7 +31,7 @@ List of tags: {tag_list}
 """)
 
 def format_contexts(docs: list[Document]) -> str:
-    return ", ".join(f"{doc.page_content} (id: {doc.metadata['pk']})" for doc in docs)
+    return ", ".join(f"{doc.page_content} (id: {doc.metadata['_id']['$oid']})" for doc in docs)
 
 
 retriever=vectorstore_for_tag.as_retriever(kwargs={"k": 10})

@@ -127,7 +127,7 @@ async def add_memo(body: Arg_add_memo):
     from langchain_openai import OpenAIEmbeddings
     embeddings=OpenAIEmbeddings(model="text-embedding-3-small")
     memo_id: str=database.collections.memo_store.add_documents([
-        Document(page_content=body.content, tags=tag_id_list, vector=embeddings.embed_query(body.content))
+        Document(page_content=body.content, vector=embeddings.embed_query(body.content))
     ])[0]
     logging.info(f"[/add_memo] content: {body.content} / tags: {tags}")
     

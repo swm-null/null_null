@@ -1,7 +1,5 @@
 from dotenv import load_dotenv
-import os
 from langchain_openai import OpenAIEmbeddings, ChatOpenAI
-from langchain_milvus import Milvus
 from langchain_core.prompts import PromptTemplate
 from langchain_core.runnables import RunnablePassthrough
 from langchain_core.output_parsers import StrOutputParser
@@ -81,7 +79,7 @@ def find_tag_name(query: str) -> Optional[list[str]]:
         return None
     
     # TODO: improve this dumb way after change the db
-    all_tags: list[Document]=vectorstore_for_tag.similarity_search("", k=10000)
+    all_tags: list[Document]=vectorstore_for_tag.similarity_search("", k=1000)
     if any(chain_res==tag.page_content for tag in all_tags) == False:
         raise Exception("[TF] Failed to get tag name. result:", chain_res)
     else:
