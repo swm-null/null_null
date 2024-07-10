@@ -21,16 +21,6 @@ app.add_middleware(SentryAsgiMiddleware)
 async def default():
     return "yes. it works."
 
-class Arg_search(BaseModel):
-    query: str
-
-class Res_search(BaseModel):
-    type: qa.Query_Type=qa.Query_Type.unspecified
-    processed_message: Optional[str]=None
-    ids: Optional[list[str]]=None
-    regex: Optional[str]=None
-    tags: Optional[list[str]]=None
-
 @app.post("/search/", response_model=Res_search)
 async def search(body: Arg_search):
     return_content: Res_search=Res_search()
@@ -106,14 +96,7 @@ async def get_user_query_with_processed(query: str):
         }
     else:
         return response
-
 # ------------deprecated
-class Arg_add_memo(BaseModel):
-    content: str
-
-class Res_add_memo(BaseModel):
-    memo_id: str
-    tags: list[str]
 
 @app.post("/add_memo/", response_model=Res_add_memo, status_code=status.HTTP_201_CREATED)
 async def add_memo(body: Arg_add_memo):
