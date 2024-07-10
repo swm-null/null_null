@@ -70,8 +70,8 @@ def similarity_search(query: str) -> tuple[str, list[str]]:
     memo_validation(similar_memos)
 
     # TODO: improve so babo approach
-    all_memos: list[Document]=vectorstore_for_memo.similarity_search("", k=10000)
-    generated_context: str='\n'.join(memo.page_content for memo in all_memos if str(memo.metadata['pk']) in similar_memos['memo_ids'])
+    all_memos: list[Document]=vectorstore_for_memo.similarity_search("", k=1000)
+    generated_context: str='\n'.join(memo.page_content for memo in all_memos if str(memo.metadata['_id']['$oid']) in similar_memos['memo_ids'])
     
     logging.info("[SS] generated context:\n%s", generated_context)
 

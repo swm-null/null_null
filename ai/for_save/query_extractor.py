@@ -67,5 +67,5 @@ def query_extractor(query: str, country: str="Korea") -> list[tuple[str, str]]:
     # use existing tag
     else: 
         found_res: list[str]
-        logging.info(f'[QE] found the tag: {search_res[0].page_content} / {search_res[0].metadata["pk"]} for "{query}"')
-        return [(chain_res, search_res[0].metadata['pk'])]
+        logging.info(f"[QE] found the tag: {search_res[0].page_content} / {search_res[0].metadata['_id']['$oid']} for '{query}'")
+        return [(chain_res, search_res[0].metadata['_id']['$oid'])]
