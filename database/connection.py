@@ -1,18 +1,11 @@
 from dotenv import load_dotenv
 import os
-from pymilvus import MilvusClient
+from pymongo import MongoClient
+import certifi
 
 load_dotenv()
+DB_NAME=os.getenv("DB_NAME")
 
-MILVUS_URI=os.getenv("MILVUS_URI")
-if MILVUS_URI == None:
-    raise Exception("Invalid MILVUS_URI")
-
-# DB_NAME=os.getenv("DB_NAME")
-# if DB_NAME == None:
-#     raise Exception("Invalid DB_NAME")
-
-# client=MilvusClient(
-#     uri=MILVUS_URI,
-#     db_name=DB_NAME,
-# )
+ca=certifi.where()
+MONGO_SRV=os.getenv("MONGO_SRV")
+client=MongoClient(MONGO_SRV, tlsCAFile=ca)
