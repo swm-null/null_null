@@ -48,6 +48,21 @@ async def search(body: Arg_search):
 
     return return_content
 
+@app.post("/add_memo/", response_model=Res_add_memo, status_code=status.HTTP_201_CREATED)
+async def add_memo(body: Arg_add_memo):
+    existing_tag_ids: list[str]
+    new_tags: list[Res_memo]
+    existing_tag_ids, new_tags = qe.query_extractor(body.content)
+
+    return Res_add_memo(
+        memo_embeddings=qe.embeddings.embed_query(body.content),
+        existing_tag_ids=existing_tag_ids,
+        new_tags=new_tags
+    )
+
+if __name__ == '__main__':
+    uvicorn.run(app)
+
 # ------------ deprecated
 class Res_get_user_query(BaseModel):
     type: int
@@ -96,19 +111,3 @@ async def get_user_query_with_processed(query: str):
         }
     else:
         return response
-# ------------deprecated
-
-@app.post("/add_memo/", response_model=Res_add_memo, status_code=status.HTTP_201_CREATED)
-async def add_memo(body: Arg_add_memo):
-    existing_tag_ids: list[str]
-    new_tags: list[Res_memo]
-    existing_tag_ids, new_tags = qe.query_extractor(body.content)
-
-    return Res_add_memo(
-        memo_embeddings=qe.embeddings.embed_query(body.content),
-        existing_tag_ids=existing_tag_ids,
-        new_tags=new_tags
-    )
-
-if __name__ == '__main__':
-    uvicorn.run(app)
