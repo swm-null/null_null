@@ -60,7 +60,7 @@ def query_extractor(query: str, country: str="Korea") -> list[tuple[str, str]]:
 
     # add a new tag
     if len(search_res)==0 or search_res[0].page_content != chain_res:
-        insert_res: str=vectorstore_for_tag.add_texts([chain_res])[0] # get the new pk
+        insert_res: str=vectorstore_for_tag.add_texts([chain_res])[0] # get the new _id
         logging.info(f'[QE] added new tag: {chain_res} / {insert_res} for "{query}"')
         return [(chain_res, insert_res)]
 

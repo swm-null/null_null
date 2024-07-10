@@ -59,7 +59,7 @@ def memo_validation(memos: Memo_List) -> bool:
     all_memos: list[Document]=vectorstore_for_memo.similarity_search("", k=10000)
 
     for id in memos['memo_ids']:
-        if not any(id==str(memo.metadata['pk']) for memo in all_memos):
+        if not any(id==str(memo.metadata['_id']['$oid']) for memo in all_memos):
             raise Exception("[SS] Failed to get memo ids. result:", memos)
     return True
         
@@ -101,8 +101,9 @@ def search_similar_memos(query: str) -> list[str]:
 # deprecated
 def process_result(query: str, selected_list: list[str]) -> str:
     # TODO: improve this dumb way after change the db
-    all_memos: list[Document]=vectorstore_for_memo.similarity_search("", k=10000)
-    new_context='\n'.join(memo.page_content for memo in all_memos if str(memo.metadata['pk']) in selected_list)
+    all_memos: list[Document]=vectorstore_for_memo.similarity_search("", k=1000)
+
+    new_context='\n'.join(memo.page_content for memo in all_memos if str(memo.metadata['_id']['$oid']) in selected_list)
     logging.info("nl processing context:\n%s", new_context)
     
     output_processing_prompt=PromptTemplate.from_template("""
