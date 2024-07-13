@@ -1,15 +1,8 @@
 import logging, logging.handlers
 import datetime
-import os
+from utils.create_directory import create_directory
 
-def createDirectory(directory):
-    try:
-        if not os.path.exists(directory):
-            os.makedirs(directory)
-    except OSError:
-        print("Error: Failed to create the directory.")
-
-createDirectory("./logs/exec")
+create_directory("./logs/access")
 
 logging.basicConfig(
     level=logging.INFO,
