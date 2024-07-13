@@ -5,7 +5,7 @@ from langchain_core.prompts import PromptTemplate
 from langchain_core.documents.base import Document
 from langchain_core.runnables import RunnablePassthrough
 from langchain_core.output_parsers import StrOutputParser
-from database.collections import tag_store
+from vectorstores.tag_store import tag_store
 from models.add_memo import Res_memo, Res_add_memo
 
 load_dotenv()
