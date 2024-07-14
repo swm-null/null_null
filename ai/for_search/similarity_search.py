@@ -1,14 +1,14 @@
 from dotenv import load_dotenv
-import os
 import logging
 from langchain_openai import OpenAIEmbeddings, ChatOpenAI
-from langchain_milvus import Milvus
 from langchain_core.prompts import PromptTemplate
 from langchain_core.runnables import RunnablePassthrough
 from langchain_core.output_parsers import JsonOutputParser, StrOutputParser
 from langchain_core.documents.base import Document
 from langchain_core.pydantic_v1 import BaseModel, Field
-from database.collections import memo_store
+from vectorstores.memo_store import memo_store
+
+load_dotenv()
 
 llm = ChatOpenAI(
     model="gpt-4o",
@@ -40,7 +40,7 @@ Customer's question: {query}
 partial_variables={"format": format_instructions}) 
 
 def format_contexts(docs: list[Document]):
-    memos="\n".join(f"{doc.page_content} (id: {doc.metadata['pk']})" for doc in docs)
+    memos="\n".join(f"{doc.page_content} (id: {doc.metadata['_id']['$oid']})" for doc in docs)
     logging.info(f"[SS] retrived contexts: {memos}")
     return memos
 
@@ -56,10 +56,10 @@ similarity_search_chain = (
 
 def memo_validation(memos: Memo_List) -> bool:
     # TODO: improve this dumb way after change the db
-    all_memos: list[Document]=vectorstore_for_memo.similarity_search("", k=10000)
+    all_memos: list[Document]=vectorstore_for_memo.similarity_search("", k=1000)
 
     for id in memos['memo_ids']:
-        if not any(id==str(memo.metadata['pk']) for memo in all_memos):
+        if not any(id==str(memo.metadata['_id']['$oid']) for memo in all_memos):
             raise Exception("[SS] Failed to get memo ids. result:", memos)
     return True
         
@@ -67,13 +67,14 @@ def similarity_search(query: str) -> tuple[str, list[str]]:
     similar_memos: Memo_List=similarity_search_chain.invoke(query)
     logging.info(f"[SS] similar_memos:\n{similar_memos['memo_ids']}")
     
-    memo_validation(similar_memos)
+    # memo_validation(similar_memos)
 
     # TODO: improve so babo approach
-    all_memos: list[Document]=vectorstore_for_memo.similarity_search("", k=10000)
-    generated_context: str='\n'.join(memo.page_content for memo in all_memos if str(memo.metadata['pk']) in similar_memos['memo_ids'])
+    all_memos: list[Document]=vectorstore_for_memo.similarity_search("", k=1000)
+    generated_context: str='\n'.join(memo.page_content for memo in all_memos if str(memo.metadata['_id']['$oid']) in similar_memos['memo_ids'])
     
     logging.info("[SS] generated context:\n%s", generated_context)
+
 
     output_processing_prompt=PromptTemplate.from_template("""
     You need to find the answer to the user's question.
@@ -101,8 +102,9 @@ def search_similar_memos(query: str) -> list[str]:
 # deprecated
 def process_result(query: str, selected_list: list[str]) -> str:
     # TODO: improve this dumb way after change the db
-    all_memos: list[Document]=vectorstore_for_memo.similarity_search("", k=10000)
-    new_context='\n'.join(memo.page_content for memo in all_memos if str(memo.metadata['pk']) in selected_list)
+    all_memos: list[Document]=vectorstore_for_memo.similarity_search("", k=1000)
+
+    new_context='\n'.join(memo.page_content for memo in all_memos if str(memo.metadata['_id']['$oid']) in selected_list)
     logging.info("nl processing context:\n%s", new_context)
     
     output_processing_prompt=PromptTemplate.from_template("""

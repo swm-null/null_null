@@ -1,14 +1,12 @@
 from dotenv import load_dotenv
-import os
 from langchain_openai import OpenAIEmbeddings, ChatOpenAI
-from langchain_milvus import Milvus
 from langchain_core.prompts import PromptTemplate
 from langchain_core.runnables import RunnablePassthrough
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.documents.base import Document
 import logging
 from typing import Optional
-from database.collections import tag_store
+from vectorstores.tag_store import tag_store
 
 llm = ChatOpenAI(
     model="gpt-4o",
@@ -19,7 +17,7 @@ vectorstore_for_tag=tag_store
 retriever=vectorstore_for_tag.as_retriever()
 
 def format_docs(docs: list[Document]):
-    ret=", ".join(f"{doc.page_content}, (id: {doc.metadata['pk']})" for doc in docs)
+    ret=", ".join(f"{doc.page_content}, (id: {doc.metadata['_id']['$oid']})" for doc in docs)
     return ret
 
 def find_tag_ids(query: str) -> Optional[list[str]]:
@@ -48,8 +46,8 @@ def find_tag_ids(query: str) -> Optional[list[str]]:
         return None
     
     # TODO: improve this dumb way after change the db
-    all_tags: list[Document]=vectorstore_for_tag.similarity_search("", k=10000)
-    if any(tag_ids==str(tag.metadata['pk']) for tag in all_tags) == False:
+    all_tags: list[Document]=vectorstore_for_tag.similarity_search("", k=1000)
+    if any(tag_ids==str(tag.metadata['_id']['$oid']) for tag in all_tags) == False:
         raise Exception("[TF] Failed to get tag ids. result:", tag_ids)
     else:
         logging.info("[TF] Found the tags. result: [%s]", tag_ids)
@@ -81,7 +79,7 @@ def find_tag_name(query: str) -> Optional[list[str]]:
         return None
     
     # TODO: improve this dumb way after change the db
-    all_tags: list[Document]=vectorstore_for_tag.similarity_search("", k=10000)
+    all_tags: list[Document]=vectorstore_for_tag.similarity_search("", k=1000)
     if any(chain_res==tag.page_content for tag in all_tags) == False:
         raise Exception("[TF] Failed to get tag name. result:", chain_res)
     else:

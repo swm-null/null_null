@@ -1,7 +1,6 @@
 # from database import connection
-from typing import Optional, Literal
+from typing import Optional
 from fastapi import FastAPI, status
-from pydantic import BaseModel
 from ai.for_search import query_analyzer as qa
 from ai.for_search import regex_generator as rg
 from ai.for_search import tag_finder as tf
@@ -9,11 +8,11 @@ from ai.for_search import similarity_search as ss
 from ai.for_save import query_extractor as qe
 import traceback
 import uvicorn, uvicorn.logging
-import database.collections
-from langchain_core.documents.base import Document
 from sentry_sdk.integrations.asgi import SentryAsgiMiddleware
 import logging
-from logger import access_logger, exec_logger, sentry_init
+from logger import *
+from models.add_memo import *
+from models.search import *
 
 app = FastAPI()
 app.add_middleware(SentryAsgiMiddleware)
@@ -21,16 +20,6 @@ app.add_middleware(SentryAsgiMiddleware)
 @app.get("/")
 async def default():
     return "yes. it works."
-
-class Arg_search(BaseModel):
-    query: str
-
-class Res_search(BaseModel):
-    type: qa.Query_Type=qa.Query_Type.unspecified
-    processed_message: Optional[str]=None
-    ids: Optional[list[str]]=None
-    regex: Optional[str]=None
-    tags: Optional[list[str]]=None
 
 @app.post("/search/", response_model=Res_search)
 async def search(body: Arg_search):
@@ -58,6 +47,21 @@ async def search(body: Arg_search):
     logging.info("[/search] query: %s / query type: %s \nreturn: %s", body.query, return_content.type, return_content)
 
     return return_content
+
+@app.post("/add_memo/", response_model=Res_add_memo, status_code=status.HTTP_201_CREATED)
+async def add_memo(body: Arg_add_memo):
+    existing_tag_ids: list[str]
+    new_tags: list[Res_memo]
+    existing_tag_ids, new_tags = qe.query_extractor(body.content)
+
+    return Res_add_memo(
+        memo_embeddings=qe.embeddings.embed_query(body.content),
+        existing_tag_ids=existing_tag_ids,
+        new_tags=new_tags
+    )
+
+if __name__ == '__main__':
+    uvicorn.run(app)
 
 # ------------ deprecated
 class Res_get_user_query(BaseModel):
@@ -107,51 +111,3 @@ async def get_user_query_with_processed(query: str):
         }
     else:
         return response
-
-# ------------deprecated
-class Arg_add_memo(BaseModel):
-    content: str
-
-class Res_add_memo(BaseModel):
-    memo_id: str
-    tags: list[str]
-
-@app.post("/add_memo/", response_model=Res_add_memo, status_code=status.HTTP_201_CREATED)
-async def add_memo(body: Arg_add_memo):
-    tags=qe.query_extractor(body.content)
-
-    tag_name_list: list[str]=[tag_name for tag_name, tag_id in tags]
-    tag_id_list: list[str]=[tag_id for tag_name, tag_id in tags]
-
-    # TODO: separate db logics
-    from langchain_openai import OpenAIEmbeddings
-    embeddings=OpenAIEmbeddings(model="text-embedding-3-small")
-    memo_id: str=database.collections.memo_store.add_documents([
-        Document(page_content=body.content, tags=tag_id_list, vector=embeddings.embed_query(body.content))
-    ])[0]
-    logging.info(f"[/add_memo] content: {body.content} / tags: {tags}")
-    
-    return {
-        "memo_id": str(memo_id),
-        "tags": tag_name_list,
-    }
-
-# ------------
-@app.post("/_drop_all_db_and_reload/")
-def _drop_all_db_and_reload():
-    from drop_all_collections import drop_db
-    drop_db()
-    import os
-    import signal
-    os.kill(os.getpid(), signal.SIGINT)
-
-@app.post("/_reload/")
-def _reload():
-    from drop_all_collections import drop_db
-    drop_db()
-    import os
-    import signal
-    os.kill(os.getpid(), signal.SIGINT)
-
-if __name__ == '__main__':
-    uvicorn.run(app)
