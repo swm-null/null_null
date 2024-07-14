@@ -1,6 +1,6 @@
 from langchain_mongodb import MongoDBAtlasVectorSearch
 from langchain_openai import OpenAIEmbeddings
-from connection.client import client, DB_NAME
+from ai.vectorstores.connection.client import client, DB_NAME
 
 MEMO_COLLECTION_NAME="memos"
 MEMO_CONTENT_NAME="content"
