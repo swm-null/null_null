@@ -1,6 +1,6 @@
 from langchain_mongodb import MongoDBAtlasVectorSearch
 from langchain_openai import OpenAIEmbeddings
-from connection.client import client, DB_NAME
+from ai.vectorstores.connection.client import client, DB_NAME
 
 TAG_COLLECTION_NAME="tags"
 TAG_CONTENT_NAME="name"
