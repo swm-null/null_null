@@ -6,6 +6,7 @@ class Arg_add_memo(BaseModel):
 
 class Res_memo_tag(BaseModel):
     name: str
+    id: Optional[str]
     embedding: list[float]
     parent: Optional[str]
     

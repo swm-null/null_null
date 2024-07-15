@@ -8,6 +8,7 @@ from langchain_core.output_parsers import JsonOutputParser
 from pydantic import BaseModel, Field
 from ai.vectorstores.tag_store import tag_store, tag_collection, TAG_INDEX_NAME, TAG_CONTENT_NAME
 from models.add_memo import Res_add_memo, Res_memo_tag
+import random
 
 load_dotenv()
 
@@ -154,10 +155,12 @@ def query_extractor(query: str, country: str="Korea") -> tuple[list[str], list[R
     # TODO: validation for tag ids
     for first_tag in first_tags['tags']:
         if first_tag['id'] is None: # if this tag is new
+            first_tag['id']="temp_id"+str(random.randint(1, 2**64))
             new_tags.append(Res_memo_tag(
                 name=first_tag['name'],
                 embedding=embeddings.embed_query(first_tag['name']),
-                parent="42", # ?
+                parent=None,
+                id=first_tag['id'],
             ))
         else:
             existing_tag_ids.append(first_tag['id'])
@@ -176,7 +179,8 @@ def query_extractor(query: str, country: str="Korea") -> tuple[list[str], list[R
                 new_tags.append(Res_memo_tag(
                     name=secondary_tag['name'],
                     embedding=embeddings.embed_query(secondary_tag['name']),
-                    parent=first_tag['id']
+                    parent=first_tag['id'],
+                    id=None,
                 ))
             else:
                 existing_tag_ids.append(secondary_tag['id'])
