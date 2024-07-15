@@ -6,7 +6,7 @@ from langchain_core.output_parsers import StrOutputParser
 from langchain_core.documents.base import Document
 import logging
 from typing import Optional
-from vectorstores.tag_store import tag_store
+from ai.vectorstores.tag_store import tag_store
 
 llm = ChatOpenAI(
     model="gpt-4o",
