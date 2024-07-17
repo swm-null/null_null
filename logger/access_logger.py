@@ -1,5 +1,5 @@
 import logging, logging.handlers
-from utils.create_directory import create_directory
+from logger.utils.create_directory import create_directory
 
 create_directory("./logs/access")
 
