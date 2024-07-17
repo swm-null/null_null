@@ -3,7 +3,7 @@ from typing import Optional
 from ai.for_search import query_analyzer as qa
 
 class Arg_search(BaseModel):
-    query: str
+    content: str
 
 class Res_search(BaseModel):
     type: qa.Query_Type=qa.Query_Type.unspecified
