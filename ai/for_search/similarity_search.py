@@ -1,5 +1,6 @@
 from dotenv import load_dotenv
 import logging
+from fastapi import HTTPException
 from langchain_openai import OpenAIEmbeddings, ChatOpenAI
 from langchain_core.prompts import PromptTemplate
 from langchain_core.runnables import RunnablePassthrough
@@ -60,14 +61,15 @@ def memo_validation(memos: Memo_List) -> bool:
 
     for id in memos['memo_ids']:
         if not any(id==str(memo.metadata['_id']['$oid']) for memo in all_memos):
-            raise Exception("[SS] Failed to get memo ids. result:", memos)
+            logging.error("[SS] Failed memo id validation: %s", id)
+            raise HTTPException(status_code=500, headers={"SS": "Failed to get memo ids."})
     return True
         
 def similarity_search(query: str) -> tuple[str, list[str]]:
     similar_memos: Memo_List=similarity_search_chain.invoke(query)
-    logging.info(f"[SS] similar_memos:\n{similar_memos['memo_ids']}")
+    logging.info(f"[SS] Similar_memos:\n{similar_memos['memo_ids']}")
     
-    # memo_validation(similar_memos)
+    memo_validation(similar_memos)
 
     # TODO: improve so babo approach
     all_memos: list[Document]=vectorstore_for_memo.similarity_search("", k=1000)

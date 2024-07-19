@@ -1,4 +1,5 @@
 from dotenv import load_dotenv
+from fastapi import HTTPException
 from langchain_openai import OpenAIEmbeddings, ChatOpenAI
 from langchain_core.prompts import PromptTemplate
 from langchain_core.runnables import RunnablePassthrough
@@ -48,7 +49,8 @@ def find_tag_ids(query: str) -> Optional[list[str]]:
     # TODO: improve this dumb way after change the db
     all_tags: list[Document]=vectorstore_for_tag.similarity_search("", k=1000)
     if any(tag_ids==str(tag.metadata['_id']['$oid']) for tag in all_tags) == False:
-        raise Exception("[TF] Failed to get tag ids. result:", tag_ids)
+        logging.error("[TF] Failed tag id validation: %s", tag_ids)
+        raise HTTPException(status_code=500, headers={"TF": "Failed to get tag id."})
     else:
         logging.info("[TF] Found the tags. result: [%s]", tag_ids)
         return [tag_ids]
