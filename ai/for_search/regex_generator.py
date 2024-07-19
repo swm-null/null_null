@@ -1,3 +1,4 @@
+from fastapi import HTTPException
 import openai
 import os
 from dotenv import load_dotenv
@@ -34,6 +35,7 @@ def get_regex(q: str, country: str="korea") -> str:
     try:
         re.compile(ret) # check the returned regex
     except:
-        raise Exception("Failed to get regex. result:", ret)
+        logging.error("[RG] Failed regex validation: %s", ret)
+        raise HTTPException(status_code=500, headers={"RG": "Failed to get regex."})
     
     return ret
