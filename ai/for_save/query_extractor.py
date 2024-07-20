@@ -169,7 +169,7 @@ def query_extractor(query: str, country: str="Korea") -> tuple[list[str], list[R
     # for each first tag, find secondary tags
     for first_tag in first_tags['tags']:
         similar_secondary_tags: list[dict[str, str]]=get_similar_tags(query, first_tag['id'])
-        formatted_similar_secondary_tags: str=format_similar_tags(similar_first_tags)
+        formatted_similar_secondary_tags: str=format_similar_tags(similar_secondary_tags)
         secondary_tags: Tag_list=get_secondary_tags(query, first_tag['name'], formatted_similar_secondary_tags)
         logging.info('f[QE] secondary level chain result: {secondary_tags}\nfor the tag: ({first_tag["name"]}, {first_tag["id"]})\nfor the query: "{query}"')
 
