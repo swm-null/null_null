@@ -47,7 +47,7 @@ async def search(body: Arg_search):
 @app.post("/add_memo/", response_model=Res_add_memo, status_code=status.HTTP_200_OK)
 async def add_memo(body: Arg_add_memo):
     existing_tag_ids: list[str]
-    new_tags: list[Res_memo]
+    new_tags: list[Res_memo_tag]
     existing_tag_ids, new_tags = qe.query_extractor(body.content)
 
     return Res_add_memo(
