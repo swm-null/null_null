@@ -1,6 +1,6 @@
 # from database import connection
 from typing import Optional
-from fastapi import FastAPI, status
+from fastapi import FastAPI, status, HTTPException
 from ai.for_search import query_analyzer as qa
 from ai.for_search import regex_generator as rg
 from ai.for_search import tag_finder as tf
@@ -25,30 +25,26 @@ async def default():
 async def search(body: Arg_search):
     return_content: Res_search=Res_search()
 
-    try:
-        return_content.type=qa.query_analyzer(body.query)
+    return_content.type=qa.query_analyzer(body.content)
 
-        if return_content.type == qa.Query_Type.regex:
-            return_content.regex=rg.get_regex(body.query)
-    
-        elif return_content.type == qa.Query_Type.tags:
-            return_content.tags=tf.find_tag_ids(body.query)
-            # if the tag search result is None
-            if return_content.tags == None:
-                # then trying similarity search
-                return_content.type = qa.Query_Type.similarity
-            
-        if return_content.type == qa.Query_Type.similarity:
-            return_content.processed_message, return_content.ids=ss.similarity_search(body.query)
-    except:
-        logging.error("[/search] %s", traceback.format_exc())
-        return_content.type=qa.Query_Type.unspecified
+    if return_content.type == qa.Query_Type.regex:
+        return_content.regex=rg.get_regex(body.content)
 
-    logging.info("[/search] query: %s / query type: %s \nreturn: %s", body.query, return_content.type, return_content)
+    elif return_content.type == qa.Query_Type.tags:
+        return_content.tags=tf.find_tag_ids(body.content)
+        # if the tag search result is None
+        if return_content.tags == None:
+            # then trying similarity search
+            return_content.type = qa.Query_Type.similarity
+        
+    if return_content.type == qa.Query_Type.similarity:
+        return_content.processed_message, return_content.ids=ss.similarity_search(body.content)
+
+    logging.info("[/search] query: %s / query type: %s \nreturn: %s", body.content, return_content.type, return_content)
 
     return return_content
 
-@app.post("/add_memo/", response_model=Res_add_memo, status_code=status.HTTP_201_CREATED)
+@app.post("/add_memo/", response_model=Res_add_memo, status_code=status.HTTP_200_OK)
 async def add_memo(body: Arg_add_memo):
     existing_tag_ids: list[str]
     new_tags: list[Res_memo_tag]

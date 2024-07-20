@@ -1,3 +1,4 @@
+from fastapi import HTTPException
 import openai
 import logging
 from dotenv import load_dotenv
@@ -31,11 +32,12 @@ def query_analyzer(query: str) -> Query_Type:
         ],
     )
 
-    logging.info("[QA] analyzed query type: %s", res.choices[0].message.content)
+    logging.info("[QA] Analyzed query type: %s", res.choices[0].message.content)
 
     ret=res.choices[0].message.content
 
     if ret not in Query_Type._member_names_:
-        raise Exception("Failed to analyze the query. result:", ret)
+        logging.error("[QA] Invalid query type: %s", ret)
+        raise HTTPException(status_code=500, headers={"QA": "Failed to analyze the query."})
     
     return Query_Type(ret)
