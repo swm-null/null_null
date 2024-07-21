@@ -74,10 +74,11 @@ tags_output_parser=JsonOutputParser(pydantic_object=Tag_list)
 tags_format_instructions=tags_output_parser.get_format_instructions()
 
 def get_first_tags(query: str, formatted_tags: str) -> Tag_list:
+    # TODO: multiple first tag..
     first_tags_prompt=PromptTemplate.from_template(
     """
     You're an expert at analyzing and organizing sentences.
-    Given a sentence, you pick a few tags if it's strongly related to an existing tag, or create a new tag if you don't think it's relevant, to help organize the sentence.
+    Given a sentence, you pick one tag if it's strongly related to an existing tag, or create a new tag if you don't think it's relevant, to help organize the sentence.
     Tags are for very big fields like economy and society.
     I'll tell you which country this sentence is used in, so you can categorize it in that country's context and generate tag in their language.
 
