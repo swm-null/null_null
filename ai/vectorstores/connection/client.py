@@ -4,6 +4,7 @@ from pymongo import MongoClient
 import certifi
 
 load_dotenv()
+
 DB_NAME: str=str(os.getenv("DB_NAME"))
 MONGO_SRV: str=str(os.getenv("MONGO_SRV"))
 
@@ -14,9 +15,3 @@ if MONGO_SRV == "None":
 
 ca=certifi.where()
 client=MongoClient(MONGO_SRV, tlsCAFile=ca)
-
-try:
-    client.admin.command('ping')
-    print("Pinged your deployment. You successfully connected to MongoDB!")
-except Exception as e:
-    print(e)

@@ -1,11 +1,8 @@
 from fastapi import HTTPException
 import openai
 import logging
-from dotenv import load_dotenv
 from enum import Enum
 from typing import Literal
-
-load_dotenv()
 
 class Query_Type(Enum):
     regex = "regex"
