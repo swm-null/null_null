@@ -1,6 +1,6 @@
 # from database import connection
 from typing import Optional
-from fastapi import FastAPI, status, HTTPException
+from fastapi import FastAPI, status
 from ai.for_search import query_analyzer as qa
 from ai.for_search import regex_generator as rg
 from ai.for_search import tag_finder as tf
@@ -8,14 +8,13 @@ from ai.for_search import similarity_search as ss
 from ai.for_save import query_extractor as qe
 import traceback
 import uvicorn, uvicorn.logging
-from sentry_sdk.integrations.asgi import SentryAsgiMiddleware
 import logging
 from logger import *
 from models.add_memo import *
 from models.search import *
+from init import init
 
 app = FastAPI()
-app.add_middleware(SentryAsgiMiddleware)
     
 @app.get("/")
 async def default():
@@ -57,6 +56,7 @@ async def add_memo(body: Arg_add_memo):
     )
 
 if __name__ == '__main__':
+    init(app)
     uvicorn.run(app)
 
 # ------------ deprecated
