@@ -150,7 +150,7 @@ def query_extractor(query: str, country: str="Korea") -> tuple[list[str], list[R
     logging.info(f'[QE] similar first level tags: {formatted_similar_first_tags}')
 
     first_tags: Tag_list=get_first_tags(query, formatted_similar_first_tags)
-    logging.info('f[QE] first level chain result: {first_tags}\nfor the query: "{query}"')
+    logging.info(f'[QE] first level chain result: {first_tags}\nfor the query: "{query}"')
 
     # TODO: validation for tag ids
     for first_tag in first_tags['tags']:
@@ -171,7 +171,7 @@ def query_extractor(query: str, country: str="Korea") -> tuple[list[str], list[R
         similar_secondary_tags: list[dict[str, str]]=get_similar_tags(query, first_tag['id'])
         formatted_similar_secondary_tags: str=format_similar_tags(similar_secondary_tags)
         secondary_tags: Tag_list=get_secondary_tags(query, first_tag['name'], formatted_similar_secondary_tags)
-        logging.info('f[QE] secondary level chain result: {secondary_tags}\nfor the tag: ({first_tag["name"]}, {first_tag["id"]})\nfor the query: "{query}"')
+        logging.info(f'[QE] secondary level chain result: {secondary_tags}\nfor the tag: ({first_tag["name"]}, {first_tag["id"]})\nfor the query: "{query}"')
 
         # TODO: validation for tag ids 
         for secondary_tag in secondary_tags['tags']:
