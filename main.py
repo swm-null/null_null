@@ -12,9 +12,11 @@ import logging
 from logger import *
 from models.add_memo import *
 from models.search import *
+from models.get_embedding import *
 from init import init
 
 app = FastAPI()
+init(app)
     
 @app.get("/")
 async def default():
@@ -55,8 +57,13 @@ async def add_memo(body: Arg_add_memo):
         new_tags=new_tags
     )
 
+@app.post("/get_embedding/", response_model=Res_get_embedding)
+async def get_embedding(body: Arg_get_embedding):
+    return Res_get_embedding(
+        embedding=qe.embeddings.embed_query(body.content)
+    )
+
 if __name__ == '__main__':
-    init(app)
     uvicorn.run(app)
 
 # ------------ deprecated
