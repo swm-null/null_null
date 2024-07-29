@@ -81,6 +81,7 @@ def similarity_search(query: str) -> tuple[str, list[str]]:
     # TODO: search using internet
     output_processing_prompt=PromptTemplate.from_template("""
     You need to answer user questions.
+    Answer in the user's language.
 
     I'm attaching some pre-written notes from the user that might help you answer this question.
 
