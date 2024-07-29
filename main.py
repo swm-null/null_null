@@ -9,9 +9,11 @@ import logging
 from logger import *
 from models.add_memo import *
 from models.search import *
+from models.get_embedding import *
 from init import init
 
 app = FastAPI()
+init(app)
     
 @app.get("/")
 async def default():
@@ -56,55 +58,11 @@ async def add_memo(body: Arg_add_memo):
         new_tags=new_tags
     )
 
+@app.post("/get_embedding/", response_model=Res_get_embedding)
+async def get_embedding(body: Arg_get_embedding):
+    return Res_get_embedding(
+        embedding=qe.embeddings.embed_query(body.content)
+    )
+
 if __name__ == '__main__':
-    init(app)
     uvicorn.run(app)
-
-# ------------ deprecated
-class Res_get_user_query(BaseModel):
-    type: int
-    content: list[str]
-
-@app.get("/user_query/", response_model=Res_get_user_query, deprecated=True)
-async def get_user_query(query: str):
-    query_type=qa.query_analyzer(query)
-
-    return_content: Optional[list[str]]=None
-
-    try:
-        if query_type == qa.Query_Type.regex:
-            query_type=2
-            return_content=[rg.get_regex(query)]
-            
-        elif query_type == qa.Query_Type.tags:
-            query_type=3
-            return_content=tf.find_tag_name(query)
-
-        if query_type == qa.Query_Type.similarity or return_content==None:
-            query_type=1
-            return_content=ss.search_similar_memos(query)
-    except:
-        logging.error("[/user_query] %s", traceback.format_exc())
-        query_type=0
-
-    logging.info("[/user_query] user query: %s / query type: %s \nreturn: %s", query, query_type, return_content)
-
-    return {
-        "type": query_type,
-        "content": return_content
-    }
-
-@app.get("/user_query_with_processed/", response_model=Res_get_user_query, deprecated=True)
-async def get_user_query_with_processed(query: str):
-    response=await get_user_query(query)
-
-    if response["type"]==1: # similarity search
-        processed_result: str=ss.process_result(query, response["content"])
-        logging.info("processed result: %s", processed_result)
-        
-        return {
-            "type": response["type"],
-            "content": [processed_result]
-        }
-    else:
-        return response
