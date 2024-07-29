@@ -1,19 +1,20 @@
-# from database import connection
-from typing import Optional
 from fastapi import FastAPI, status
+import uvicorn
+import logging
+
+from init import init
+
 from ai.for_search import query_analyzer as qa
 from ai.for_search import regex_generator as rg
 from ai.for_search import tag_finder as tf
 from ai.for_search import similarity_search as ss
 from ai.for_save import query_extractor as qe
-import traceback
-import uvicorn, uvicorn.logging
-import logging
-from logger import *
+from ai.for_save import kakao_parser as kp
+
 from models.add_memo import *
 from models.search import *
 from models.get_embedding import *
-from init import init
+from models.kakao_parser import *
 
 app = FastAPI()
 init(app)
@@ -61,6 +62,12 @@ async def add_memo(body: Arg_add_memo):
 async def get_embedding(body: Arg_get_embedding):
     return Res_get_embedding(
         embedding=qe.embeddings.embed_query(body.content)
+    )
+
+@app.post("/kakao-parser/", response_model=Res_kakao_parser)
+async def kakao_parser(body: Arg_kakao_parser):
+    return Res_kakao_parser(
+        parsed_memolist=kp.kakao_parser(body.content)
     )
 
 if __name__ == '__main__':
