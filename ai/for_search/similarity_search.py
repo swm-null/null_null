@@ -77,13 +77,18 @@ def similarity_search(query: str) -> tuple[str, list[str]]:
     
     logging.info("[SS] generated context:\n%s", generated_context)
 
-
+    # TODO: return memos used to answer the query
+    # TODO: search using internet
     output_processing_prompt=PromptTemplate.from_template("""
-    You need to find the answer to the user's question.
+    You need to answer user questions.
 
-    I've included some notes that might help you answer it. Please make the best use of these notes.
-    If it's a question you can't answer, print that you can't answer it.
+    I'm attaching some pre-written notes from the user that might help you answer this question.
 
+    1. Determine if you can answer the user's question with the information provided.
+
+    2-1. If you can, create and print an answer to the user's question using the information provided and end this prompt.
+    2-2. If you can't, print that you can't answer the user's question with the given notes. Then use the Internet to create and print an answer to the question and end this prompt.
+                                                          
     Notes: {context}
     The user's question: {query}
     """, 
