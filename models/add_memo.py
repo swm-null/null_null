@@ -3,8 +3,8 @@ from pydantic import BaseModel, Field
 from typing import Optional
 
 class Arg_add_memo(BaseModel):
-    timestamp: Optional[datetime]
     content: str
+    timestamp: Optional[datetime]
 
 class Res_memo_tag(BaseModel):
     name: str
