@@ -33,6 +33,10 @@ async def search(body: Arg_search):
 
     return_content.type=qa.query_analyzer(body.content)
 
+    if return_content.type == qa.Query_Type.unspecified:
+        logging.info("[/search] unspecified query: %s", body.content)
+        return_content.type=qa.Query_Type.similarity
+
     if return_content.type == qa.Query_Type.regex:
         return_content.regex=rg.get_regex(body.content)
 
@@ -41,7 +45,7 @@ async def search(body: Arg_search):
         # if the tag search result is None
         if return_content.tags == None:
             # then trying similarity search
-            return_content.type = qa.Query_Type.similarity
+            return_content.type=qa.Query_Type.similarity
         
     if return_content.type == qa.Query_Type.similarity:
         return_content.processed_message, return_content.ids=ss.similarity_search(body.content)
