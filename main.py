@@ -63,7 +63,8 @@ async def add_memo(body: Arg_add_memo):
     return Res_add_memo(
         memo_embeddings=qe.embeddings.embed_query(body.content),
         existing_tag_ids=existing_tag_ids,
-        new_tags=new_tags
+        new_tags=new_tags,
+        timestamp=datetime.now()
     )
 
 @app.post("/get_embedding/", response_model=Res_get_embedding)

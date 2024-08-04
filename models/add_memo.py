@@ -1,7 +1,9 @@
-from pydantic import BaseModel
+from datetime import datetime
+from pydantic import BaseModel, Field
 from typing import Optional
 
 class Arg_add_memo(BaseModel):
+    timestamp: Optional[datetime]
     content: str
 
 class Res_memo_tag(BaseModel):
@@ -14,3 +16,4 @@ class Res_add_memo(BaseModel):
     memo_embeddings: list[float]
     existing_tag_ids: list[str]
     new_tags: list[Res_memo_tag]
+    timestamp: datetime
