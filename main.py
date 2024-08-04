@@ -67,7 +67,7 @@ async def get_embedding(body: Arg_get_embedding):
 @app.post("/kakao-parser/", response_model=Res_kakao_parser)
 async def kakao_parser(body: Arg_kakao_parser):
     return Res_kakao_parser(
-        parsed_memolist=kp.kakao_parser(body.content)
+        parsed_memolist=kp.kakao_parser(body.content, body.type)
     )
 
 if __name__ == '__main__':
