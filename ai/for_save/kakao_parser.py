@@ -8,7 +8,6 @@ from fastapi import HTTPException
 from models.kakao_parser import kakao_parser_type
 from typing import Optional
 
-
 def kakao_parser(content: str, type: kakao_parser_type) -> list[tuple[str, datetime]]:
     parsed_memolist: list[tuple[str, datetime]]
 
@@ -27,7 +26,6 @@ def kakao_parser(content: str, type: kakao_parser_type) -> list[tuple[str, datet
 def _get_csv_reader_from_string(content: str) -> csv.DictReader:
     virtual_csv_file=StringIO(content)
     return csv.DictReader(virtual_csv_file, delimiter=',')
-
 
 def _parse_csv_reader(reader: csv.DictReader) -> list[tuple[str, datetime]]:
     result: list[tuple[str, datetime]]=[]

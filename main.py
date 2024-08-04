@@ -16,7 +16,11 @@ from models.search import *
 from models.get_embedding import *
 from models.kakao_parser import *
 
-app = FastAPI()
+app = FastAPI(
+    title="Oatnote AI",
+    description="after PR #36",
+    version="0.1.1",
+)
 init(app)
     
 @app.get("/")
