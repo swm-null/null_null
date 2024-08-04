@@ -10,6 +10,7 @@ from ai.for_search import tag_finder as tf
 from ai.for_search import similarity_search as ss
 from ai.for_save import query_extractor as qe
 from ai.for_save import kakao_parser as kp
+from ai.for_save import batch_adder as ba
 
 from models.add_memo import *
 from models.search import *
@@ -73,11 +74,12 @@ async def get_embedding(body: Arg_get_embedding):
         embedding=qe.embeddings.embed_query(body.content)
     )
 
-@app.post("/kakao-parser/", response_model=Res_kakao_parser)
+@app.post("/kakao-parser/", response_model=list[Res_add_memo])
 async def kakao_parser(body: Arg_kakao_parser):
-    return Res_kakao_parser(
-        parsed_memolist=kp.kakao_parser(body.content, body.type)
-    )
+    parsed_memolist=kp.kakao_parser(body.content, body.type)
+    results: list[Res_add_memo]=await ba.batch_adder(parsed_memolist)
+    
+    return results
 
 if __name__ == '__main__':
     uvicorn.run(app)
