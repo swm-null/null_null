@@ -1,9 +1,7 @@
 from fastapi import FastAPI, status
 import uvicorn
 import logging
-
 from init import init
-
 from ai.for_search import query_analyzer as qa
 from ai.for_search import regex_generator as rg
 from ai.for_search import tag_finder as tf
@@ -16,6 +14,7 @@ from ai.for_save import batch_adder as ba
 from models.add_memo import *
 from models.search import *
 from models.get_embedding import *
+from models.kakao_parser import *
 from models.kakao_parser import *
 
 app = FastAPI(
