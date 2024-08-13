@@ -3,7 +3,7 @@ import uvicorn
 import logging
 from init import init
 
-from ai.saving.utils.embedder import embedder
+from ai.utils.embedder import embedder
 from ai.saving.adder.single_adder import single_adder
 from ai.saving.adder.batch_adder import batch_adder
 from ai.searching.regex_generator import get_regex
