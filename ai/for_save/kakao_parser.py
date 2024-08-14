@@ -40,8 +40,6 @@ def _parse_csv_reader(reader: csv.DictReader) -> list[tuple[str, datetime]]:
     # time_format="%Y.%m.%d %H:%M"
     time_format="%Y-%m-%d %H:%M:%S"
     for message in reader:
-        print(message)
-        
         content: str=message[_csv_field.message.value]
         date_str: str=message[_csv_field.date.value]
 
