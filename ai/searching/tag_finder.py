@@ -20,7 +20,7 @@ vectorstore_for_tag=tag_store
 retriever=vectorstore_for_tag.as_retriever()
 
 def format_docs(docs: list[Document]):
-    ret=", ".join(f"{doc.page_content}, (id: {doc.metadata['_id']['$oid']})" for doc in docs)
+    ret=", ".join(f"{doc.page_content}, (id: {doc.metadata['_id']})" for doc in docs)
     return ret
 
 def find_tag_ids(query: str) -> Optional[list[str]]:
@@ -50,7 +50,7 @@ def find_tag_ids(query: str) -> Optional[list[str]]:
     
     # TODO: improve this dumb way after change the db
     all_tags: list[Document]=vectorstore_for_tag.similarity_search("", k=1000)
-    if any(tag_ids==str(tag.metadata['_id']['$oid']) for tag in all_tags) == False:
+    if any(tag_ids==str(tag.metadata['_id']) for tag in all_tags) == False:
         logging.error("[TF] Failed tag id validation: %s", tag_ids)
         raise HTTPException(status_code=500, headers={"TF": "Failed to get tag id."})
     else:

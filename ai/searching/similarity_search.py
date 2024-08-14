@@ -41,7 +41,7 @@ Customer's question: {query}
 partial_variables={"format": format_instructions}) 
 
 def format_contexts(docs: list[Document]):
-    memos="\n".join(f"{doc.page_content} (id: {doc.metadata['_id']['$oid']})" for doc in docs)
+    memos="\n".join(f"{doc.page_content} (id: {doc.metadata['_id']})" for doc in docs)
     logging.info(f"[SS] retrived contexts: {memos}")
     return memos
 
@@ -60,7 +60,7 @@ def memo_validation(memos: Memo_List) -> bool:
     all_memos: list[Document]=vectorstore_for_memo.similarity_search("", k=1000)
 
     for id in memos['memo_ids']:
-        if not any(id==str(memo.metadata['_id']['$oid']) for memo in all_memos):
+        if not any(id==str(memo.metadata['_id']) for memo in all_memos):
             logging.error("[SS] Failed memo id validation: %s", id)
             raise HTTPException(status_code=500, headers={"SS": "Failed to get memo ids."})
     return True
@@ -73,7 +73,7 @@ def similarity_search(query: str) -> tuple[str, list[str]]:
 
     # TODO: improve so babo approach
     all_memos: list[Document]=vectorstore_for_memo.similarity_search("", k=1000)
-    generated_context: str='\n'.join(memo.page_content for memo in all_memos if str(memo.metadata['_id']['$oid']) in similar_memos['memo_ids'])
+    generated_context: str='\n'.join(memo.page_content for memo in all_memos if str(memo.metadata['_id']) in similar_memos['memo_ids'])
     
     logging.info("[SS] generated context:\n%s", generated_context)
 
