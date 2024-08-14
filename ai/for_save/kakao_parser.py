@@ -10,7 +10,9 @@ from typing import Optional
 
 def kakao_parser(content: str, type: kakao_parser_type) -> list[tuple[str, datetime]]:
     parsed_memolist: list[tuple[str, datetime]]
-
+    
+    content=content.replace("\ufeff", "")
+    
     if type == kakao_parser_type.CSV:
         csv_reader: csv.DictReader=_get_csv_reader_from_string(content)
         parsed_memolist: list[tuple[str, datetime]]=_parse_csv_reader(csv_reader)    
@@ -35,8 +37,11 @@ def _parse_csv_reader(reader: csv.DictReader) -> list[tuple[str, datetime]]:
         user="User"
         message="Message"
 
-    time_format="%Y.%m.%d %H:%M"
+    # time_format="%Y.%m.%d %H:%M"
+    time_format="%Y-%m-%d %H:%M:%S"
     for message in reader:
+        print(message)
+        
         content: str=message[_csv_field.message.value]
         date_str: str=message[_csv_field.date.value]
 
