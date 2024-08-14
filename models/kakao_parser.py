@@ -1,6 +1,6 @@
 from pydantic import BaseModel
-from datetime import datetime
 from enum import Enum
+from models.add_memo import Res_add_memo
 
 class kakao_parser_type(Enum):
     CSV="csv"
@@ -11,4 +11,4 @@ class Arg_kakao_parser(BaseModel):
     content: str
 
 class Res_kakao_parser(BaseModel):
-    parsed_memolist: list[tuple[str, datetime]]
+    kakao: list[Res_add_memo]

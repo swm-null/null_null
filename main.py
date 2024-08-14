@@ -65,14 +65,16 @@ async def get_embedding(body: Arg_get_embedding):
         embedding=qe.embeddings.embed_query(body.content)
     )
 
-@app.post("/kakao-parser/", response_model=list[Res_add_memo])
+@app.post("/kakao-parser/", response_model=Res_kakao_parser)
 async def kakao_parser(body: Arg_kakao_parser):
     parsed_memolist: list[tuple[str, datetime]]=kp.kakao_parser(body.content, body.type)
     memolist: list[Arg_add_memo]=[
         Arg_add_memo(content=content, timestamp=timestamp) for content, timestamp in parsed_memolist
     ]
     
-    return await ba.batch_adder(memolist)
+    return Res_kakao_parser(
+        kakao=await ba.batch_adder(memolist)
+    )
 
 if __name__ == '__main__':
     uvicorn.run(app)
