@@ -11,6 +11,7 @@ def single_adder(memo: Arg_add_memo) -> Res_add_memo:
     existing_tag_ids, new_tags = qe.query_extractor(memo.content)
 
     return Res_add_memo(
+        content=memo.content,
         memo_embeddings=embeddings.embed_query(memo.content),
         existing_tag_ids=existing_tag_ids,
         new_tags=new_tags,
