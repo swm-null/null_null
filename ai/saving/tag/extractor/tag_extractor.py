@@ -13,6 +13,7 @@ def tag_extractor(query: str, user_lang: str="Korean") -> list[Tag]:
     extracted_tag: list[Tag]=[]
     
     extracted_tag.extend(chain_result["existing"].tag_list)
-    extracted_tag.append(chain_result["new"]) # this tag's id should be tag's name
+    if not any(exist_tag.name == chain_result["new"].name for exist_tag in chain_result["existing"].tag_list): 
+        extracted_tag.append(chain_result["new"]) # this tag's id should be tag's name
     
     return extracted_tag
