@@ -69,7 +69,7 @@ async def get_embedding(body: Arg_get_embedding):
         embedding=embedder.embed_query(body.content)
     )
 
-@app.post("/kakao-parser/", response_model=list[Res_add_memo])
+@app.post("/kakao-parser/", response_model=Res_post_memos)
 async def kakao_parser(body: Arg_kakao_parser):
     parsed_memolist: list[tuple[str, datetime]]=kp.kakao_parser(body.content, body.type)
     memolist: list[Memos_raw_memo]=[
@@ -79,7 +79,9 @@ async def kakao_parser(body: Arg_kakao_parser):
         ) for content, timestamp in parsed_memolist
     ]
     
-    return await batch_adder(memolist)
+    return Res_post_memos(
+        content=await batch_adder(memolist)
+    )
 
 @app.post("/add_memo/", deprecated=True, response_model=Res_add_memo, status_code=status.HTTP_200_OK)
 async def add_memo(body: Arg_add_memo):
