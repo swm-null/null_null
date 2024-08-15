@@ -1,5 +1,6 @@
 from pydantic import BaseModel
 from enum import Enum
+from models.add_memo import Res_add_memo
 
 class kakao_parser_type(Enum):
     CSV="csv"
