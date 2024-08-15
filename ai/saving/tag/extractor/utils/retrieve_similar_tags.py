@@ -1,11 +1,5 @@
-import logging
-from operator import itemgetter
-from pydantic import BaseModel, Field
-from langchain_core.runnables import RunnableParallel, RunnableLambda
-from langchain_core.output_parsers import JsonOutputParser
 from ai.saving.tag.utils.tag_formatter import tag_formatter
 from ai.utils.embedder import embedder
-from ai.utils.llm import llm4o
 from ai.vectorstores.tag_store import TAG_CONTENT_NAME, TAG_ID_NAME, TAG_INDEX_NAME, tag_collection
 from ai.saving.tag._models.tag import Tag
 
