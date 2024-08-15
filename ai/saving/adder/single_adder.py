@@ -33,6 +33,7 @@ def single_adder(memo: Memos_raw_memo, lang: str="Korean") -> Memos_processed_me
     ]
     
     return Memos_processed_memo(
+        content=memo.content,
         timestamp=datetime.now() if memo.timestamp is None else memo.timestamp,
         parent_tag_ids=parent_tag_ids,
         tag_relations=tag_relations,
@@ -46,6 +47,7 @@ def single_adder_deprecated(memo: Arg_add_memo) -> Res_add_memo:
     existing_tag_ids, new_tags = qe.query_extractor(memo.content)
 
     return Res_add_memo(
+        content=memo.content,
         existing_tag_ids=existing_tag_ids,
         new_tags=new_tags,
         timestamp=datetime.now() if memo.timestamp is None else memo.timestamp,

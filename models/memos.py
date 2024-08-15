@@ -18,6 +18,7 @@ class Memos_raw_memo(BaseModel):
     
 class Memos_processed_memo(BaseModel):
     timestamp: datetime
+    content: str
     parent_tag_ids: list[str]=Field(description="relations between tag and memo")
     tag_relations: list[Memos_tag_relation]=Field(description="relations between tags")
     new_tags: list[Memos_tag]
