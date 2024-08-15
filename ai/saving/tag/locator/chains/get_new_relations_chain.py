@@ -21,13 +21,13 @@ _get_new_relations_chain_prompt=PromptTemplate.from_template(
     For example, if you have an existing directory called 'plants' and you need to organize the directory 'apples', you can create a new relationship 'plants'-'apples', but also create a new directory called 'fruits', such as 'plants'-'fruits', 'fruits'-'apples', etc.
 
     I'm attaching the existing directory structure.
-    When the number of '-'s increases, you're in that directory.
-    If there's an ID next to the name, it's a directory; if there's no ID, it's a document.
-    
+    A string next to the name is the directory's id.
+    When the number of '-'s increases, it means you're inside that directory.
+
     Language: {lang}              
     New directory: {name}
     Current directories: [
-        {directories}
+    {directories}
     ]
 
     {format}

@@ -11,11 +11,11 @@ def get_formatted_directories(current: str="", depth: int=0) -> str:
     
     result: str=""
     for next in current_directories:
-        next_line: str="-"*depth+' '
-        next_line+=f'{next["name"]} (id: {next["id"]})'
+        next_line: str="-"*depth
+        next_line+=f'{next["name"]} ({next["id"]})\n'
         next_result=get_formatted_directories(next["id"], depth+1)
         if next_result != "":
-            next_line+='\n'+next_result+'\n'
+            next_line+=next_result
             
         result+=next_line
         
