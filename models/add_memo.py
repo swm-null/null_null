@@ -4,7 +4,7 @@ from typing import Optional
 
 class Arg_add_memo(BaseModel):
     content: str
-    timestamp: Optional[datetime]
+    timestamp: Optional[datetime] = None
 
 class Res_memo_tag(BaseModel):
     name: str

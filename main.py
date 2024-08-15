@@ -4,7 +4,7 @@ import logging
 from init import init
 
 from ai.utils.embedder import embedder
-from ai.saving.adder.single_adder import single_adder
+from ai.saving.adder.single_adder import single_adder, single_adder_deprecated
 from ai.saving.adder.batch_adder import batch_adder
 from ai.searching.regex_generator import get_regex
 from ai.searching.query_analyzer import Query_Type, query_analyzer
@@ -14,6 +14,7 @@ from ai.searching.tag_finder import find_tag_ids
 from ai.saving.parser import kakao_parser as kp
 
 from models.add_memo import *
+from models.memos import *
 from models.search import *
 from models.get_embedding import *
 from models.kakao_parser import *
@@ -56,10 +57,12 @@ async def search(body: Arg_search):
 
     return return_content
 
-@app.post("/add_memo/", response_model=Res_add_memo, status_code=status.HTTP_200_OK)
-async def add_memo(body: Arg_add_memo):
-    return single_adder(body)
-
+@app.post("/memos", response_model=Res_post_memos, status_code=status.HTTP_200_OK)
+async def post_memos(body: Arg_post_memos):
+    return Res_post_memos(
+        content=[single_adder(memo) for memo in body.content]
+    )
+    
 @app.post("/get_embedding/", response_model=Res_get_embedding)
 async def get_embedding(body: Arg_get_embedding):
     return Res_get_embedding(
@@ -70,10 +73,17 @@ async def get_embedding(body: Arg_get_embedding):
 async def kakao_parser(body: Arg_kakao_parser):
     parsed_memolist: list[tuple[str, datetime]]=kp.kakao_parser(body.content, body.type)
     memolist: list[Arg_add_memo]=[
-        Arg_add_memo(content=content, timestamp=timestamp) for content, timestamp in parsed_memolist
+        Arg_add_memo(
+            content=content, 
+            timestamp=timestamp
+        ) for content, timestamp in parsed_memolist
     ]
     
     return await batch_adder(memolist)
+
+@app.post("/add_memo/", deprecated=True, response_model=Res_add_memo, status_code=status.HTTP_200_OK)
+async def add_memo(body: Arg_add_memo):
+    return single_adder_deprecated(body)
 
 if __name__ == '__main__':
     uvicorn.run(app)
