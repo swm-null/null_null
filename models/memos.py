@@ -9,7 +9,7 @@ class Memos_tag(BaseModel):
     embedding: list[float]
 
 class Memos_tag_relation(BaseModel):
-    parent_id: str
+    parent_id: Optional[str]
     child_id: str
 
 class Memos_raw_memo(BaseModel):
