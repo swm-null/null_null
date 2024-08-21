@@ -7,17 +7,21 @@ import re
 from fastapi import HTTPException
 from models.kakao_parser import kakao_parser_type
 from typing import Optional
+from urllib.request import urlopen
+from urllib.parse import quote
 
 def kakao_parser(content: str, type: kakao_parser_type) -> list[tuple[str, datetime]]:
     parsed_memolist: list[tuple[str, datetime]]
     
-    content=content.replace("\ufeff", "")
+    encoded_url = quote(content, safe=':/')
+    data: str=urlopen(encoded_url).read().decode('utf-8', 'ignore')
+    data=data.replace("\ufeff", "")
     
     if type == kakao_parser_type.CSV:
-        csv_reader: csv.DictReader=_get_csv_reader_from_string(content)
+        csv_reader: csv.DictReader=_get_csv_reader_from_string(data)
         parsed_memolist: list[tuple[str, datetime]]=_parse_csv_reader(csv_reader)    
     elif type == kakao_parser_type.TXT:
-        parsed_memolist: list[tuple[str, datetime]]=_parse_txt_string(content)
+        parsed_memolist: list[tuple[str, datetime]]=_parse_txt_string(data)
     else:
         logging.error("[KP] invalid content type: %s", type)
         raise HTTPException(status_code=500, headers={"KP": "invalid content type"})
