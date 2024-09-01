@@ -36,7 +36,10 @@ def single_adder(memo: Memos_raw_memo, lang: str="Korean") -> Memos_processed_me
         content=memo.content,
         timestamp=datetime.now() if memo.timestamp is None else memo.timestamp,
         parent_tag_ids=parent_tag_ids,
-        tag_relations=tag_relations,
+        tag_relations=Memos_relations(
+            added=tag_relations,
+            deleted=[]
+        ),
         new_tags=new_tags,
         embedding=embedder.embed_query(memo.content),
     )
