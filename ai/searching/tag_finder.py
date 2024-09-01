@@ -20,7 +20,7 @@ vectorstore_for_tag=tag_store
 retriever=vectorstore_for_tag.as_retriever()
 
 def format_docs(docs: list[Document]):
-    ret=", ".join(f"{doc.page_content}, (id: {doc.metadata['_id']})" for doc in docs)
+    ret=", ".join(f"{doc.page_content}, (id: {str(doc.metadata['_id'])})" for doc in docs)
     return ret
 
 def find_tag_ids(query: str) -> Optional[list[str]]:

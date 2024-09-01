@@ -41,7 +41,7 @@ Customer's question: {query}
 partial_variables={"format": format_instructions}) 
 
 def format_contexts(docs: list[Document]):
-    memos="\n".join(f"{doc.page_content} (id: {doc.metadata['_id']})" for doc in docs)
+    memos="\n".join(f"{doc.page_content} (id: {str(doc.metadata['_id'])})" for doc in docs)
     logging.info(f"[SS] retrived contexts: {memos}")
     return memos
 
@@ -60,7 +60,7 @@ def memo_validation(memos: Memo_List) -> bool:
     all_memos: list[Document]=vectorstore_for_memo.similarity_search("", k=1000)
 
     for id in memos['memo_ids']:
-        if not any(id==str(memo.metadata['_id']) for memo in all_memos):
+        if not any(id==str(str(memo.metadata['_id'])) for memo in all_memos):
             logging.error("[SS] Failed memo id validation: %s", id)
             raise HTTPException(status_code=500, headers={"SS": "Failed to get memo ids."})
     return True
