@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 from typing import Optional
-from ai.for_search import query_analyzer as qa
+from ai.searching import query_analyzer as qa
 
 class Arg_search(BaseModel):
     content: str

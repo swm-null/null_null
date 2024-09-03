@@ -6,9 +6,12 @@ from langchain_core.prompts import PromptTemplate
 from langchain_core.runnables import RunnablePassthrough
 from langchain_core.output_parsers import JsonOutputParser
 from pydantic import BaseModel, Field
+from ai.utils.embedder import embedder
 from ai.vectorstores.tag_store import tag_store, tag_collection, TAG_INDEX_NAME, TAG_CONTENT_NAME
 from models.add_memo import Res_add_memo, Res_memo_tag
 import random
+
+# deprecated
 
 load_dotenv()
 
@@ -40,7 +43,7 @@ def get_similar_tags(query: str, id: Optional[str]) -> list[dict[str, str]]:
             {
                 'index': TAG_INDEX_NAME,
                 'path': "embedding",
-                'queryVector': embeddings.embed_query(query),
+                'queryVector': embedder.embed_query(query),
                 'numCandidates': 500,
                 'limit': 10,
             }
@@ -159,7 +162,7 @@ def query_extractor(query: str, country: str="Korea") -> tuple[list[str], list[R
             first_tag['id']="temp_id"+str(random.randint(1, 2**64))
             new_tags.append(Res_memo_tag(
                 name=first_tag['name'],
-                embedding=embeddings.embed_query(first_tag['name']),
+                embedding=embedder.embed_query(first_tag['name']),
                 parent=None,
                 id=first_tag['id'],
             ))
@@ -179,7 +182,7 @@ def query_extractor(query: str, country: str="Korea") -> tuple[list[str], list[R
             if secondary_tag['id'] is None:
                 new_tags.append(Res_memo_tag(
                     name=secondary_tag['name'],
-                    embedding=embeddings.embed_query(secondary_tag['name']),
+                    embedding=embedder.embed_query(secondary_tag['name']),
                     parent=first_tag['id'],
                     id=None,
                 ))
