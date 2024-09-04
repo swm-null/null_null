@@ -18,9 +18,10 @@ _new_chain_prompt=PromptTemplate.from_template(
     I'm attaching a document for you.
     Create the category in the given language.
     Categories can be one or two words.
+    The document is given between ᝃ. Sometimes it can be empty.
     
     Language: {lang}
-    Document: {query}              
+    Document: ᝃ{query}ᝃ
 
     {format}
     Set new category's id to category's name.

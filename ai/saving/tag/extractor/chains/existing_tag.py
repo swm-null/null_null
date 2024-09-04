@@ -22,10 +22,11 @@ _existing_chain_prompt=PromptTemplate.from_template(
     If such a category does not exist, you don't have to select it.
     
     I've attached the document and the categorizations for you.
+    The document is given between ᝃ. Sometimes it can be empty.
 
     Language: {lang}
-    Document: {query}              
-    List of categories: [{tag_list}]    
+    Document: ᝃ{query}ᝃ
+    List of categories: [{tag_list}]
 
     {format}
     """,
