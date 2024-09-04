@@ -18,7 +18,7 @@ def _get_similar_tags_from_db(query: str) -> list[Tag]:
                 'path': "embedding",
                 'queryVector': embedder.embed_query(query),
                 'numCandidates': 1000,
-                'limit': 20,
+                'limit': 30,
             }
         },
         {
@@ -26,15 +26,8 @@ def _get_similar_tags_from_db(query: str) -> list[Tag]:
             {
                 "_id": 1,
                 TAG_CONTENT_NAME: 1,
-                "child": 1,
             }
         },
-        {
-            "$match":  # only leaf tags
-            {
-                "$expr": { "$eq": [{ "$size": "$child" }, 0] }
-            }
-        }
     ])
 
     similar_tags: list[Tag]=[]
