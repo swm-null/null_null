@@ -19,7 +19,8 @@ _existing_chain_prompt=PromptTemplate.from_template(
     Given a document, you choose the best categorization you think fits.
     Choose based on how the average person categorizes notes.
     You might not choose one if you don't think it's a good fit, or you might choose multiple if you think there are several that are very good fits.
-
+    If such a category does not exist, you don't have to select it.
+    
     I've attached the document and the categorizations for you.
 
     Language: {lang}
