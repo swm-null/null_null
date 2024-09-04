@@ -5,6 +5,7 @@ from ai.database.collections.tag_store import tag_collection, TAG_UID_NAME, TAG_
 def get_formatted_directories(user_id: str) -> str:
     graph: dict[str, list[str]]=get_tag_relations_from_db(user_id)
     tag_id_to_name: dict[str, str]=_get_tags_from_db(user_id)
+    
     return _format_graph(graph, tag_id_to_name)
 
 def _format_graph(graph: dict[str, list[str]], tag_id_to_name: dict[str, str], now: str="root", depth: int=0) -> str:
@@ -38,7 +39,7 @@ def _get_roots_from_graph(graph: dict[str, list[str]]):
         for child_id in graph[parent_id]:
             has_parent[child_id]=1
     
-    return [id for id, has_parent in has_parent.items() if has_parent]
+    return [id for id, has_parent in has_parent.items() if not has_parent]
             
 def _get_tags_from_db(user_id: str) -> dict[str, str]:
     tags: dict[str, str]={}
