@@ -6,5 +6,6 @@ class kakao_parser_type(Enum):
     TXT="txt"
 
 class Arg_kakao_parser(BaseModel):
+    user_id: str
     type: kakao_parser_type
     content: str

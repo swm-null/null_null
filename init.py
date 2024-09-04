@@ -1,7 +1,7 @@
 from dotenv import load_dotenv
 from fastapi import FastAPI
 from logger import access_logger, exec_logger, sentry_init
-from ai.vectorstores.connection import client as mongo_client
+from ai.database.connection import client as mongo_client
 from sentry_sdk.integrations.asgi import SentryAsgiMiddleware
 
 def init(app: FastAPI):

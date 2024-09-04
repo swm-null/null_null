@@ -60,7 +60,7 @@ async def search(body: Arg_search):
 @app.post("/memos", response_model=Res_post_memos, status_code=status.HTTP_200_OK)
 async def post_memos(body: Arg_post_memos):
     return Res_post_memos(
-        processed_memos=[single_adder(memo) for memo in body.memos]
+        processed_memos=[single_adder(memo, body.user_id) for memo in body.memos]
     )
     
 @app.post("/get_embedding/", response_model=Res_get_embedding)
@@ -80,7 +80,7 @@ async def kakao_parser(body: Arg_kakao_parser):
     ]
     
     return Res_post_memos(
-        processed_memos=await batch_adder(memolist)
+        processed_memos=await batch_adder(memolist, body.user_id)
     )
 
 @app.post("/add_memo/", deprecated=True, response_model=Res_add_memo, status_code=status.HTTP_200_OK)

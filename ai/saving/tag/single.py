@@ -5,8 +5,8 @@ from ai.saving.tag.locator.tag_locator import tag_locator
 from ai.saving.tag.selector.tag_selector import tag_selector
 
 
-def get_tag_single(query: str, lang: str="Korean") -> tuple[list[Tag], list[Tag], list[Directory_relation]]:
-    candidate_tag_list=tag_extractor(query, lang)
+def get_tag_single(query: str, user_id: str, lang: str="Korean") -> tuple[list[Tag], list[Tag], list[Directory_relation]]:
+    candidate_tag_list=tag_extractor(query, user_id, lang)
     selected_tag_list=tag_selector(query, candidate_tag_list, lang)
     
     new_tag_list: list[Tag]=[]
@@ -15,7 +15,7 @@ def get_tag_single(query: str, lang: str="Korean") -> tuple[list[Tag], list[Tag]
     
     for tag in selected_tag_list:
         if tag.id == tag.name: # is newly created tag
-            new_directory_relations, new_directories=_add_new_tag(tag, lang)
+            new_directory_relations, new_directories=_add_new_tag(tag, user_id, lang)
             dir_relations.extend(new_directory_relations)
             new_tag_list.extend(new_directories)
 
@@ -25,8 +25,8 @@ def get_tag_single(query: str, lang: str="Korean") -> tuple[list[Tag], list[Tag]
     
     return new_tag_list, parent_tags, dir_relations
                     
-def _add_new_tag(tag: Tag, lang: str="Korean") -> tuple[list[Directory_relation], list[Tag]]:
-    new_directory_relations: list[Directory_relation]=tag_locator(tag.name, lang)
+def _add_new_tag(tag: Tag, user_id: str, lang: str="Korean") -> tuple[list[Directory_relation], list[Tag]]:
+    new_directory_relations: list[Directory_relation]=tag_locator(tag.name, user_id, lang)
     new_directories: list[Tag]=_process_new_directories(new_directory_relations)
     
     return new_directory_relations, new_directories

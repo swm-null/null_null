@@ -5,8 +5,8 @@ from ai.saving.tag.locator.chains.get_new_relations_chain import get_new_relatio
 from ai.saving.tag.locator.get_formatted_directories import get_formatted_directories
 
     
-def tag_locator(name: str, lang: str="Korean") -> list[Directory_relation]:
-    formatted_directories: str=get_formatted_directories()
+def tag_locator(name: str, user_id: str, lang: str="Korean") -> list[Directory_relation]:
+    formatted_directories: str=get_formatted_directories(user_id)
     new_dir_relations: list[Directory_relation]=_get_new_relations(name, lang, formatted_directories)
     logging.info("[tag_locator]\n## formatted directories:\n%s\n\n## new_dir_relations:\n%s\n\n", formatted_directories, new_dir_relations)
     

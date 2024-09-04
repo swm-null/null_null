@@ -17,7 +17,7 @@ class Memos_relations(BaseModel):
     deleted: list[Memos_tag_relation]
 
 class Memos_raw_memo(BaseModel):
-    content: str
+    content: str=Field(examples=["치즈라면 레시피: 라면 위에 치즈를 얹어 내놓는 음식으로 제조법 또한 간단하여 그냥 라면을 끓인 후 시중에 판매되는 슬라이스 체다치즈를 얹는 것으로 완성."])
     timestamp: Optional[datetime]=None
     
 class Memos_processed_memo(BaseModel):
@@ -29,6 +29,7 @@ class Memos_processed_memo(BaseModel):
     embedding: list[float]
 
 class Arg_post_memos(BaseModel):
+    user_id: str
     memos: list[Memos_raw_memo]
 
 class Res_post_memos(BaseModel):
