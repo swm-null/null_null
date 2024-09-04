@@ -22,10 +22,11 @@ _tag_selector_chain_prompt=PromptTemplate.from_template(
     You don't have to select all {selection_count} if you think they are less relevant.
 
     I'll attach the document and the categories for you.
-
+    The document is given between ᝃ. Sometimes it can be empty.
+    
     Language: {lang}
-    Document: {query}              
-    List of categories: [{tag_list}]    
+    Document: ᝃ{query}ᝃ
+    List of categories: [{tag_list}]
 
     {format}
     """,
