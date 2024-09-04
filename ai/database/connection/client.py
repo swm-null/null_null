@@ -3,6 +3,7 @@ import os
 from pymongo import MongoClient
 import certifi
 
+
 load_dotenv()
 
 DB_NAME: str=str(os.getenv("DB_NAME"))
