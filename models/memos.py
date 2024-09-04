@@ -17,7 +17,7 @@ class Memos_relations(BaseModel):
     deleted: list[Memos_tag_relation]
 
 class Memos_raw_memo(BaseModel):
-    content: str
+    content: str=Field(examples=["이것은 메모의 예시입니다. 감사합니다?"])
     timestamp: Optional[datetime]=None
     
 class Memos_processed_memo(BaseModel):

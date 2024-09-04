@@ -15,6 +15,7 @@ from ai.saving.parser import kakao_parser as kp
 
 from models.add_memo import *
 from models.memos import *
+from models.memo import *
 from models.search import *
 from models.get_embedding import *
 from models.kakao_parser import *
@@ -61,6 +62,12 @@ async def search(body: Arg_search):
 async def post_memos(body: Arg_post_memos):
     return Res_post_memos(
         processed_memos=[single_adder(memo) for memo in body.memos]
+    )
+
+@app.post("/memo", response_model=Res_post_memo, status_code=status.HTTP_200_OK)
+async def post_memo(body: Arg_post_memo):
+    return Res_post_memo(
+        processed_memo=single_adder(body.memo)
     )
     
 @app.post("/get_embedding/", response_model=Res_get_embedding)
