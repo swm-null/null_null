@@ -1,6 +1,6 @@
 from ai.saving.tag.utils.tag_formatter import tag_formatter
 from ai.utils.embedder import embedder
-from ai.vectorstores.tag_store import TAG_CONTENT_NAME, TAG_ID_NAME, TAG_INDEX_NAME, tag_collection
+from ai.database.collections.tag_store import TAG_CONTENT_NAME, TAG_ID_NAME, TAG_UID_NAME, tag_collection
 from ai.saving.tag._models.tag import Tag
 
 

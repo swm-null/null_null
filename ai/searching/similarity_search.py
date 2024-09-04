@@ -7,7 +7,7 @@ from langchain_core.runnables import RunnablePassthrough
 from langchain_core.output_parsers import JsonOutputParser, StrOutputParser
 from langchain_core.documents.base import Document
 from langchain_core.pydantic_v1 import BaseModel, Field
-from ai.vectorstores.memo_store import memo_store
+from ai.database.collections.memo_store import memo_store
 
 load_dotenv()
 

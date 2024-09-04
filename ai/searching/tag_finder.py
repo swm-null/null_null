@@ -7,7 +7,7 @@ from langchain_core.output_parsers import StrOutputParser
 from langchain_core.documents.base import Document
 import logging
 from typing import Optional
-from ai.vectorstores.tag_store import tag_store
+from ai.database.collections.tag_store import tag_store
 
 load_dotenv()
 
