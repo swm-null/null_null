@@ -6,9 +6,10 @@ from ai.utils.embedder import embedder
 from models.add_memo import Arg_add_memo, Res_add_memo, Res_memo_tag
 from models.memos import *
 
-def single_adder(memo: Memos_raw_memo, user_id: str, lang: str="Korean") -> Memos_processed_memo:
+
+def single_processor(memo: Memos_raw_memo, user_id: str, lang: str="Korean") -> Memos_processed_memo:
     new_tag_list, parent_tags, dir_relations=get_tag_single(memo.content, user_id, lang)
-    logging.info("[single_adder]\n## new_tag_list:\n%s\n\n## parent_tags:\n%s\n\n## dir_relations:\n%s\n\n", new_tag_list, parent_tags, dir_relations)
+    logging.info("[single_processor]\n## new_tag_list:\n%s\n\n## parent_tags:\n%s\n\n## dir_relations:\n%s\n\n", new_tag_list, parent_tags, dir_relations)
 
     new_tags: list[Memos_tag]=[
         Memos_tag(
