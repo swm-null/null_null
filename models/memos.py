@@ -34,4 +34,7 @@ class Arg_post_memos(BaseModel):
 
 class Res_post_memos(BaseModel):
     processed_memos: list[Memos_processed_memo]
-    new_structure: dict[str, list[str]]
+    new_structure: dict[str, list[str]]=Field(examples=[{
+        "parent_tag_id1": ["child_tag_id1", "child_tag_id2", ],
+        "parent_tag_id2": ["child_tag_id2", "child_tag_id3", ],
+    }])
