@@ -1,15 +1,16 @@
 from ai.saving.tag.utils.tag_formatter import tag_formatter
 from ai.utils.embedder import embedder
-from ai.vectorstores.tag_store import TAG_CONTENT_NAME, TAG_ID_NAME, TAG_INDEX_NAME, tag_collection
+from ai.database.collections.tag_store import TAG_CONTENT_NAME, TAG_ID_NAME, TAG_INDEX_NAME, TAG_UID_NAME, tag_collection
 from ai.saving.tag._models.tag import Tag
 
 
-def retrieve_similar_tags(query: str) -> str:
-    tag_list: list[Tag]=_get_similar_tags_from_db(query)
+def retrieve_similar_tags(query: str, user_id: str) -> str:
+    tag_list: list[Tag]=_get_similar_tags_from_db(query, user_id)
     formatted_tag_list=tag_formatter(tag_list)
     return formatted_tag_list
 
-def _get_similar_tags_from_db(query: str) -> list[Tag]: 
+def _get_similar_tags_from_db(query: str, user_id: str) -> list[Tag]: 
+    raw_tags=tag_collection.find({TAG_UID_NAME: user_id})
     raw_tags=tag_collection.aggregate([
         {
             "$vectorSearch": 
@@ -18,7 +19,7 @@ def _get_similar_tags_from_db(query: str) -> list[Tag]:
                 'path': "embedding",
                 'queryVector': embedder.embed_query(query),
                 'numCandidates': 1000,
-                'limit': 20,
+                'limit': 30,
             }
         },
         {
@@ -26,13 +27,12 @@ def _get_similar_tags_from_db(query: str) -> list[Tag]:
             {
                 "_id": 1,
                 TAG_CONTENT_NAME: 1,
-                "child": 1,
             }
         },
         {
-            "$match":  # only leaf tags
+            "$match":
             {
-                "$expr": { "$eq": [{ "$size": "$child" }, 0] }
+                "$expr": { TAG_UID_NAME: user_id}
             }
         }
     ])

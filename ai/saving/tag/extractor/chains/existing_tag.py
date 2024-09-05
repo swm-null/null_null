@@ -39,7 +39,7 @@ existing_tag_chain=(
     {
         "query": itemgetter("query"),
         "lang": itemgetter("lang"),
-        "tag_list": itemgetter("query") | RunnableLambda(retrieve_similar_tags),
+        "tag_list": itemgetter("query", "user_id") | RunnableLambda(lambda args: retrieve_similar_tags(args[0], args[1])),
     }
     | _existing_chain_prompt
     | llm4o

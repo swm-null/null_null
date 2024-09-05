@@ -7,7 +7,7 @@ from langchain_core.runnables import RunnablePassthrough
 from langchain_core.output_parsers import JsonOutputParser
 from pydantic import BaseModel, Field
 from ai.utils.embedder import embedder
-from ai.vectorstores.tag_store import tag_store, tag_collection, TAG_INDEX_NAME, TAG_CONTENT_NAME
+from ai.database.collections.tag_store import tag_store, tag_collection, TAG_INDEX_NAME, TAG_CONTENT_NAME
 from models.add_memo import Res_add_memo, Res_memo_tag
 import random
 
