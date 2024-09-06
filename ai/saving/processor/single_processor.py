@@ -34,7 +34,7 @@ def single_processor(memo: Memos_raw_memo, user_id: str, lang: str="Korean") -> 
         content=memo.content,
         timestamp=datetime.now() if memo.timestamp is None else memo.timestamp,
         parent_tag_ids=parent_tag_ids,
-        tag_relations=Memos_relations(
+        tags_relations=Memos_relations(
             added=tag_relations,
             deleted=[]
         ),
