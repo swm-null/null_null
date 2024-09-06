@@ -21,6 +21,7 @@ _get_new_relations_chain_prompt=PromptTemplate.from_template(
     For example, if you have an existing directory called 'plants' and you need to organize the directory 'apples', you can create a new relationship 'plants'-'apples', but also create a new directory called 'fruits', such as 'plants'-'fruits', 'fruits'-'apples', etc.
 
     I'm attaching the existing directory structure.
+    The directory with the name '@' is the root.
     A string next to the name is the directory's id.
     When the number of '-'s increases, it means you're inside that directory.
 
@@ -33,7 +34,6 @@ _get_new_relations_chain_prompt=PromptTemplate.from_template(
     {format}
     
     When you create a new directory on your own, put the name of the directory in the ID of the new directory and is_new to True.
-    If you want to create a directory at the very top level, put the parent's id to null.
     """,
     partial_variables={
         "format": _parser.get_format_instructions()

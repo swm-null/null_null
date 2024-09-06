@@ -4,8 +4,9 @@ import logging
 from init import init
 
 from ai.utils.embedder import embedder
-from ai.saving.adder.single_adder import single_adder, single_adder_deprecated
-from ai.saving.adder.batch_adder import batch_adder
+from ai.saving.processor.single_processor import single_processor, single_adder_deprecated
+from ai.saving.processor.batch_processor import batch_processor
+from ai.saving.structurer.structurer import memo_structurer, memos_structurer
 from ai.searching.regex_generator import get_regex
 from ai.searching.query_analyzer import Query_Type, query_analyzer
 from ai.searching.similarity_search import similarity_search
@@ -20,10 +21,11 @@ from models.search import *
 from models.get_embedding import *
 from models.kakao_parser import *
 
+
 app = FastAPI(
     title="Oatnote AI",
-    description="after PR #47",
-    version="0.1.9",
+    description="after PR #48",
+    version="0.1.10",
 )
 init(app)
     
@@ -60,14 +62,20 @@ async def search(body: Arg_search):
 
 @app.post("/memos", response_model=Res_post_memos, status_code=status.HTTP_200_OK)
 async def post_memos(body: Arg_post_memos):
+    processed_memos=await batch_processor(body.memos, body.user_id)
+    
     return Res_post_memos(
-        processed_memos=[single_adder(memo, body.user_id) for memo in body.memos]
+        processed_memos=processed_memos,
+        new_structure=memos_structurer(processed_memos, body.user_id)
     )
 
 @app.post("/memo", response_model=Res_post_memo, status_code=status.HTTP_200_OK)
 async def post_memo(body: Arg_post_memo):
+    processed_memo=single_processor(body.memo, body.user_id)
+    
     return Res_post_memo(
-        processed_memo=single_adder(body.memo, body.user_id)
+        processed_memo=processed_memo,
+        new_structure=memo_structurer(processed_memo, body.user_id)
     )
     
 @app.post("/get_embedding/", response_model=Res_get_embedding)
@@ -78,17 +86,18 @@ async def get_embedding(body: Arg_get_embedding):
 
 @app.post("/kakao-parser/", response_model=Res_post_memos)
 async def kakao_parser(body: Arg_kakao_parser):
-    parsed_memolist: list[tuple[str, datetime]]=kp.kakao_parser(body.content, body.type)
-    memolist: list[Memos_raw_memo]=[
+    parsed_memos: list[tuple[str, datetime]]=kp.kakao_parser(body.content, body.type)
+    memos: list[Memos_raw_memo]=[
         Memos_raw_memo(
             content=content, 
             timestamp=timestamp
-        ) for content, timestamp in parsed_memolist
+        ) for content, timestamp in parsed_memos
     ]
     
-    return Res_post_memos(
-        processed_memos=await batch_adder(memolist, body.user_id)
-    )
+    return post_memos(Arg_post_memos(
+        user_id=body.user_id,
+        memos=memos
+    ))
 
 @app.post("/add_memo/", deprecated=True, response_model=Res_add_memo, status_code=status.HTTP_200_OK)
 async def add_memo(body: Arg_add_memo):
