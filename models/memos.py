@@ -24,7 +24,7 @@ class Memos_processed_memo(BaseModel):
     timestamp: datetime
     content: str
     parent_tag_ids: list[str]=Field(description="relations between leaf tags and this memo")
-    tag_relations: Memos_relations=Field(description="relations between tags")
+    tags_relations: Memos_relations=Field(description="relations between tags")
     new_tags: list[Memos_tag]
     embedding: list[float]
 
