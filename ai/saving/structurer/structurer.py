@@ -1,4 +1,5 @@
 from collections import defaultdict
+import logging
 from models.memos import Memos_processed_memo, Memos_relations
 from ai.saving.utils.get_tag_relations_from_db import get_tag_relations_from_db
 
@@ -7,7 +8,8 @@ def memos_structurer(processed_memos: list[Memos_processed_memo], user_id: str):
     graph: defaultdict[str, list[str]]=get_tag_relations_from_db(user_id)
     for memo in processed_memos:
         _structurer(graph, memo.tags_relations)
-    
+    logging.info("[memos_structurer]\n## new structure:\n%s\n\n", graph)
+
     return graph
 
 def memo_structurer(processed_memo: Memos_processed_memo, user_id: str):
