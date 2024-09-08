@@ -57,6 +57,5 @@ def _assign_new_tags_id(new_tag_list: list[Tag], parent_tags: list[Tag], dir_rel
             relation.child_id=new_tag_dict[relation.child_id]
         
     for relation in dir_relations:
-        print(relation.parent_id)
         if relation.parent_id in new_tag_dict:
             relation.parent_id=new_tag_dict[relation.parent_id]
