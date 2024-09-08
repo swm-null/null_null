@@ -2,7 +2,7 @@ import logging, logging.handlers
 from logger.utils.create_directory import create_directory
 
 def init():
-    create_directory("./logs/access")
+    create_directory("../logs/access")
 
     access_logger = logging.getLogger("uvicorn.access")
     handler = logging.handlers.TimedRotatingFileHandler(

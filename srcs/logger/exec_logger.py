@@ -2,7 +2,7 @@ import logging, logging.handlers
 from logger.utils.create_directory import create_directory
 
 def init():
-    create_directory("./logs/exec")
+    create_directory("../logs/exec")
 
     logging.basicConfig(level=logging.INFO) 
 
