@@ -24,8 +24,8 @@ from models.kakao_parser import *
 
 app = FastAPI(
     title="Oatnote AI",
-    description="after PR #52, https://github.com/swm-null/null_null/pull/52",
-    version="0.1.14",
+    description="after PR #54, https://github.com/swm-null/null_null/pull/54",
+    version="0.1.15",
 )
 init(app)
     
