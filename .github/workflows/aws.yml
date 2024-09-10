@@ -73,6 +73,8 @@ jobs:
         # Build a docker container and
         # push it to ECR so that it can
         # be deployed to ECS.
+        echo ${{ secrets.DB_NAME }}
+        
         docker build \
         --build-arg DB_NAME=${{ secrets.DB_NAME }} \
         --build-arg LANGCHAIN_API_KEY=${{ secrets.LANGCHAIN_API_KEY }} \
