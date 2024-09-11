@@ -33,11 +33,11 @@ on:
 env:
   AWS_REGION: ap-northeast-2                   # set this to your preferred AWS region, e.g. us-west-1
   ECR_REPOSITORY: oatnote/ai           # set this to your Amazon ECR repository name
-  ECS_SERVICE: ai2-main                 # set this to your Amazon ECS service name
-  ECS_CLUSTER: oatnote-ai2                 # set this to your Amazon ECS cluster name
+  ECS_SERVICE: oatnote-ai-stage-service                 # set this to your Amazon ECS service name
+  ECS_CLUSTER: oatnote-stage-cluster                 # set this to your Amazon ECS cluster name
   ECS_TASK_DEFINITION: .aws/task-definition.json # set this to the path to your Amazon ECS task definition
                                                # file, e.g. .aws/task-definition.json
-  CONTAINER_NAME: ai-main           # set this to the name of the container in the
+  CONTAINER_NAME: oatnote-ai-stage-container           # set this to the name of the container in the
                                                # containerDefinitions section of your task definition
 
 permissions:
