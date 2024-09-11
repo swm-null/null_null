@@ -1,3 +1,4 @@
+import asyncio
 from fastapi import FastAPI, status
 import uvicorn
 import logging
@@ -24,8 +25,8 @@ from models.kakao_parser import *
 
 app = FastAPI(
     title="Oatnote AI",
-    description="after PR #55, https://github.com/swm-null/null_null/pull/55",
-    version="0.2.0",
+    description="after PR #56, https://github.com/swm-null/null_null/pull/56",
+    version="0.2.1",
 )
 init(app)
     
@@ -34,7 +35,7 @@ async def default():
     return "yes. it works."
 
 @app.post("/search/", response_model=Res_search)
-async def search(body: Arg_search):
+def search(body: Arg_search):
     return_content: Res_search=Res_search()
 
     return_content.type=query_analyzer(body.content)
@@ -61,8 +62,8 @@ async def search(body: Arg_search):
     return return_content
 
 @app.post("/memos", response_model=Res_post_memos, status_code=status.HTTP_200_OK)
-async def post_memos(body: Arg_post_memos):
-    processed_memos=await batch_processor(body.memos, body.user_id)
+def post_memos(body: Arg_post_memos):
+    processed_memos=asyncio.run(batch_processor(body.memos, body.user_id))
     
     return Res_post_memos(
         processed_memos=processed_memos,
@@ -70,7 +71,7 @@ async def post_memos(body: Arg_post_memos):
     )
 
 @app.post("/memo", response_model=Res_post_memo, status_code=status.HTTP_200_OK)
-async def post_memo(body: Arg_post_memo):
+def post_memo(body: Arg_post_memo):
     processed_memo=single_processor(body.memo, body.user_id)
     
     return Res_post_memo(
@@ -79,13 +80,13 @@ async def post_memo(body: Arg_post_memo):
     )
     
 @app.post("/get_embedding/", response_model=Res_get_embedding)
-async def get_embedding(body: Arg_get_embedding):
+def get_embedding(body: Arg_get_embedding):
     return Res_get_embedding(
         embedding=embedder.embed_query(body.content)
     )
 
 @app.post("/kakao-parser/", response_model=Res_post_memos)
-async def kakao_parser(body: Arg_kakao_parser):
+def kakao_parser(body: Arg_kakao_parser):
     parsed_memos: list[tuple[str, datetime]]=kp.kakao_parser(body.content, body.type)
     memos: list[Memos_raw_memo]=[
         Memos_raw_memo(
@@ -100,7 +101,7 @@ async def kakao_parser(body: Arg_kakao_parser):
     ))
 
 @app.post("/add_memo/", deprecated=True, response_model=Res_add_memo, status_code=status.HTTP_200_OK)
-async def add_memo(body: Arg_add_memo):
+def add_memo(body: Arg_add_memo):
     return single_adder_deprecated(body)
 
 if __name__ == '__main__':
