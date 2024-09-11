@@ -74,6 +74,14 @@ jobs:
         # push it to ECR so that it can
         # be deployed to ECS.
         docker buildx build \
+          --build-arg DB_NAME="${{ secrets.DB_NAME }}" \
+          --build-arg LANGCHAIN_API_KEY="${{ secrets.LANGCHAIN_API_KEY }}" \
+          --build-arg LANGCHAIN_ENDPOINT="${{ secrets.LANGCHAIN_ENDPOINT }}" \
+          --build-arg LANGCHAIN_PROJECT="${{ secrets.LANGCHAIN_PROJECT }}" \
+          --build-arg LANGCHAIN_TRACING_V2="${{ secrets.LANGCHAIN_TRACING_V2 }}" \
+          --build-arg MONGO_SRV="${{ secrets.MONGO_SRV }}" \
+          --build-arg OPENAI_API_KEY="${{ secrets.OPENAI_API_KEY }}" \
+          --build-arg SENTRY_DSN="${{ secrets.SENTRY_DSN }}" \
           -t "$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" .
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
         echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
@@ -85,24 +93,7 @@ jobs:
         task-definition: ${{ env.ECS_TASK_DEFINITION }}
         container-name: ${{ env.CONTAINER_NAME }}
         image: ${{ steps.build-image.outputs.image }}
-        
-    - name: Add environment variables to ECS task definition
-      id: add-env-var
-      uses: cvmaker-bv/amazon-ecs-task-environment@v1
-      env:
-        DB_NAME: ${{ secrets.DB_NAME }}
-        LANGCHAIN_API_KEY: ${{ secrets.LANGCHAIN_API_KEY }}
-        LANGCHAIN_ENDPOINT: ${{ secrets.LANGCHAIN_ENDPOINT }}
-        LANGCHAIN_PROJECT: ${{ secrets.LANGCHAIN_PROJECT }}
-        LANGCHAIN_TRACING_V2: ${{ secrets.LANGCHAIN_TRACING_V2 }}
-        MONGO_SRV: ${{ secrets.MONGO_SRV }}
-        OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-        SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
-      with:
-        task-definition: ${{ steps.render-web-container.outputs.task-definition }}
-        container-name: "ecs-container"
-        env-variables: "${{ toJson(env) }}"
-        
+
     - name: Deploy Amazon ECS task definition
       uses: aws-actions/amazon-ecs-deploy-task-definition@v1
       with:
