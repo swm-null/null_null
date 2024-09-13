@@ -106,3 +106,100 @@ def add_memo(body: Arg_add_memo):
 
 if __name__ == '__main__':
     uvicorn.run(app)
+
+@app.post("/test_format_directories")
+async def test_format_directories():
+    from ai.saving.tag.locator.get_formatted_directories import get_formatted_directories
+    print(get_formatted_directories("test2"))
+    return get_formatted_directories("test2")
+
+@app.post("/clear_tags")
+async def clear_tags():
+    from ai.database.collections.tag_store import tag_collection
+    tag_collection.delete_many({"uId": "test2"})
+    
+@app.post("/clear_edges")
+async def clear_edges():
+    from ai.database.collections.tag_edges import tag_edges_collection
+    tag_edges_collection.delete_many({"uId": "test2"})
+    
+@app.post("/create_dummy")
+async def create_dummy():
+
+    from ai.database.collections.tag_edges import tag_edges_collection
+    tag_edges_collection.delete_many({"uId": "test2"})
+    tag_edges_collection.insert_one({
+        "uId": "test2",
+        "edges": {
+            "@test@": ["!음식", "!여행", "!라면"],
+            "!음식": ["!라면", "!떡볶이", "!고추장"],
+            "!여행": ["!프랑스", "!네덜란드"],
+            "!라면": ["!떡라면", "!날치알라면"],
+        }
+    })
+
+    # 이거 임베딩 동기라 느리네 아이고..
+    from ai.database.collections.tag_store import tag_collection
+    tag_collection.delete_many({"uId": "test2"})
+    tag_collection.insert_many([
+        {
+            "uId": "test2",
+            "name": "@",
+            "_id": "@test@",
+            "embedding": embedder.embed_query("@"),
+        },
+        {
+            "uId": "test2",
+            "name": "음식",
+            "_id": "!음식",
+            "embedding": embedder.embed_query("음식"),
+        },
+        {
+            "uId": "test2",
+            "name": "라면",
+            "_id": "!라면",
+            "embedding": embedder.embed_query("라면"),
+        },
+        {
+            "uId": "test2",
+            "name": "떡볶이",
+            "_id": "!떡볶이",
+            "embedding": embedder.embed_query("떡볶이"),
+        },
+        {
+            "uId": "test2",
+            "name": "고추장",
+            "_id": "!고추장",
+            "embedding": embedder.embed_query("고추장"),
+        },
+        {
+            "uId": "test2",
+            "name": "여행",
+            "_id": "!여행",
+            "embedding": embedder.embed_query("여행"),
+        },
+        {
+            "uId": "test2",
+            "name": "프랑스",
+            "_id": "!프랑스",
+            "embedding": embedder.embed_query("프랑스"),
+        },
+        {
+            "uId": "test2",
+            "name": "네덜란드",
+            "_id": "!네덜란드",
+            "embedding": embedder.embed_query("네덜란드"),
+        },
+        {
+            "uId": "test2",
+            "name": "떡라면",
+            "_id": "!떡라면",
+            "embedding": embedder.embed_query("떡라면"),
+        },
+        {
+            "uId": "test2",
+            "name": "날치알라면",
+            "_id": "!날치알라면",
+            "embedding": embedder.embed_query("날치알라면"),
+        },
+    ])

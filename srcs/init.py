@@ -18,6 +18,6 @@ def init(app: FastAPI):
     # init database
     try:
         mongo_client.client.admin.command('ping')
-        logging.info("Pinged your deployment. You successfully connected to MongoDB!")
+        logging.info(f"Pinged your deployment. You successfully connected to {mongo_client.DB_NAME}!")
     except Exception as e:
         logging.error(e)
