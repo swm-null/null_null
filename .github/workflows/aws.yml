@@ -29,6 +29,14 @@ name: Deploy to Amazon ECS
 on:
   push:
     branches: [ "develop" ]
+  workflow_dispatch:
+    inputs:
+      yes:
+        description: 'yes'     
+        required: true
+        default: 'no'
+      tags:
+        description: 'manual deploy to ecs'  
 
 env:
   AWS_REGION: ap-northeast-2                   # set this to your preferred AWS region, e.g. us-west-1
@@ -74,7 +82,9 @@ jobs:
         # push it to ECR so that it can
         # be deployed to ECS.
         docker buildx build \
-          --build-arg DB_NAME="${{ secrets.DB_NAME }}" \
+          --build-arg FLOW="stage" \
+          --build-arg DB_NAME_STAGE="${{ secrets.DB_NAME_STAGE }}" \
+          --build-arg DB_NAME_PROD="${{ secrets.DB_NAME_PROD }}" \
           --build-arg LANGCHAIN_API_KEY="${{ secrets.LANGCHAIN_API_KEY }}" \
           --build-arg LANGCHAIN_ENDPOINT="${{ secrets.LANGCHAIN_ENDPOINT }}" \
           --build-arg LANGCHAIN_PROJECT="${{ secrets.LANGCHAIN_PROJECT }}" \

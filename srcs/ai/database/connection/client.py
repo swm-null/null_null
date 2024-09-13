@@ -6,8 +6,12 @@ import certifi
 
 load_dotenv()
 
-DB_NAME: str=str(os.getenv("DB_NAME"))
+FLOW: str=(str(os.getenv("FLOW")))
+DB_NAME_PROD: str=str(os.getenv("DB_NAME"))
+DB_NAME_STAGE: str=str(os.getenv("DB_NAME"))
 MONGO_SRV: str=str(os.getenv("MONGO_SRV"))
+
+DB_NAME=DB_NAME_STAGE if FLOW=="stage" else DB_NAME_PROD
 
 if DB_NAME == "None":
     raise Exception("[vectorstores.connection] Invalid DB_NAME")
