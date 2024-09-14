@@ -1,10 +1,18 @@
 import logging, logging.handlers
 from logger.utils.create_directory import create_directory
 
+class EndpointHealthCheckFilter(logging.Filter):
+    def filter(self, record: logging.LogRecord) -> bool:
+        if record.args and len(record.args) >= 3:
+            endpoint_name: str=str(record.args[2])
+            return endpoint_name!="/"
+        return True
+
 def init():
     create_directory("../logs/access")
 
     access_logger = logging.getLogger("uvicorn.access")
+    logging.getLogger("uvicorn.access").addFilter(EndpointHealthCheckFilter())
     handler = logging.handlers.TimedRotatingFileHandler(
         filename=f'../logs/access/access_log',
         when='midnight', 
