@@ -82,7 +82,7 @@ jobs:
         # push it to ECR so that it can
         # be deployed to ECS.
         docker buildx build \
-          --build-arg FLOW="stage" \
+          --build-arg FLOW="STAGE" \
           --build-arg DB_NAME_STAGE="${{ secrets.DB_NAME_STAGE }}" \
           --build-arg DB_NAME_PROD="${{ secrets.DB_NAME_PROD }}" \
           --build-arg LANGCHAIN_API_KEY="${{ secrets.LANGCHAIN_API_KEY }}" \
