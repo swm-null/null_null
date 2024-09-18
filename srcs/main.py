@@ -8,10 +8,11 @@ from ai.utils.embedder import embedder
 from ai.saving.processor.single_processor import single_processor, single_adder_deprecated
 from ai.saving.processor.batch_processor import batch_processor
 from ai.saving.structurer.structurer import memo_structurer, memos_structurer
-from ai.searching.regex_generator import get_regex
-from ai.searching.query_analyzer import Query_Type, query_analyzer
-from ai.searching.similarity_search import similarity_search
-from ai.searching.tag_finder import find_tag_ids
+
+from ai.searching_deprecated.regex_generator import get_regex
+from ai.searching_deprecated.query_analyzer import Query_Type, query_analyzer
+from ai.searching_deprecated.similarity_search import similarity_search
+from ai.searching_deprecated.tag_finder import find_tag_ids
 
 from ai.saving.parser import kakao_parser as kp
 
@@ -19,6 +20,7 @@ from models.add_memo import *
 from models.memos import *
 from models.memo import *
 from models.search import *
+from models.search_deprecated import *
 from models.get_embedding import *
 from models.kakao_parser import *
 
@@ -203,3 +205,30 @@ async def create_dummy():
             "embedding": embedder.embed_query("날치알라면"),
         },
     ])
+
+@app.post("/search_deprecated/", response_model=Res_search, deprecated=True)
+def search_depreacted(body: Arg_search):
+    return_content: Res_search=Res_search()
+
+    return_content.type=query_analyzer(body.content)
+
+    if return_content.type == Query_Type.unspecified:
+        logging.info("[/search] unspecified query: %s", body.content)
+        return_content.type=Query_Type.similarity
+
+    if return_content.type == Query_Type.regex:
+        return_content.regex=get_regex(body.content)
+
+    elif return_content.type == Query_Type.tags:
+        return_content.tags=find_tag_ids(body.content)
+        # if the tag search result is None
+        if return_content.tags == None:
+            # then trying similarity search
+            return_content.type=Query_Type.similarity
+        
+    if return_content.type == Query_Type.similarity:
+        return_content.processed_message, return_content.ids=similarity_search(body.content)
+
+    logging.info("[/search] query: %s / query type: %s \nreturn: %s", body.content, return_content.type, return_content)
+
+    return return_content
