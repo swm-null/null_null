@@ -23,6 +23,7 @@ from models.search import *
 from models.search_deprecated import *
 from models.get_embedding import *
 from models.kakao_parser import *
+from ai.searching.search import search
 
 
 app = FastAPI(
@@ -36,32 +37,9 @@ init(app)
 async def default():
     return "yes. it works."
 
-@app.post("/search/", response_model=Res_search)
-def search(body: Arg_search):
-    return_content: Res_search=Res_search()
-
-    return_content.type=query_analyzer(body.content)
-
-    if return_content.type == Query_Type.unspecified:
-        logging.info("[/search] unspecified query: %s", body.content)
-        return_content.type=Query_Type.similarity
-
-    if return_content.type == Query_Type.regex:
-        return_content.regex=get_regex(body.content)
-
-    elif return_content.type == Query_Type.tags:
-        return_content.tags=find_tag_ids(body.content)
-        # if the tag search result is None
-        if return_content.tags == None:
-            # then trying similarity search
-            return_content.type=Query_Type.similarity
-        
-    if return_content.type == Query_Type.similarity:
-        return_content.processed_message, return_content.ids=similarity_search(body.content)
-
-    logging.info("[/search] query: %s / query type: %s \nreturn: %s", body.content, return_content.type, return_content)
-
-    return return_content
+@app.post("/search", response_model=Res_post_search)
+def post_search(body: Arg_post_search):
+    return search(body.content, body.user_id)
 
 @app.post("/memos", response_model=Res_post_memos, status_code=status.HTTP_200_OK)
 def post_memos(body: Arg_post_memos):
