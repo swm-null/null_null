@@ -4,8 +4,11 @@ from ai.utils.embedder import embedder
 
 
 MEMO_COLLECTION_NAME="memos"
-MEMO_CONTENT_NAME="content"
 MEMO_INDEX_NAME="vector_index_memos"
+MEMO_ID_NAME="_id"
+MEMO_UID_NAME="uId"
+MEMO_CONTENT_NAME="content"
+MEMO_UTIME_NAME="uTime"
 
 memo_collection=client[DB_NAME][MEMO_COLLECTION_NAME]
 memo_store=MongoDBAtlasVectorSearch(
