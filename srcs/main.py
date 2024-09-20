@@ -28,8 +28,8 @@ from ai.searching.search import search
 
 app = FastAPI(
     title="Oatnote AI",
-    description="after PR #60, https://github.com/swm-null/null_null/pull/60",
-    version="0.2.5",
+    description="after PR #61, https://github.com/swm-null/null_null/pull/61",
+    version="0.2.6",
 )
 init(app)
     
