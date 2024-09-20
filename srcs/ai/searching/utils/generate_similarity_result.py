@@ -13,15 +13,11 @@ def generate_similarity_result(query: str, memos: list[Memo], lang: str="Korean"
     return generated_result.answer, generated_result.used_memo_ids
     
 def _format_memos(memos: list[Memo]) -> str:
-    formatted_memos: list[str]=[]
-    
-    for memo in memos:
-        formatted_memos.append(f"""
+    return "\n".join(f"""
             ID: {memo.id}, {memo.timestamp}\n
             {memo.content}\n
-        """)
-        
-    return "\n".join(formatted_memos)
+        """ for memo in memos
+    )
 
 def _validate_result(memos: list[Memo], used_memo_ids: list[str]) -> None:
     missing_ids = [used_memo_id for used_memo_id in used_memo_ids if not any(memo.id == used_memo_id for memo in memos)]
