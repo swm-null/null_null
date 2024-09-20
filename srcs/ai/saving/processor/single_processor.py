@@ -1,7 +1,7 @@
 from datetime import datetime
 import logging
 from ai.saving.tag.single import get_tag_single
-from ai.utils.embedder import embedder
+from ai.utils import embedder
 from models.memos import *
 
 

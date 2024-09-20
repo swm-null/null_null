@@ -10,6 +10,7 @@ from typing import Optional
 from urllib.request import urlopen
 from urllib.parse import quote
 
+
 def kakao_parser(content: str, type: kakao_parser_type) -> list[tuple[str, datetime]]:
     parsed_memolist: list[tuple[str, datetime]]
     

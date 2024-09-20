@@ -1,6 +1,6 @@
 from langchain_mongodb import MongoDBAtlasVectorSearch
 from ai.database.connection.client import client, DB_NAME
-from ai.utils.embedder import embedder
+from ai.utils import embedder
 
 
 MEMO_COLLECTION_NAME="memos"

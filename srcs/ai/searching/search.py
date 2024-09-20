@@ -1,8 +1,7 @@
 from re import Pattern
 from models.search import Res_post_search
 from ai.searching.utils import generate_similarity_result, retrieve_similar_memos_from_db, query_analyzer, generate_regex
-from ai.searching.models.query_type import Query_Type
-from ai.searching.models.memo import Memo
+from ai.searching.models import Memo, Query_Type
 
 def search(query: str, user_id: str, lang: str="Korean") -> Res_post_search:
     query_type: Query_Type=query_analyzer(query, lang)

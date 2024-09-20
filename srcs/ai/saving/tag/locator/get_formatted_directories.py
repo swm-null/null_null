@@ -1,4 +1,4 @@
-from ai.saving.utils.get_tag_relations_from_db import get_tag_relations_from_db
+from ai.saving.utils import get_tag_relations_from_db
 from ai.database.collections.tag_store import tag_collection, TAG_UID_NAME, TAG_ID_NAME, TAG_CONTENT_NAME, TAG_ROOT_NAME
 
 

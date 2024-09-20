@@ -1,7 +1,7 @@
 from operator import itemgetter
 from langchain_core.output_parsers import PydanticOutputParser
 from pydantic import BaseModel, Field
-from ai.saving.tag._models.directory_relation import Directory_relation
+from ai.saving.tag.models import Directory_relation
 from ai.utils.llm import llm4o
 from langchain_core.prompts import PromptTemplate
 

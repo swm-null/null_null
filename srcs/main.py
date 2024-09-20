@@ -5,7 +5,7 @@ import logging
 
 from init import init
 from ai.utils import embedder
-from ai.searching.search import search
+from ai.searching import search
 from ai.saving import single_processor, batch_processor, memo_structurer, memos_structurer
 from ai.saving.parser import kakao_parser
 from models import *

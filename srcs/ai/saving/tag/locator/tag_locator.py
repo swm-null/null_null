@@ -1,6 +1,6 @@
 import logging
 import uuid
-from ai.saving.tag._models.directory_relation import Directory_relation
+from ai.saving.tag.models import Directory_relation
 from ai.saving.tag.locator.chains.get_new_relations_chain import get_new_relations_chain
 from ai.saving.tag.locator.get_formatted_directories import get_formatted_directories
 

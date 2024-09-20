@@ -1,4 +1,4 @@
-from ai.saving.processor.single_processor import single_processor
+from ai.saving.processor import single_processor
 from models.memos import Memos_processed_memo, Memos_raw_memo
 
 

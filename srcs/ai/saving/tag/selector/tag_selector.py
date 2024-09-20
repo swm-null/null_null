@@ -1,6 +1,6 @@
 import logging
-from ai.saving.tag._models.tag import Tag
-from ai.saving.tag.selector.chains.tag_selector_chain import tag_selector_chain
+from ai.saving.tag.models import Tag
+from ai.saving.tag.selector.chains import tag_selector_chain
 
 
 # TODO: change to async func

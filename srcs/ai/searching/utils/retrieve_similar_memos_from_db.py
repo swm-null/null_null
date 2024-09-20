@@ -1,5 +1,5 @@
 import logging
-from ai.searching.models.memo import Memo
+from ai.searching.models import Memo
 from ai.database.collections.memo_store import MEMO_CONTENT_NAME, MEMO_ID_NAME, MEMO_UID_NAME, MEMO_UTIME_NAME, memo_collection, MEMO_INDEX_NAME
 from ai.utils import embedder
 
