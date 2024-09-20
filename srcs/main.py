@@ -80,10 +80,6 @@ def kakao_parser(body: Arg_kakao_parser):
         memos=memos
     ))
 
-@app.post("/add_memo/", deprecated=True, response_model=Res_add_memo, status_code=status.HTTP_200_OK)
-def add_memo(body: Arg_add_memo):
-    return single_adder_deprecated(body)
-
 if __name__ == '__main__':
     uvicorn.run(app)
 
