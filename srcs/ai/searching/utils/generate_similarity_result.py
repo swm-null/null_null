@@ -1,8 +1,8 @@
 import logging
-
 from fastapi import HTTPException
 from ai.searching.models.memo import Memo
-from ai.searching.utils.chains.generate_similarity_result_chain import generate_similarity_result_chain
+from ai.searching.utils.chains import generate_similarity_result_chain
+
 
 def generate_similarity_result(query: str, memos: list[Memo], lang: str="Korean") -> tuple[str, list[str]]:
     formatted_memos: str=_format_memos(memos)
