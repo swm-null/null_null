@@ -2,28 +2,18 @@ import asyncio
 from fastapi import FastAPI, status
 import uvicorn
 import logging
-from init import init
 
-from ai.utils.embedder import embedder
-from ai.saving.processor.single_processor import single_processor, single_adder_deprecated
-from ai.saving.processor.batch_processor import batch_processor
-from ai.saving.structurer.structurer import memo_structurer, memos_structurer
+from init import init
+from ai.utils import embedder
+from ai.searching.search import search
+from ai.saving import single_processor, batch_processor, memo_structurer, memos_structurer
+from ai.saving.parser import kakao_parser
+from models import *
 
 from ai.searching_deprecated.regex_generator import get_regex
 from ai.searching_deprecated.query_analyzer import Query_Type, query_analyzer
 from ai.searching_deprecated.similarity_search import similarity_search
 from ai.searching_deprecated.tag_finder import find_tag_ids
-
-from ai.saving.parser import kakao_parser as kp
-
-from models.add_memo import *
-from models.memos import *
-from models.memo import *
-from models.search import *
-from models.search_deprecated import *
-from models.get_embedding import *
-from models.kakao_parser import *
-from ai.searching.search import search
 
 
 app = FastAPI(
@@ -59,15 +49,15 @@ def post_memo(body: Arg_post_memo):
         new_structure=memo_structurer(processed_memo, body.user_id)
     )
     
-@app.post("/get_embedding/", response_model=Res_get_embedding)
+@app.post("/get-embedding", response_model=Res_get_embedding)
 def get_embedding(body: Arg_get_embedding):
     return Res_get_embedding(
         embedding=embedder.embed_query(body.content)
     )
 
-@app.post("/kakao-parser/", response_model=Res_post_memos)
-def kakao_parser(body: Arg_kakao_parser):
-    parsed_memos: list[tuple[str, datetime]]=kp.kakao_parser(body.content, body.type)
+@app.post("/kakao-parser", response_model=Res_post_memos)
+def post_kakao_parser(body: Arg_kakao_parser):
+    parsed_memos: list[tuple[str, datetime]]=kakao_parser(body.content, body.type)
     memos: list[Memos_raw_memo]=[
         Memos_raw_memo(
             content=content, 
