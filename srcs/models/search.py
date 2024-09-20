@@ -1,13 +1,16 @@
-from pydantic import BaseModel
+from re import Pattern
 from typing import Optional
-from ai.searching import query_analyzer as qa
+from pydantic import BaseModel, Field
+from ai.searching.models.query_type import Query_Type
 
-class Arg_search(BaseModel):
+class Arg_post_search(BaseModel):
+    user_id: str
     content: str
 
-class Res_search(BaseModel):
-    type: qa.Query_Type=qa.Query_Type.unspecified
-    processed_message: Optional[str]=None
-    ids: Optional[list[str]]=None
-    regex: Optional[str]=None
-    tags: Optional[list[str]]=None
+class Res_post_search(BaseModel):
+    type: Query_Type
+    # similarity
+    processed_message: Optional[str]=Field(default=None)
+    ids: Optional[list[str]]=Field(description="used memo ids for processing message", default=None)
+    # regex
+    regex: Optional[Pattern[str]]=Field(default=None)
