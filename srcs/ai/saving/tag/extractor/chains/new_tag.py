@@ -1,7 +1,7 @@
 from operator import itemgetter
 from langchain_core.output_parsers import PydanticOutputParser
-from ai.saving.tag._models.tag import Tag
-from ai.utils.llm import llm4o
+from ai.saving.tag.models import Tag
+from ai.utils import llm4o
 from langchain_core.prompts import PromptTemplate
 
 

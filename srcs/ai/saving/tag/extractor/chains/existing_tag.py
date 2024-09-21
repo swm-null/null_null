@@ -2,9 +2,9 @@ from operator import itemgetter
 from langchain_core.runnables import RunnableLambda
 from langchain_core.output_parsers import PydanticOutputParser
 from pydantic import BaseModel, Field
-from ai.saving.tag.extractor.utils.retrieve_similar_tags import retrieve_similar_tags
-from ai.saving.tag._models.tag import Tag
-from ai.utils.llm import llm4o
+from ai.saving.tag.extractor.utils import retrieve_similar_tags
+from ai.saving.tag.models import Tag
+from ai.utils import llm4o
 from langchain_core.prompts import PromptTemplate
 
 

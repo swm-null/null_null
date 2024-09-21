@@ -1,8 +1,7 @@
 import logging
 from langchain_core.runnables import RunnableParallel
-from ai.saving.tag.extractor.chains.existing_tag import existing_tag_chain
-from ai.saving.tag.extractor.chains.new_tag import new_tag_chain
-from ai.saving.tag._models.tag import Tag
+from ai.saving.tag.extractor.chains import existing_tag_chain, new_tag_chain
+from ai.saving.tag.models import Tag
 
 
 def tag_extractor(query: str, user_id: str, lang: str="Korean") -> list[Tag]:

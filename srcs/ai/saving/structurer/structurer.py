@@ -1,7 +1,7 @@
 from collections import defaultdict
 import logging
 from models.memos import Memos_processed_memo, Memos_relations
-from ai.saving.utils.get_tag_relations_from_db import get_tag_relations_from_db
+from ai.saving.utils import get_tag_relations_from_db
 
 
 def memos_structurer(processed_memos: list[Memos_processed_memo], user_id: str):

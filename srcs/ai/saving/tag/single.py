@@ -1,8 +1,7 @@
-from ai.saving.tag._models.directory_relation import Directory_relation
-from ai.saving.tag._models.tag import Tag
-from ai.saving.tag.extractor.tag_extractor import tag_extractor
-from ai.saving.tag.locator.tag_locator import tag_locator
-from ai.saving.tag.selector.tag_selector import tag_selector
+from ai.saving.tag.models import Directory_relation, Tag
+from ai.saving.tag.extractor import tag_extractor
+from ai.saving.tag.locator import tag_locator
+from ai.saving.tag.selector import tag_selector
 
 
 def get_tag_single(query: str, user_id: str, lang: str="Korean") -> tuple[list[Tag], list[Tag], list[Directory_relation]]:

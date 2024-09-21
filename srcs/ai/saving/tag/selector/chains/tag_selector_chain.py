@@ -2,8 +2,8 @@ from operator import itemgetter
 from langchain_core.runnables import RunnableLambda
 from langchain_core.output_parsers import PydanticOutputParser
 from pydantic import BaseModel, Field
-from ai.saving.tag._models.tag import Tag
-from ai.saving.tag.utils.tag_formatter import tag_formatter
+from ai.saving.tag.models import Tag
+from ai.saving.tag.utils import tag_formatter
 from ai.utils.llm import llm4o
 from langchain_core.prompts import PromptTemplate
 from ai.saving.tag._configs import TAG_SELECTION_COUNT

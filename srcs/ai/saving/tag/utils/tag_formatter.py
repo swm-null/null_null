@@ -1,4 +1,4 @@
-from ai.saving.tag._models.tag import Tag
+from ai.saving.tag.models import Tag
 
 
 def tag_formatter(tag_list: list[Tag]) -> str:

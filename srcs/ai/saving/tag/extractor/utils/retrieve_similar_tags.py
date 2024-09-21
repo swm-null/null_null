@@ -1,7 +1,7 @@
-from ai.saving.tag.utils.tag_formatter import tag_formatter
+from ai.saving.tag.utils import tag_formatter
 from ai.utils.embedder import embedder
 from ai.database.collections.tag_store import TAG_CONTENT_NAME, TAG_ID_NAME, TAG_INDEX_NAME, TAG_UID_NAME, tag_collection
-from ai.saving.tag._models.tag import Tag
+from ai.saving.tag.models import Tag
 
 
 def retrieve_similar_tags(query: str, user_id: str) -> str:
