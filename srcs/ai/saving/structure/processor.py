@@ -59,17 +59,14 @@ def _get_new_tags(tags: list[Tag]) -> list[Tag]:
     return [tag for tag in tags if tag.is_new]
 
 def _merge_located_tags_and_new_tags(located_tags: list[Tag], new_tags: list[Tag]) -> list[Tag]:
-    tag_id_to_memo_id: dict[str, Optional[int]]={tag.id: tag.connected_memo_id for tag in new_tags if tag.connected_memo_id is not None}
-    print(located_tags)
-    print(new_tags)
-    print(tag_id_to_memo_id)
+    tag_name_to_original_tag: dict[str, tuple[str, Optional[int]]]={tag.name: (tag.id, tag.connected_memo_id) for tag in new_tags}
     
     return [
         Tag(
-            id=tag.id,
+            id=tag_name_to_original_tag[tag.name][0] if tag.name in tag_name_to_original_tag else tag.id,
             name=tag.name,
             is_new=tag.is_new,
-            connected_memo_id=tag_id_to_memo_id.setdefault(tag.id, None)
+            connected_memo_id=tag_name_to_original_tag[tag.name][1] if tag.name in tag_name_to_original_tag else tag.connected_memo_id
         ) for tag in located_tags
     ]
 
