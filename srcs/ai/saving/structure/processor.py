@@ -42,6 +42,7 @@ async def _convert_tag(tag: Tag) -> Memos_tag:
     return Memos_tag(
         name=tag.name,
         id=tag.id,
+        is_new=tag.is_new,
         embedding=await embedder.aembed_query(tag.name)
     )
 
