@@ -10,7 +10,7 @@ class Memos_tag(BaseModel):
     name: str
     is_new: bool
     id: str
-    embedding: Optional[list[float]]
+    embedding: Optional[list[float]]=None
     
 class Body_post_memo_tags(BaseModel):
     user_id: str=Field(examples=["add4277c-b56c-4c0c-a14c-8f0a28b5396f"])
