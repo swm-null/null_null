@@ -7,4 +7,4 @@ class Body_post_memo_tag(BaseModel):
     raw_memo: Memos_raw_memo
     
 class Res_post_memo_tag(BaseModel):
-    tag: list[Memos_tag]
+    tags: list[Memos_tag]
