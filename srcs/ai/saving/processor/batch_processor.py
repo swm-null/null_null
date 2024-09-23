@@ -2,6 +2,7 @@ from ai.saving.processor import single_processor
 from models.memos import Memos_processed_memo, Memos_raw_memo
 
 
+# deprecated
 async def batch_processor(memos: list[Memos_raw_memo], user_id: str) -> list[Memos_processed_memo]:
     results: list[Memos_processed_memo]=[]
 

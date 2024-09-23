@@ -1,8 +1,8 @@
 import logging
 import uuid
-from ai.saving.tag.models import Directory_relation
-from ai.saving.tag.locator.chains.get_new_relations_chain import get_new_relations_chain
-from ai.saving.tag.locator.get_formatted_directories import get_formatted_directories
+from ai.saving.tag_deprecated.models.directory_relation import Directory_relation
+from ai.saving.tag_deprecated.locator.chains.get_new_relations_chain import get_new_relations_chain
+from ai.saving.tag_deprecated.locator.get_formatted_directories import get_formatted_directories
 
     
 def tag_locator(name: str, user_id: str, lang: str="Korean") -> list[Directory_relation]:
