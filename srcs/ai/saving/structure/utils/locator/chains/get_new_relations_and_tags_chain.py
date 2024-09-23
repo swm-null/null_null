@@ -8,7 +8,7 @@ from langchain_core.prompts import PromptTemplate
 
 class Get_new_relations_and_tags_chain_output(BaseModel):
     relations: list[Directory_relation]=Field(description="relations of new directory")
-    new_directories: list[str]=Field(description="name of new directories")
+    new_directories: list[str]=Field(description="name of given directories or a newly created directory")
 
 _parser = PydanticOutputParser(pydantic_object=Get_new_relations_and_tags_chain_output)
 
