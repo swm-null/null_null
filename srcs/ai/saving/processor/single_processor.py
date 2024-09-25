@@ -2,7 +2,7 @@ from datetime import datetime
 import logging
 from ai.saving.tag_deprecated.single import get_tag_single
 from ai.utils import embedder
-from models.memo import *
+from models.memos_deprecated import *
 
 # deprecated
 def single_processor(memo: Memo_raw_memo, user_id: str, lang: str="Korean") -> Memo_processed_memo:

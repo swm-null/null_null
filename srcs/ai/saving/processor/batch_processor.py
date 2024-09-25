@@ -1,5 +1,5 @@
 from ai.saving.processor import single_processor
-from models.memo import Memo_processed_memo, Memo_raw_memo
+from models.memos_deprecated import Memo_processed_memo, Memo_raw_memo
 
 
 # deprecated

@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from models.memo import Memo_raw_memo, Memo_processed_memo
+from models.memos_deprecated import Memo_raw_memo, Memo_processed_memo
 
 
 class Arg_post_memo(BaseModel):

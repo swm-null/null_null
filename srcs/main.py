@@ -64,6 +64,7 @@ from models.memos_deprecated import *
 from models.memo_deprecated import *
 from models.search_deprecated import *
 from models.kakao_parser import *
+from ai.searching_deprecated.query_analyzer import Search_Query_Type
 
 @app.post("/search_deprecated", response_model=Res_search, deprecated=True)
 def search_depreacted(body: Arg_search):
