@@ -1,6 +1,6 @@
 import logging
 from fastapi import HTTPException
-from ai.searching.models import Memo
+from ai.searching._models import Memo
 from ai.searching.utils.chains import generate_similarity_result_chain
 
 

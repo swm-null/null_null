@@ -1,1 +1,1 @@
-from ai.searching.search import search
+from ai.searching.search import search_memo
