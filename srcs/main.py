@@ -4,11 +4,11 @@ import uvicorn
 import logging
 
 from init import init
+from models import *
 from ai.utils import embedder
-from ai.searching import search
+from ai.searching import search_memo
 from ai.saving.tag import create_tag, create_tags
 from ai.saving.structure import process_memos, get_structure
-from models import *
 
 app = FastAPI(
     title="Oatnote AI",
@@ -23,13 +23,11 @@ async def default():
 
 @app.post("/search", response_model=Res_post_search)
 def post_search(body: Arg_post_search):
-    return search(body.content, body.user_id)
-    
+    return search_memo(body.content, body.user_id)
+
 @app.post("/get-embedding", response_model=Res_get_embedding)
 def get_embedding(body: Arg_get_embedding):
-    return Res_get_embedding(
-        embedding=embedder.embed_query(body.content)
-    )
+    return Res_get_embedding(embedding=embedder.embed_query(body.content))
 
 @app.post("/memo/tags", response_model=Res_post_memo_tags)
 def post_memo_tags(body: Body_post_memo_tags):
@@ -38,7 +36,7 @@ def post_memo_tags(body: Body_post_memo_tags):
 @app.post("/memo/tag", response_model=Res_post_memo_tag)
 def post_memo_tag(body: Body_post_memo_tag):
     return Res_post_memo_tag(tags=asyncio.run(create_tag(body.user_id, body.raw_memo)))
-    
+
 @app.post("/memo/structures", response_model=Res_post_memo_structures)
 def post_memo_structures(body: Body_post_memo_structures):
     processed_memos, relations, tags=asyncio.run(process_memos(body.user_id, body.memos))
@@ -50,14 +48,13 @@ def post_memo_structures(body: Body_post_memo_structures):
         new_tags=tags,
         new_structure=structure
     )
-    
 
 if __name__ == '__main__':
     uvicorn.run(app)
 
 # deprecated imports
 from ai.searching_deprecated.regex_generator import get_regex
-from ai.searching_deprecated.query_analyzer import Query_Type, query_analyzer
+from ai.searching_deprecated.query_analyzer import query_analyzer
 from ai.searching_deprecated.similarity_search import similarity_search
 from ai.searching_deprecated.tag_finder import find_tag_ids
 from ai.saving import single_processor, batch_processor
@@ -74,21 +71,21 @@ def search_depreacted(body: Arg_search):
 
     return_content.type=query_analyzer(body.content)
 
-    if return_content.type == Query_Type.unspecified:
+    if return_content.type == Search_Query_Type.unspecified:
         logging.info("[/search] unspecified query: %s", body.content)
-        return_content.type=Query_Type.similarity
+        return_content.type=Search_Query_Type.similarity
 
-    if return_content.type == Query_Type.regex:
+    if return_content.type == Search_Query_Type.regex:
         return_content.regex=get_regex(body.content)
 
-    elif return_content.type == Query_Type.tags:
+    elif return_content.type == Search_Query_Type.tags:
         return_content.tags=find_tag_ids(body.content)
         # if the tag search result is None
         if return_content.tags == None:
             # then trying similarity search
-            return_content.type=Query_Type.similarity
+            return_content.type=Search_Query_Type.similarity
         
-    if return_content.type == Query_Type.similarity:
+    if return_content.type == Search_Query_Type.similarity:
         return_content.processed_message, return_content.ids=similarity_search(body.content)
 
     logging.info("[/search] query: %s / query type: %s \nreturn: %s", body.content, return_content.type, return_content)

@@ -6,7 +6,7 @@ class Arg_search(BaseModel):
     content: str
 
 class Res_search(BaseModel):
-    type: qa.Query_Type=qa.Query_Type.unspecified
+    type: qa.Search_Query_Type=qa.Search_Query_Type.unspecified
     processed_message: Optional[str]=None
     ids: Optional[list[str]]=None
     regex: Optional[str]=None

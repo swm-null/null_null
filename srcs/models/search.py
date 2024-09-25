@@ -1,14 +1,19 @@
 from re import Pattern
 from typing import Optional
 from pydantic import BaseModel, Field
-from ai.searching._models.query_type import Query_Type
+from enum import Enum
+
+
+class Search_Query_Type(Enum):
+    regex = "regex"
+    similarity = "similarity"
 
 class Arg_post_search(BaseModel):
     user_id: str
     content: str
 
 class Res_post_search(BaseModel):
-    type: Query_Type
+    type: Search_Query_Type
     # similarity
     processed_message: Optional[str]=Field(default=None)
     ids: Optional[list[str]]=Field(description="used memo ids for processing message", default=None)

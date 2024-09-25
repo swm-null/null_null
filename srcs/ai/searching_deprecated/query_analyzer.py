@@ -4,13 +4,13 @@ import logging
 from enum import Enum
 from typing import Literal
 
-class Query_Type(Enum):
+class Search_Query_Type(Enum):
     regex = "regex"
     tags = "tags"
     similarity = "similarity"
     unspecified = "unspecified"
 
-def query_analyzer(query: str) -> Query_Type:
+def query_analyzer(query: str) -> Search_Query_Type:
     res=openai.chat.completions.create(
         model="gpt-4o",
         messages=[
@@ -33,8 +33,8 @@ def query_analyzer(query: str) -> Query_Type:
 
     ret=res.choices[0].message.content
 
-    if ret not in Query_Type._member_names_:
+    if ret not in Search_Query_Type._member_names_:
         logging.error("[QA] Invalid query type: %s", ret)
         raise HTTPException(status_code=500, headers={"QA": "Failed to analyze the query."})
     
-    return Query_Type(ret)
+    return Search_Query_Type(ret)
