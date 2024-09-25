@@ -1,15 +1,15 @@
 import asyncio
 from typing import Optional
-from models.memo_structures import Memos_memo_and_tags, Memos_processed_memo
-from ai.saving.structure.models import Tag, Memo
+from models.memo import Memo_memo_and_tags, Memo_processed_memo
+from ai.saving.structure._models import Tag, Memo
 from ai.saving.structure.utils.memo_and_tags_converter import convert_memos_and_tags
 from ai.saving.structure.utils.locator.tag_locator import locate_tags
-from ai.saving.structure.models.directory_relation import Directory_relation
+from ai.saving.structure._models.directory_relation import Directory_relation
 from ai.utils import embedder
-from models.memos import Memos_tag, Memos_tag_relation
+from models.memo import Memo_tag, Memo_tag_relation
 
 
-async def process_memos(user_id: str, memos_and_tags: list[Memos_memo_and_tags], lang: str="Korean") -> tuple[list[Memos_processed_memo], list[Memos_tag_relation], list[Memos_tag]]:
+async def process_memos(user_id: str, memos_and_tags: list[Memo_memo_and_tags], lang: str="Korean") -> tuple[list[Memo_processed_memo], list[Memo_tag_relation], list[Memo_tag]]:
     located_memos_and_tags, relations, located_tags=_locate_memos(user_id, memos_and_tags, lang)
     
     process_memo_tasks=[_process_memo(memo_and_tags) for memo_and_tags in located_memos_and_tags]
@@ -22,31 +22,31 @@ async def process_memos(user_id: str, memos_and_tags: list[Memos_memo_and_tags],
      
     return processed_memos, converted_relations, converted_tags
 
-async def _process_memo(memo_and_tags: Memo) -> Memos_processed_memo:
-    return Memos_processed_memo(
+async def _process_memo(memo_and_tags: Memo) -> Memo_processed_memo:
+    return Memo_processed_memo(
             content=memo_and_tags.content,
             parent_tag_ids=memo_and_tags.parent_tag_ids,
             timestamp=memo_and_tags.timestamp,
             embedding=await embedder.aembed_query(memo_and_tags.content)
     )
     
-def _convert_relations(relations: list[Directory_relation]) -> list[Memos_tag_relation]:
+def _convert_relations(relations: list[Directory_relation]) -> list[Memo_tag_relation]:
     return [
-        Memos_tag_relation(
+        Memo_tag_relation(
             parent_id=relation.parent_id,
             child_id=relation.child_id
         ) for relation in relations
     ]  
 
-async def _convert_tag(tag: Tag) -> Memos_tag:
-    return Memos_tag(
+async def _convert_tag(tag: Tag) -> Memo_tag:
+    return Memo_tag(
         name=tag.name,
         id=tag.id,
         is_new=tag.is_new,
         embedding=await embedder.aembed_query(tag.name)
     )
 
-def _locate_memos(user_id: str, memos_and_tags: list[Memos_memo_and_tags], lang: str) -> tuple[list[Memo], list[Directory_relation], list[Tag]]:
+def _locate_memos(user_id: str, memos_and_tags: list[Memo_memo_and_tags], lang: str) -> tuple[list[Memo], list[Directory_relation], list[Tag]]:
     memos, tags=convert_memos_and_tags(memos_and_tags)
     new_tags: list[Tag]=_get_new_tags(tags)
     

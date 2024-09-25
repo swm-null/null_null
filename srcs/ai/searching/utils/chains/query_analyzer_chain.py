@@ -3,7 +3,7 @@ from langchain_core.output_parsers import PydanticOutputParser
 from pydantic import BaseModel, Field
 from ai.utils.llm import llm4o
 from langchain_core.prompts import PromptTemplate
-from ai.searching.models.query_type import Query_Type
+from ai.searching._models.query_type import Query_Type
 
 
 class _query_analyzer_chain_output(BaseModel):

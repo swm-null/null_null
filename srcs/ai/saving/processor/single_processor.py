@@ -2,15 +2,15 @@ from datetime import datetime
 import logging
 from ai.saving.tag_deprecated.single import get_tag_single
 from ai.utils import embedder
-from models.memos import *
+from models.memo import *
 
 # deprecated
-def single_processor(memo: Memos_raw_memo, user_id: str, lang: str="Korean") -> Memos_processed_memo:
+def single_processor(memo: Memo_raw_memo, user_id: str, lang: str="Korean") -> Memo_processed_memo:
     new_tag_list, parent_tags, dir_relations=get_tag_single(memo.content, user_id, lang)
     logging.info("[single_processor]\n## new_tag_list:\n%s\n\n## parent_tags:\n%s\n\n## dir_relations:\n%s\n\n", new_tag_list, parent_tags, dir_relations)
 
-    new_tags: list[Memos_tag]=[
-        Memos_tag(
+    new_tags: list[Memo_tag]=[
+        Memo_tag(
             embedding=embedder.embed_query(tag.name),
             name=tag.name, 
             id=tag.id
@@ -21,18 +21,18 @@ def single_processor(memo: Memos_raw_memo, user_id: str, lang: str="Korean") -> 
         parent.id for parent in parent_tags
     ]
     
-    tag_relations: list[Memos_tag_relation]=[
-        Memos_tag_relation(
+    tag_relations: list[Memo_tag_relation]=[
+        Memo_tag_relation(
             parent_id=relation.parent_id,
             child_id=relation.child_id,
         ) for relation in dir_relations
     ]
     
-    return Memos_processed_memo(
+    return Memo_processed_memo(
         content=memo.content,
         timestamp=datetime.now() if memo.timestamp is None else memo.timestamp,
         parent_tag_ids=parent_tag_ids,
-        tags_relations=Memos_relations(
+        tags_relations=Memo_relations(
             added=tag_relations,
             deleted=[]
         ),

@@ -1,10 +1,10 @@
 from collections import defaultdict
 import logging
-from models.memos import Memos_processed_memo, Memos_relations
+from models.memos_deprecated import Memo_processed_memo, Memo_relations
 from ai.saving.utils import get_tag_relations_from_db
 
 
-def memos_structurer(processed_memos: list[Memos_processed_memo], user_id: str):
+def memos_structurer(processed_memos: list[Memo_processed_memo], user_id: str):
     graph: defaultdict[str, list[str]]=get_tag_relations_from_db(user_id)
     for memo in processed_memos:
         _structurer(graph, memo.tags_relations)
@@ -12,10 +12,10 @@ def memos_structurer(processed_memos: list[Memos_processed_memo], user_id: str):
 
     return graph
 
-def memo_structurer(processed_memo: Memos_processed_memo, user_id: str):
+def memo_structurer(processed_memo: Memo_processed_memo, user_id: str):
     return memos_structurer([processed_memo], user_id)
 
-def _structurer(graph: defaultdict[str, list[str]], relations: Memos_relations) -> None:
+def _structurer(graph: defaultdict[str, list[str]], relations: Memo_relations) -> None:
     for relation in relations.added:
         graph[relation.parent_id].append(relation.child_id)
      

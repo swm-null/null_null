@@ -1,7 +1,7 @@
 from re import Pattern
 from typing import Optional
 from pydantic import BaseModel, Field
-from ai.searching.models.query_type import Query_Type
+from ai.searching._models.query_type import Query_Type
 
 class Arg_post_search(BaseModel):
     user_id: str

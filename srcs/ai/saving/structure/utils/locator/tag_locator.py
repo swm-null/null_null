@@ -1,6 +1,6 @@
 import uuid
-from ai.saving.structure.models import Tag
-from ai.saving.structure.models.directory_relation import Directory_relation
+from ai.saving.structure._models import Tag
+from ai.saving.structure._models.directory_relation import Directory_relation
 from ai.saving.structure.utils.directory_format import get_formatted_directories
 from ai.saving.structure.utils.locator.chains import get_new_relations_and_tags_chain
 from ai.saving.structure.utils.locator.chains.get_new_relations_and_tags_chain import get_new_relations_and_tags_chain, Get_new_relations_and_tags_chain_output

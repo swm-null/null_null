@@ -1,13 +1,13 @@
 from ai.saving.tag_deprecated.models.directory_relation import Directory_relation
-from ai.saving.tag.models import Tag
-from ai.saving.tag.utils.extractor import tag_extractor
+from ai.saving.tag._models import Tag
+from ai.saving.tag.utils.extractor.tag_extractor import extract_tags
 from ai.saving.tag_deprecated.locator import tag_locator
-from ai.saving.tag.utils.selector import tag_selector
+from ai.saving.tag.utils.selector.tag_selector import select_tags
 
 
 def get_tag_single(query: str, user_id: str, lang: str="Korean") -> tuple[list[Tag], list[Tag], list[Directory_relation]]:
-    candidate_tag_list=tag_extractor(query, user_id, lang)
-    selected_tag_list=tag_selector(query, candidate_tag_list, lang)
+    candidate_tag_list=extract_tags(query, user_id, lang)
+    selected_tag_list=select_tags(query, candidate_tag_list, lang)
     
     new_tag_list: list[Tag]=[]
     parent_tags: list[Tag]=[]

@@ -37,9 +37,8 @@ def post_memo_tags(body: Body_post_memo_tags):
 
 @app.post("/memo/tag", response_model=Res_post_memo_tag)
 def post_memo_tag(body: Body_post_memo_tag):
-    return Res_post_memo_tag(tag=asyncio.run(create_tag(body.user_id, body.raw_memo)))
+    return Res_post_memo_tag(tags=asyncio.run(create_tag(body.user_id, body.raw_memo)))
     
-# TODO: add mutex
 @app.post("/memo/structures", response_model=Res_post_memo_structures)
 def post_memo_structures(body: Body_post_memo_structures):
     processed_memos, relations, tags=asyncio.run(process_memos(body.user_id, body.memos))
@@ -47,7 +46,7 @@ def post_memo_structures(body: Body_post_memo_structures):
 
     return Res_post_memo_structures(
         processed_memos=processed_memos,
-        tags_relations=Memos_relations(added=relations, deleted=[]),
+        tags_relations=Memo_relations(added=relations, deleted=[]),
         new_tags=tags,
         new_structure=structure
     )
@@ -64,8 +63,8 @@ from ai.searching_deprecated.tag_finder import find_tag_ids
 from ai.saving import single_processor, batch_processor
 from ai.saving.structurer_deprecated.structurer import memo_structurer, memos_structurer
 from ai.saving.parser import kakao_parser
-from models.memo import *
-from models.memos import *
+from models.memos_deprecated import *
+from models.memo_deprecated import *
 from models.search_deprecated import *
 from models.kakao_parser import *
 
@@ -117,8 +116,8 @@ def post_memo(body: Arg_post_memo):
 @app.post("/kakao-parser", response_model=Res_post_memos, deprecated=True)
 def post_kakao_parser(body: Arg_kakao_parser):
     parsed_memos: list[tuple[str, datetime]]=kakao_parser(body.content, body.type)
-    memos: list[Memos_raw_memo]=[
-        Memos_raw_memo(
+    memos: list[Memo_raw_memo]=[
+        Memo_raw_memo(
             content=content, 
             timestamp=timestamp
         ) for content, timestamp in parsed_memos

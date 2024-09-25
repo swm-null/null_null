@@ -1,5 +1,5 @@
 import logging
-from ai.saving.tag.models import Tag
+from ai.saving.tag._models import Tag
 from ai.saving.tag.utils.selector.chains import tag_selector_chain
 
 
