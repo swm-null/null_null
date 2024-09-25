@@ -1,7 +1,7 @@
 from ai.saving.tag.utils.tag_formatter import format_tags
 from ai.utils.embedder import embedder
 from ai.database.collections.tag_store import TAG_CONTENT_NAME, TAG_ID_NAME, TAG_INDEX_NAME, TAG_UID_NAME, tag_collection
-from ai.saving.tag._models import Tag
+from ai.saving._models import Tag
 
 
 def retrieve_similar_tags(query: str, user_id: str) -> str:
@@ -43,5 +43,6 @@ def _get_similar_tags_from_db(query: str, user_id: str) -> list[Tag]:
         similar_tags.append(Tag(
             id=str(res[TAG_ID_NAME]),
             name=res[TAG_CONTENT_NAME],
+            is_new=False
         ))
     return similar_tags

@@ -1,7 +1,8 @@
 import asyncio
 from typing import Optional
 from models.memo import Memo_memo_and_tags, Memo_processed_memo
-from ai.saving.structure._models import Tag, Memo
+from ai.saving._models import Tag
+from ai.saving.structure._models import Memo
 from ai.saving.structure.utils.memo_and_tags_converter import convert_memos_and_tags
 from ai.saving.structure.utils.locator.tag_locator import locate_tags
 from ai.saving.structure._models.directory_relation import Directory_relation

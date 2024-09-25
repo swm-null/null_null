@@ -1,5 +1,5 @@
 from ai.saving.tag_deprecated.models.directory_relation import Directory_relation
-from ai.saving.tag._models import Tag
+from ai.saving._models import Tag
 from ai.saving.tag.utils.extractor.tag_extractor import extract_tags
 from ai.saving.tag_deprecated.locator import tag_locator
 from ai.saving.tag.utils.selector.tag_selector import select_tags

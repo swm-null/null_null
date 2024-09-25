@@ -3,7 +3,8 @@ from typing import Any, Coroutine
 import uuid
 from models.memo import Memo_raw_memo, Memo_tag_name_and_id
 from ai.saving.tag.utils import extract_tags, select_tags
-from ai.saving.tag._models import Tag
+from ai.saving._models import Tag
+from ai.saving.utils.check_is_new_tag import is_new_tag
 
 
 # TODO: NULL-378
@@ -17,8 +18,8 @@ async def create_tag(user_id: str, raw_memo: Memo_raw_memo, lang: str="Korean") 
 def _assign_tags(selected_tags: list[Tag]) -> list[Memo_tag_name_and_id]:
     return [
         Memo_tag_name_and_id(
-            id=uuid.uuid4().hex if selected_tag.name==selected_tag.id else selected_tag.id,
+            id=uuid.uuid4().hex if is_new_tag(selected_tag) else selected_tag.id,
             name=selected_tag.name,
-            is_new=selected_tag.id==selected_tag.name
+            is_new=is_new_tag(selected_tag)
         ) for selected_tag in selected_tags
     ]
