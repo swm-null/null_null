@@ -64,7 +64,7 @@ from models.memos_deprecated import *
 from models.memo_deprecated import *
 from models.search_deprecated import *
 from models.kakao_parser import *
-from ai.searching_deprecated.query_analyzer import Search_Query_Type
+from ai.searching_deprecated.query_analyzer import Search_query_type
 
 @app.post("/search_deprecated", response_model=Res_search, deprecated=True)
 def search_depreacted(body: Arg_search):
@@ -72,21 +72,21 @@ def search_depreacted(body: Arg_search):
 
     return_content.type=query_analyzer(body.content)
 
-    if return_content.type == Search_Query_Type.unspecified:
+    if return_content.type == Search_query_type.unspecified:
         logging.info("[/search] unspecified query: %s", body.content)
-        return_content.type=Search_Query_Type.similarity
+        return_content.type=Search_query_type.similarity
 
-    if return_content.type == Search_Query_Type.regex:
+    if return_content.type == Search_query_type.regex:
         return_content.regex=get_regex(body.content)
 
-    elif return_content.type == Search_Query_Type.tags:
+    elif return_content.type == Search_query_type.tags:
         return_content.tags=find_tag_ids(body.content)
         # if the tag search result is None
         if return_content.tags == None:
             # then trying similarity search
-            return_content.type=Search_Query_Type.similarity
+            return_content.type=Search_query_type.similarity
         
-    if return_content.type == Search_Query_Type.similarity:
+    if return_content.type == Search_query_type.similarity:
         return_content.processed_message, return_content.ids=similarity_search(body.content)
 
     logging.info("[/search] query: %s / query type: %s \nreturn: %s", body.content, return_content.type, return_content)

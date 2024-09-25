@@ -3,11 +3,11 @@ from langchain_core.output_parsers import PydanticOutputParser
 from pydantic import BaseModel, Field
 from ai.utils.llm import llm4o
 from langchain_core.prompts import PromptTemplate
-from models.search import Search_Query_Type
+from models.search import Search_query_type
 
 
 class _query_analyzer_chain_output(BaseModel):
-    type: Search_Query_Type=Field("type of query")
+    type: Search_query_type=Field("type of query")
 
 _parser = PydanticOutputParser(pydantic_object=_query_analyzer_chain_output)
 
