@@ -12,8 +12,8 @@ from ai.saving.structure import process_memos, get_structure
 
 app = FastAPI(
     title="Oatnote AI",
-    description="after PR #62, https://github.com/swm-null/null_null/pull/62",
-    version="0.2.7",
+    description="after PR #63, https://github.com/swm-null/null_null/pull/62",
+    version="0.2.8",
 )
 init(app)
     
