@@ -7,10 +7,9 @@ from ai.saving._models import Tag
 from ai.saving.utils.check_is_new_tag import is_new_tag
 
 
-# TODO: NULL-378
 async def create_tag(user_id: str, raw_memo: Memo_raw_memo, lang: str="Korean") -> list[Memo_tag_name_and_id]:
-    candidate_tags=extract_tags(raw_memo.content, user_id, lang)
-    selected_tags: list[Tag]=select_tags(raw_memo.content, candidate_tags, lang)
+    candidate_tags: list[Tag]=await extract_tags(raw_memo.content, user_id, lang)
+    selected_tags: list[Tag]=await select_tags(raw_memo.content, candidate_tags, lang)
     assigned_tags: list[Memo_tag_name_and_id]=_assign_tags(selected_tags)
     
     return assigned_tags
