@@ -3,11 +3,11 @@ from typing import Optional
 from models.memo import Memo_memo_and_tags, Memo_processed_memo
 from ai.saving._models import Tag
 from ai.saving.structure._models import Memo
-from ai.saving.structure.utils.memo_and_tags_converter import convert_memos_and_tags
+from ai.saving.structure.utils import convert_tag, convert_relations, convert_memos_and_tags
 from ai.saving.structure.utils.locator.tag_locator import locate_tags
 from ai.saving.structure._models.directory_relation import Directory_relation
-from ai.utils import embedder
 from models.memo import Memo_tag, Memo_tag_relation
+from ai.utils import embedder
 
 
 async def process_memos(user_id: str, memos_and_tags: list[Memo_memo_and_tags], lang: str="Korean") -> tuple[list[Memo_processed_memo], list[Memo_tag_relation], list[Memo_tag]]:
@@ -16,9 +16,9 @@ async def process_memos(user_id: str, memos_and_tags: list[Memo_memo_and_tags], 
     process_memo_tasks=[_process_memo(memo_and_tags) for memo_and_tags in located_memos_and_tags]
     processed_memos=await asyncio.gather(*process_memo_tasks)
     
-    converted_relations=_convert_relations(relations)
+    converted_relations=convert_relations(relations)
     
-    process_tag_tasks=[_convert_tag(tag) for tag in located_tags]
+    process_tag_tasks=[convert_tag(tag) for tag in located_tags]
     converted_tags=await asyncio.gather(*process_tag_tasks)
      
     return processed_memos, converted_relations, converted_tags
@@ -31,22 +31,6 @@ async def _process_memo(memo_and_tags: Memo) -> Memo_processed_memo:
             embedding=await embedder.aembed_query(memo_and_tags.content)
     )
     
-def _convert_relations(relations: list[Directory_relation]) -> list[Memo_tag_relation]:
-    return [
-        Memo_tag_relation(
-            parent_id=relation.parent_id,
-            child_id=relation.child_id
-        ) for relation in relations
-    ]  
-
-async def _convert_tag(tag: Tag) -> Memo_tag:
-    return Memo_tag(
-        name=tag.name,
-        id=tag.id,
-        is_new=tag.is_new,
-        embedding=await embedder.aembed_query(tag.name)
-    )
-
 def _locate_memos(user_id: str, memos_and_tags: list[Memo_memo_and_tags], lang: str) -> tuple[list[Memo], list[Directory_relation], list[Tag]]:
     memos, tags=convert_memos_and_tags(memos_and_tags)
     new_tags: list[Tag]=_get_new_tags(tags)

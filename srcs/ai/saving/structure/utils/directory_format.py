@@ -1,3 +1,4 @@
+from fastapi import HTTPException
 from ai.saving.utils import get_tag_relations_from_db
 from ai.database.collections.tag_store import tag_collection, TAG_UID_NAME, TAG_ID_NAME, TAG_CONTENT_NAME, TAG_ROOT_NAME
 
@@ -5,6 +6,8 @@ from ai.database.collections.tag_store import tag_collection, TAG_UID_NAME, TAG_
 def get_formatted_directories(user_id: str) -> str:
     tag_id_to_name, tag_name_to_id=_get_tags_from_db(user_id)
     graph: dict[str, list[str]]=get_tag_relations_from_db(user_id)
+    if TAG_ROOT_NAME not in tag_name_to_id:
+        raise HTTPException(status_code=500, headers={"/memo/structures": "root tag not found (@)"})
     
     return _format_graph(graph, tag_id_to_name, tag_name_to_id[TAG_ROOT_NAME])
 
