@@ -70,11 +70,11 @@ def _merge_relations_and_new_tags(relations: list[Directory_relation], new_tags:
     ]
     
 def _link_memos_and_tags(memos: dict[int, Memo], tags: list[Tag]) -> list[Memo]:
-    linked_memo_id_to_tags: dict[int, list[Tag]]=dict()
-    
+    linked_memo_id_to_tags: defaultdict[int, list[Tag]]=defaultdict(list[Tag])
+
     for tag in tags:
         if tag.connected_memo_id:
-            linked_memo_id_to_tags.setdefault(tag.connected_memo_id, []).append(tag)
+            linked_memo_id_to_tags[tag.connected_memo_id].append(tag)
     
     linked_memos: list[Memo]=[
         Memo(
