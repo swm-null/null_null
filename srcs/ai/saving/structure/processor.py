@@ -34,16 +34,20 @@ async def _process_memo(memo_and_tags: Memo) -> Memo_processed_memo:
 def _locate_memos(user_id: str, memos_and_tags: list[Memo_memo_and_tags], lang: str) -> tuple[list[Memo], list[Directory_relation], list[Tag]]:
     memos, tags=convert_memos_and_tags(memos_and_tags)
     new_tags: list[Tag]=_get_new_tags(tags)
+    exist_tags: list[Tag]=_get_exist_tags(tags)
     
     relations, located_tags=locate_tags(user_id, new_tags, lang)
     located_and_merged_tags=_merge_located_tags_and_new_tags(located_tags, new_tags)
     merged_relations=_merge_relations_and_new_tags(relations, new_tags)
-    located_memos_and_tags: list[Memo]=_link_memos_and_tags(memos, located_and_merged_tags)
+    located_memos_and_tags: list[Memo]=_link_memos_and_tags(memos, located_and_merged_tags+exist_tags)
     
     return located_memos_and_tags, merged_relations, located_and_merged_tags
         
 def _get_new_tags(tags: list[Tag]) -> list[Tag]:
     return [tag for tag in tags if tag.is_new]
+        
+def _get_exist_tags(tags: list[Tag]) -> list[Tag]:
+    return [tag for tag in tags if not tag.is_new]
 
 def _merge_located_tags_and_new_tags(located_tags: list[Tag], new_tags: list[Tag]) -> list[Tag]:
     tag_name_to_original_tag: dict[str, tuple[str, Optional[int]]]={tag.name: (tag.id, tag.connected_memo_id) for tag in new_tags}
