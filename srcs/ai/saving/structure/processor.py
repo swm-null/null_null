@@ -4,7 +4,7 @@ from typing import Optional
 from models.memo import Memo_memo_and_tags, Memo_processed_memo
 from ai.saving._models import Tag
 from ai.saving.structure._models import Memo
-from ai.saving.structure.utils import convert_tag, convert_relations, convert_memos_and_tags
+from ai.saving.structure.utils import convert_tag, convert_relations, convert_memos_and_tags, extract_and_assign_metadata
 from ai.saving.structure.utils.locator.tag_locator import locate_tags
 from ai.saving.structure._models.directory_relation import Directory_relation
 from models.memo import Memo_tag, Memo_tag_relation
@@ -12,7 +12,9 @@ from ai.utils import embedder
 
 
 async def process_memos(user_id: str, memos_and_tags: list[Memo_memo_and_tags], lang: str="Korean") -> tuple[list[Memo_processed_memo], list[Memo_tag_relation], list[Memo_tag]]:
-    located_memos_and_tags, relations, located_tags=_locate_memos(user_id, memos_and_tags, lang)
+    memos, tags=convert_memos_and_tags(memos_and_tags)
+    memos_with_metadata=await extract_and_assign_metadata(memos, lang)
+    located_memos_and_tags, relations, located_tags=_locate_memos(user_id, memos_with_metadata, tags, lang)
     
     process_memo_tasks=[_process_memo(memo_and_tags) for memo_and_tags in located_memos_and_tags]
     processed_memos=await asyncio.gather(*process_memo_tasks)
@@ -27,28 +29,24 @@ async def process_memos(user_id: str, memos_and_tags: list[Memo_memo_and_tags], 
 async def _process_memo(memo_and_tags: Memo) -> Memo_processed_memo:
     return Memo_processed_memo(
             content=memo_and_tags.content,
+            metadata=str(memo_and_tags.metadata),
             parent_tag_ids=memo_and_tags.parent_tag_ids,
             timestamp=memo_and_tags.timestamp,
             embedding=await embedder.aembed_query(memo_and_tags.content)
     )
     
-def _locate_memos(user_id: str, memos_and_tags: list[Memo_memo_and_tags], lang: str) -> tuple[list[Memo], list[Directory_relation], list[Tag]]:
-    memos, tags=convert_memos_and_tags(memos_and_tags)
-    new_tags: list[Tag]=_get_new_tags(tags)
-    exist_tags: list[Tag]=_get_exist_tags(tags)
+def _locate_memos(user_id: str, memos: dict[int, Memo], tags: list[Tag], lang: str) -> tuple[list[Memo], list[Directory_relation], list[Tag]]:
+    new_tags, exist_tags=_categorize_tags(tags)
     
-    relations, located_tags=locate_tags(user_id, new_tags, lang)
+    relations, located_tags=locate_tags(user_id, new_tags, memos, lang)
     located_and_merged_tags=_merge_located_tags_and_new_tags(located_tags, new_tags)
     merged_relations=_merge_relations_and_new_tags(relations, new_tags)
     located_memos_and_tags: list[Memo]=_link_memos_and_tags(memos, located_and_merged_tags+exist_tags)
     
     return located_memos_and_tags, merged_relations, located_and_merged_tags
         
-def _get_new_tags(tags: list[Tag]) -> list[Tag]:
-    return [tag for tag in tags if tag.is_new]
-        
-def _get_exist_tags(tags: list[Tag]) -> list[Tag]:
-    return [tag for tag in tags if not tag.is_new]
+def _categorize_tags(tags: list[Tag]) -> tuple[list[Tag], list[Tag]]:
+    return [tag for tag in tags if tag.is_new], [tag for tag in tags if not tag.is_new]
 
 def _merge_located_tags_and_new_tags(located_tags: list[Tag], new_tags: list[Tag]) -> list[Tag]:
     tag_name_to_original_tag: dict[str, tuple[str, Optional[int]]]={tag.name: (tag.id, tag.connected_memo_id) for tag in new_tags}
@@ -84,6 +82,7 @@ def _link_memos_and_tags(memos: dict[int, Memo], tags: list[Tag]) -> list[Memo]:
     linked_memos: list[Memo]=[
         Memo(
             content=memo.content,
+            metadata=memo.metadata,
             parent_tag_ids=[tag.id for tag in linked_memo_id_to_tags[memo_id]],
             timestamp=memo.timestamp
         ) for memo_id, memo in memos.items()
