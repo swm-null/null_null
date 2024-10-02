@@ -16,11 +16,11 @@ _new_chain_prompt=PromptTemplate.from_template(
     But I don't want the category to be so broad that it could contain too many documents.
 
     I'm attaching a document for you.
-    Create the category in the given language.
+    Create the category in the user's language.
     Categories can be one or two words.
     The document is given between ᝃ. Sometimes it can be empty.
     
-    Language: {lang}
+    User's language: {lang}
     Document: ᝃ{query}ᝃ
 
     {format}
