@@ -26,6 +26,7 @@ _get_new_relations_and_tags_chain_prompt=PromptTemplate.from_template(
     The directory with the name '@' is the root.
     A string next to the name is the directory's id.
     When the number of '-'s increases, it means you're inside that directory.
+    Write the directory's name in the user's language.
 
     Language: {lang}
     New directories: {tags}
