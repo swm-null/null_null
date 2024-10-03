@@ -13,33 +13,31 @@ class Get_new_relations_and_tags_chain_output(BaseModel):
 _parser = PydanticOutputParser(pydantic_object=Get_new_relations_and_tags_chain_output)
 
 _get_new_relations_and_tags_chain_prompt=PromptTemplate.from_template(
-    """
-    You're an expert at categorizing files.
-    Given a new directory, your job is to determine how it should be organized.
-    Choose a directory based on how normal people organize their notes.
-    You can use the directory's metadata to categorize it correctly.
-    
-    In addition to putting new directories into existing directories, you can also create new directories of your own.
-    For example, if you have an existing directory called 'plants' and you need to organize the directory 'apples', you can create a new relationship 'plants'-'apples', but also create a new directory called 'fruits', such as 'plants'-'fruits', 'fruits'-'apples', etc.
+"""
+You're an expert at categorizing files.
+Given a new directory, your job is to determine how it should be organized.
+Choose a directory based on how normal people organize their notes.
+You can use the directory's metadata to categorize it correctly.
 
-    I'm attaching the existing directory structure.
-    The directory with the name '@' is the root.
-    A string next to the name is the directory's id.
-    When the number of '-'s increases, it means you're inside that directory.
-    Write the directory's name in the user's language.
+In addition to putting new directories into existing directories, you can also create new directories of your own.
+For example, if you have an existing directory called 'plants' and you need to organize the directory 'apples', you can create a new relationship 'plants'-'apples', but also create a new directory called 'fruits', such as 'plants'-'fruits', 'fruits'-'apples', etc.
 
-    Language: {lang}
-    New directories: {tags}
-    Metadatas: {metadatas}
-    
-    Current directories: [
-    {directories}
-    ]
+I'm attaching the existing directory structure.
+The directory with the name '@' is the root.
+A string next to the name is the directory's id.
+When the number of '-'s increases, it means you're inside that directory.
+Write the directory's name in the user's language.
 
-    {format}
-    
-    When you create a new directory on your own, put the name of the directory in the ID of the new directory and is_new to True.
-    """,
+Language: {lang}
+New directories: {tags}
+Metadatas: {metadatas}
+
+Current directories: [
+{directories}
+]
+
+{format}
+""",
     partial_variables={
         "format": _parser.get_format_instructions()
     }
