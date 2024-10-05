@@ -27,12 +27,18 @@ async def process_memos(user_id: str, memos_and_tags: list[Memo_memo_and_tags], 
     return processed_memos, converted_relations, converted_tags
 
 async def _process_memo(memo_and_tags: Memo) -> Memo_processed_memo:
+    embedding_content_task=embedder.aembed_query(memo_and_tags.content)
+    embedding_metadata_task=embedder.aembed_query(memo_and_tags.metadata)
+    
+    embedded_content, embedded_metadata=await asyncio.gather(embedding_content_task, embedding_metadata_task)  
+    
     return Memo_processed_memo(
             content=memo_and_tags.content,
             metadata=str(memo_and_tags.metadata),
             parent_tag_ids=memo_and_tags.parent_tag_ids,
             timestamp=memo_and_tags.timestamp,
-            embedding=await embedder.aembed_query(memo_and_tags.content)
+            embedding=embedded_content if memo_and_tags.content!="" else [],
+            embedding_metadata=embedded_metadata if memo_and_tags.metadata!="" else []
     )
     
 def _locate_memos(user_id: str, memos: dict[int, Memo], tags: list[Tag], lang: str) -> tuple[list[Memo], list[Directory_relation], list[Tag]]:

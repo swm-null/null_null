@@ -5,6 +5,6 @@ from pydantic import BaseModel
 
 class Memo(BaseModel):
     content: str
-    metadata: Optional[str]=None
+    metadata: str=""
     parent_tag_ids: list[str]=[]
     timestamp: datetime
