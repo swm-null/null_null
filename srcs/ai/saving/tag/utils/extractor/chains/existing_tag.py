@@ -14,22 +14,22 @@ class _existing_tag_output(BaseModel):
 _parser = PydanticOutputParser(pydantic_object=_existing_tag_output)
 
 _existing_chain_prompt=PromptTemplate.from_template(
-    """
-    You're an expert at categorizing documents.
-    Given a document, you choose the best categorization you think fits.
-    Choose based on how the average person categorizes notes.
-    You might not choose one if you don't think it's a good fit, or you might choose multiple if you think there are several that are very good fits.
-    If such a category does not exist, you don't have to select it.
-    
-    I've attached the document and the categorizations for you.
-    The document is given between ᝃ. Sometimes it can be empty.
+"""
+You're an expert at categorizing documents.
+Given a document, you choose the best categorization you think fits.
+Choose based on how the average person categorizes notes.
+You might not choose one if you don't think it's a good fit, or you might choose multiple if you think there are several that are very good fits.
+If such a category does not exist, you don't have to select it.
 
-    Language: {lang}
-    Document: ᝃ{query}ᝃ
-    List of categories: [{tag_list}]
+I've attached the document and the categorizations for you.
+The document is given between ᝃ. Sometimes it can be empty.
 
-    {format}
-    """,
+Language: {lang}
+Document: ᝃ{query}ᝃ
+List of categories: [{tag_list}]
+
+{format}
+""",
     partial_variables={
         "format": _parser.get_format_instructions()
     }
