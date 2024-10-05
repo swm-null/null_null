@@ -4,6 +4,7 @@ from ai.searching.utils import generate_similarity_result, retrieve_similar_memo
 from ai.searching._models import Memo
 from models.search import Search_query_type
 
+
 def search_memo(query: str, user_id: str, lang: str="Korean") -> Res_post_search:
     query_Type: Search_query_type=query_analyzer(query, lang)
     
