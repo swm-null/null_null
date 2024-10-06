@@ -15,8 +15,8 @@ async def create_tag(user_id: str, raw_memo: Memo_raw_memo, lang: str="Korean") 
     return assigned_tags
 
 async def _convert_image_to_content(raw_memo: Memo_raw_memo) -> str:    
-    image_to_texts_tasks=[asyncio.to_thread(image_to_text, image) for image in raw_memo.image_urls]
-    image_to_texts: list[str]=await asyncio.gather(*image_to_texts_tasks)
+    image_to_text_tasks=[asyncio.to_thread(image_to_text, image) for image in raw_memo.image_urls]
+    image_to_texts: list[str]=await asyncio.gather(*image_to_text_tasks)
     
     return "\n".join(image_to_texts)
 
