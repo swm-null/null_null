@@ -14,10 +14,10 @@ def locate_tags(user_id: str, tags: list[Tag], memos: dict[int, Memo], lang: str
     return new_dir_relations, new_tags
 
 def _format_tags(tags: list[Tag]) -> str:
-    return ", ".join(f"{tag.name} for id {tag.connected_memo_id}" for tag in tags)
+    return ", ".join(f"{tag.name} for memo {tag.connected_memo_id}" for tag in tags)
 
 def _format_metadatas(memos: dict[int, Memo]) -> str:
-    return ", ".join(f"id: {id}, metadata: {memo.metadata}" for id, memo in memos.items())
+    return "".join(f"\nmemo {id}: {memo.metadata}" for id, memo in memos.items())
     
 def _get_new_relations_and_tags(tags: list[Tag], memos: dict[int, Memo], lang:str, directories: str) -> tuple[list[Directory_relation], list[Tag]]:
     chain_result: Get_new_relations_and_tags_chain_output=get_new_relations_and_tags_chain.invoke({"tags": _format_tags(tags), "metadatas": _format_metadatas(memos), "lang": lang, "directories": directories})
