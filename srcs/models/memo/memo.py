@@ -15,6 +15,7 @@ class Memo_processed_memo(BaseModel):
     metadata: str
     parent_tag_ids: list[str]=Field(description="relations between leaf tags and this memo")
     embedding: list[float]
+    embedding_metadata: list[float]=[]
     
 class Memo_tag_name_and_id(BaseModel):
     id: str

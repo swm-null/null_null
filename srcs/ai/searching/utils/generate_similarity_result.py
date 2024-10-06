@@ -15,7 +15,8 @@ def generate_similarity_result(query: str, memos: list[Memo], lang: str="Korean"
 def _format_memos(memos: list[Memo]) -> str:
     return "\n".join(f"""
             ID: {memo.id}, {memo.timestamp}\n
-            {memo.content}\n
+            Metadata: {memo.metadata}\n\n
+            Content: {memo.content}\n
         """ for memo in memos
     )
 
