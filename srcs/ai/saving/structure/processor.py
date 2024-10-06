@@ -29,6 +29,7 @@ async def process_memos(user_id: str, memos_and_tags: list[Memo_memo_and_tags], 
 async def _process_memo(memo_and_tags: Memo) -> Memo_processed_memo:
     return Memo_processed_memo(
             content=memo_and_tags.content,
+            image_urls=memo_and_tags.image_urls,
             metadata=str(memo_and_tags.metadata),
             parent_tag_ids=memo_and_tags.parent_tag_ids,
             timestamp=memo_and_tags.timestamp,
@@ -82,6 +83,7 @@ def _link_memos_and_tags(memos: dict[int, Memo], tags: list[Tag]) -> list[Memo]:
     linked_memos: list[Memo]=[
         Memo(
             content=memo.content,
+            image_urls=memo.image_urls,
             metadata=memo.metadata,
             parent_tag_ids=[tag.id for tag in linked_memo_id_to_tags[memo_id]],
             timestamp=memo.timestamp

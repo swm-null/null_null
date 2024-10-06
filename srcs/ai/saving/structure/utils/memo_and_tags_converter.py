@@ -10,7 +10,7 @@ def convert_memos_and_tags(memos_and_tags: list[Memo_memo_and_tags]) -> tuple[di
     
     memo_id: int=1
     for memo_and_tags in memos_and_tags:
-        memos[memo_id]=Memo(content=memo_and_tags.content, timestamp=datetime.now())
+        memos[memo_id]=Memo(content=memo_and_tags.content, image_urls=memo_and_tags.image_urls, timestamp=datetime.now())
         for tag in memo_and_tags.tags:
             tags.append(Tag(
                 id=tag.id,
