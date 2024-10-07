@@ -21,6 +21,7 @@ You can use the directory's metadata to categorize it correctly.
 
 In addition to putting new directories into existing directories, you can also create new directories of your own.
 For example, if you have an existing directory called 'plants' and you need to organize the directory 'apples', you can create a new relationship 'plants'-'apples', but also create a new directory called 'fruits', such as 'plants'-'fruits', 'fruits'-'apples', etc.
+However, do not create a new tag with the same name as an existing tag.
 If you created a new directory, make sure the name and ID of that directory are exactly the same.
 
 I'm attaching the existing directory structure.
