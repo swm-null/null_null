@@ -20,6 +20,7 @@ def _get_similar_tags_from_db(query: str, user_id: str) -> list[Tag]:
                 'queryVector': embedder.embed_query(query),
                 'numCandidates': 1000,
                 'limit': 30,
+                'filter': { TAG_UID_NAME: user_id }
             }
         },
         {
@@ -29,12 +30,6 @@ def _get_similar_tags_from_db(query: str, user_id: str) -> list[Tag]:
                 TAG_CONTENT_NAME: 1,
             }
         },
-        {
-            "$match":
-            {
-                "$expr": { TAG_UID_NAME: user_id}
-            }
-        }
     ])
 
     similar_tags: list[Tag]=[]

@@ -20,6 +20,7 @@ def _get_memos_from_db_using_content(query: str, user_id: str) -> set[Memo]:
                 'queryVector': embedder.embed_query(query),
                 'numCandidates': 1000,
                 'limit': 15,
+                'filter': { MEMO_UID_NAME: user_id }
             }
         },
         {
@@ -29,12 +30,6 @@ def _get_memos_from_db_using_content(query: str, user_id: str) -> set[Memo]:
                 MEMO_CONTENT_NAME: 1,
                 MEMO_UTIME_NAME: 1,
                 MEMO_METADATA_NAME: 1,
-            }
-        },
-        {
-            "$match":
-            {
-                "$expr": { MEMO_UID_NAME: user_id }
             }
         }
     ])
@@ -58,6 +53,7 @@ def _get_memos_from_db_using_metadata(query: str, user_id: str) -> set[Memo]:
                 'queryVector': embedder.embed_query(query),
                 'numCandidates': 1000,
                 'limit': 15,
+                'filter': { MEMO_UID_NAME: user_id }
             }
         },
         {
@@ -67,12 +63,6 @@ def _get_memos_from_db_using_metadata(query: str, user_id: str) -> set[Memo]:
                 MEMO_CONTENT_NAME: 1,
                 MEMO_UTIME_NAME: 1,
                 MEMO_METADATA_NAME: 1,
-            }
-        },
-        {
-            "$match":
-            {
-                "$expr": { MEMO_UID_NAME: user_id }
             }
         }
     ])
