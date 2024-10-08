@@ -20,6 +20,7 @@ You're an expert at categorizing documents.
 Given a document and a set of categories, you choose which category this document can belong to.
 Pick up to '{selection_count}' of the most relevant categories that this article could belong to.
 You don't have to select all {selection_count} categories if you think they are less relevant.
+Dismiss new tags that is very similar to existing tag like "짧은 질문" and "짧은질문".
 
 I'll attach the document and the categories for you.
 The document is given between ᝃ. Sometimes it can be empty.
