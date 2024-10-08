@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from enum import Enum
 
 class kakao_parser_type(Enum):
@@ -8,4 +8,4 @@ class kakao_parser_type(Enum):
 class Body_post_kakao_parser(BaseModel):
     user_id: str
     type: kakao_parser_type
-    content: str
+    content: str=Field(description="url of content")
