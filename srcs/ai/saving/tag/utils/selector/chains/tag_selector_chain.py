@@ -2,15 +2,14 @@ from operator import itemgetter
 from langchain_core.runnables import RunnableLambda
 from langchain_core.output_parsers import PydanticOutputParser
 from pydantic import BaseModel, Field
-from ai.saving._models import Tag
-from ai.saving.tag.utils.tag_formatter import format_tags
 from ai.utils.llm import llm4o
 from langchain_core.prompts import PromptTemplate
 from ai.saving.tag._configs import TAG_SELECTION_COUNT
+from ai.saving.tag.utils.selector.chains.utils.tag_formater_with_is_new import format_tags_with_is_new
 
 
 class _selected_tag_output(BaseModel):
-    tag_list: list[Tag] = Field(description="list of tags")
+    tag_names: list[str] = Field(description="selected tag names")
 
 _parser = PydanticOutputParser(pydantic_object=_selected_tag_output)
 
@@ -27,7 +26,7 @@ The document is given between ᝃ. Sometimes it can be empty.
 
 Language: {lang}
 Document: ᝃ{query}ᝃ
-List of categories: [{tag_list}]
+List of categories: [{tags}]
 
 {format}
 """,
@@ -40,7 +39,7 @@ List of categories: [{tag_list}]
 tag_selector_chain=(
     {
         "query": itemgetter("query"),
-        "tag_list": itemgetter("tag_list") | RunnableLambda(format_tags),
+        "tags": itemgetter("tags") | RunnableLambda(format_tags_with_is_new),
         "lang": itemgetter("lang"),
     }
     | _tag_selector_chain_prompt
