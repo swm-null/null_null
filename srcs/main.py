@@ -9,6 +9,7 @@ from ai.utils import embedder
 from ai.searching import search_memo
 from ai.saving.tag import create_tag, create_tags
 from ai.saving.structure import process_memos, get_structure
+from ai.saving.parser import kakao_parser
 
 app = FastAPI(
     title="Oatnote AI",
@@ -59,6 +60,29 @@ def validate_ids(relations: list[Memo_tag_relation], tags: list[Memo_tag]):
     for tag in tags:
         if len(tag.id) != 32:
             raise HTTPException(500)
+        
+@app.post("/kakao-parser", response_model=Res_post_memo_structures)
+def post_kakao_parser(body: Body_post_kakao_parser):
+    parsed_contents: list[tuple[str, datetime]]=kakao_parser(content=body.content, type=body.type)
+    raw_memos: list[Memo_raw_memo]=[
+        Memo_raw_memo(content=content, timestamp=timestamp)
+        for content, timestamp in parsed_contents
+    ]
+    tag_results: list[list[Memo_tag_name_and_id]]=Res_post_memo_tags(tags=asyncio.run(create_tags(body.user_id, raw_memos))).tags
+    
+    return post_memo_structures(
+        Body_post_memo_structures(
+            user_id=body.user_id,
+            memos=[
+                Memo_memo_and_tags(
+                    content=memo.content,
+                    timestamp=memo.timestamp,
+                    tags=tags
+                )
+                for memo, tags in zip(raw_memos, tag_results)
+            ]
+        )
+    )
 
 if __name__ == '__main__':
     uvicorn.run(app)
