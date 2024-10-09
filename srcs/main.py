@@ -9,6 +9,7 @@ from ai.utils import embedder
 from ai.searching import search_memo
 from ai.saving.tag import create_tag, create_tags
 from ai.saving.structure import process_memos, get_structure
+from ai.saving.utils import extract_metadata
 
 app = FastAPI(
     title="Oatnote AI",
@@ -28,6 +29,10 @@ def post_search(body: Arg_post_search):
 @app.post("/get-embedding", response_model=Res_get_embedding)
 def get_embedding(body: Arg_get_embedding):
     return Res_get_embedding(embedding=embedder.embed_query(body.content))
+
+@app.post("/get-metadata", response_model=Res_get_metadata)
+def post_get_metadata(body: Body_get_metadata):
+    return extract_metadata(body.content)
 
 @app.post("/memo/tags", response_model=Res_post_memo_tags)
 def post_memo_tags(body: Body_post_memo_tags):
