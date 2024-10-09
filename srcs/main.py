@@ -1,7 +1,6 @@
 import asyncio
-from fastapi import FastAPI, status
+from fastapi import FastAPI
 import uvicorn
-import logging
 
 from init import init
 from models import *
@@ -33,6 +32,15 @@ def get_embedding(body: Arg_get_embedding):
 @app.post("/get-metadata", response_model=Res_get_metadata)
 def post_get_metadata(body: Body_get_metadata):
     return extract_metadata(body.content)
+
+@app.post("/get-metadata-with-embedding", response_model=Res_get_metadata_with_embedding)
+def post_get_meta_data_with_embedding(body: Body_get_metadata_with_embedding):
+    metadata=extract_metadata(body.content).metadata
+    
+    return Res_get_metadata_with_embedding(
+        metadata=metadata,
+        embedding=embedder.embed_query(body.content)
+    )
 
 @app.post("/memo/tags", response_model=Res_post_memo_tags)
 def post_memo_tags(body: Body_post_memo_tags):
