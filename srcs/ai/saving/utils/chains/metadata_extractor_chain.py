@@ -5,10 +5,10 @@ from ai.utils.llm import llm4o
 from langchain_core.prompts import PromptTemplate
 
 
-class metadata_extractor_chain_output(BaseModel):
+class Metadata_extractor_chain_output(BaseModel):
     metadata: str=Field(description="metadata of memo")
 
-_parser = PydanticOutputParser(pydantic_object=metadata_extractor_chain_output)
+_parser = PydanticOutputParser(pydantic_object=Metadata_extractor_chain_output)
 
 _metadata_extractor_chain_prompt=PromptTemplate.from_template(
 """
