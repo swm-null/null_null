@@ -1,7 +1,6 @@
 import asyncio
-from fastapi import FastAPI, status
+from fastapi import FastAPI
 import uvicorn
-import logging
 
 from init import init
 from models import *
@@ -9,12 +8,13 @@ from ai.utils import embedder
 from ai.searching import search_memo
 from ai.saving.tag import create_tag, create_tags
 from ai.saving.structure import process_memos, get_structure
+from ai.saving.utils import extract_metadata
 from ai.saving.parser import kakao_parser
 
 app = FastAPI(
     title="Oatnote AI",
-    description="after PR #75, https://github.com/swm-null/null_null/pull/75",
-    version="0.2.24",
+    description="after PR #77, https://github.com/swm-null/null_null/pull/77",
+    version="0.2.27",
 )
 init(app)
     
@@ -29,6 +29,19 @@ def post_search(body: Arg_post_search):
 @app.post("/get-embedding", response_model=Res_get_embedding)
 def get_embedding(body: Arg_get_embedding):
     return Res_get_embedding(embedding=embedder.embed_query(body.content))
+
+@app.post("/get-metadata", response_model=Res_get_metadata)
+def post_get_metadata(body: Body_get_metadata):
+    return extract_metadata(body.content)
+
+@app.post("/get-metadata-with-embedding", response_model=Res_get_metadata_with_embedding)
+def post_get_meta_data_with_embedding(body: Body_get_metadata_with_embedding):
+    metadata=extract_metadata(body.content).metadata
+    
+    return Res_get_metadata_with_embedding(
+        metadata=metadata,
+        embedding_metadata=embedder.embed_query(body.content)
+    )
 
 @app.post("/memo/tags", response_model=Res_post_memo_tags)
 def post_memo_tags(body: Body_post_memo_tags):
