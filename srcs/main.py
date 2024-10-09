@@ -39,7 +39,7 @@ def post_get_meta_data_with_embedding(body: Body_get_metadata_with_embedding):
     
     return Res_get_metadata_with_embedding(
         metadata=metadata,
-        embedding=embedder.embed_query(body.content)
+        embedding_metadata=embedder.embed_query(body.content)
     )
 
 @app.post("/memo/tags", response_model=Res_post_memo_tags)

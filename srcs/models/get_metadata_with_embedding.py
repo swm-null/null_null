@@ -6,4 +6,4 @@ class Body_get_metadata_with_embedding(BaseModel):
 
 class Res_get_metadata_with_embedding(BaseModel):
     metadata: str
-    embedding: list[float]
+    embedding_metadata: list[float]
