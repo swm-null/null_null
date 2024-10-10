@@ -1,5 +1,6 @@
 from pydantic import BaseModel
 
+
 class Arg_get_embedding(BaseModel):
     content: str
 

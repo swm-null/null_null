@@ -23,7 +23,7 @@ def _get_tags_from_db(user_id: str) -> tuple[dict[str, str], dict[str, str]]:
     return id_to_name, name_to_id
     
 def _format_graph(graph: dict[str, list[str]], tag_id_to_name: dict[str, str], now_id: str, depth: int=1) -> str:
-    result: str=f'{tag_id_to_name[now_id]} ({now_id})\n'
+    result: str=f'{tag_id_to_name[now_id]}\n'
     next_ids: list[str]=_get_next_ids_from_graph(graph, now_id)
     
     for next_id in next_ids:
