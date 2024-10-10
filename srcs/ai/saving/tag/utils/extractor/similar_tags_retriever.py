@@ -1,13 +1,12 @@
-from ai.saving.tag.utils.tag_formatter import format_tags
 from ai.utils.embedder import embedder
 from ai.database.collections.tag_store import TAG_CONTENT_NAME, TAG_ID_NAME, TAG_INDEX_NAME, TAG_UID_NAME, tag_collection
 from ai.saving._models import Tag
 
 
-def retrieve_similar_tags(query: str, user_id: str) -> str:
+def retrieve_similar_tags(query: str, user_id: str) -> list[Tag]:
     tag_list: list[Tag]=_get_similar_tags_from_db(query, user_id)
-    formatted_tag_list=format_tags(tag_list)
-    return formatted_tag_list
+    
+    return tag_list
 
 def _get_similar_tags_from_db(query: str, user_id: str) -> list[Tag]: 
     raw_tags=tag_collection.find({TAG_UID_NAME: user_id})

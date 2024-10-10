@@ -9,7 +9,7 @@ from langchain_core.prompts import PromptTemplate
 
 
 class _existing_tag_output(BaseModel):
-    tag_list: list[Tag]=Field(description="list of tags")
+    tag_list: list[str]=Field(description="list of tag names")
 
 _parser = PydanticOutputParser(pydantic_object=_existing_tag_output)
 
@@ -26,7 +26,7 @@ The document is given between ᝃ. Sometimes it can be empty.
 
 Language: {lang}
 Document: ᝃ{query}ᝃ
-List of categories: [{tag_list}]
+List of categories: [{tag_names}]
 
 {format}
 """,
@@ -39,7 +39,7 @@ existing_tag_chain=(
     {
         "query": itemgetter("query"),
         "lang": itemgetter("lang"),
-        "tag_list": itemgetter("query", "user_id") | RunnableLambda(lambda args: retrieve_similar_tags(args[0], args[1])), # type: ignore
+        "tag_names": itemgetter("tag_names")
     }
     | _existing_chain_prompt
     | llm4o
