@@ -10,6 +10,7 @@ def retrieve_similar_memos_from_db(query: str, user_id: str) -> list[Memo]:
     return list(memos)
     
     
+# TODO: async query vector
 def _get_memos_from_db_using_content(query: str, user_id: str) -> set[Memo]:
     raw_memos=memo_collection.aggregate([
         {

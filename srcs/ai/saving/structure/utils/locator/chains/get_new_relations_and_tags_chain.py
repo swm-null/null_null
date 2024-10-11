@@ -10,7 +10,7 @@ class Relation_for_chain(BaseModel):
 
 class Get_new_relations_and_tags_chain_output(BaseModel):
     relations: list[Relation_for_chain]=Field(description="relations of new directory")
-    new_directories: list[str]=Field(description="name of given directories or a newly created directory")
+    new_directories: list[str]=Field(description="name of given directories and a newly created directory by you")
 
 _parser = PydanticOutputParser(pydantic_object=Get_new_relations_and_tags_chain_output)
 
