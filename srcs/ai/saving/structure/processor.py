@@ -17,12 +17,13 @@ async def process_memos(user_id: str, memos_and_tags: list[Memo_memo_and_tags], 
     located_memos_and_tags, relations, located_tags=_locate_memos(user_id, memos_with_metadata, tags, lang)
     
     process_memo_tasks=[_process_memo(memo_and_tags) for memo_and_tags in located_memos_and_tags]
-    processed_memos=await asyncio.gather(*process_memo_tasks)
-    
-    converted_relations=convert_relations(relations)
-    
     process_tag_tasks=[convert_tag(tag) for tag in located_tags]
-    converted_tags=await asyncio.gather(*process_tag_tasks)
+    
+    processed_memos, converted_relations, converted_tags = await asyncio.gather(
+        asyncio.gather(*process_memo_tasks),
+        asyncio.to_thread(convert_relations, relations),
+        asyncio.gather(*process_tag_tasks)
+    )
      
     return processed_memos, converted_relations, converted_tags
 
