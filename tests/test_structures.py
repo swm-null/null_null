@@ -64,7 +64,7 @@ async def send_request_and_validate():
     for memo in res_model.processed_memos:
         assert "link description" in memo.metadata
         assert "image description" in memo.metadata    
-        assert memo.parent_tag_ids    
+        assert memo.parent_tag_ids   
         assert memo.metadata
         if memo.content:
             assert memo.embedding
@@ -72,8 +72,10 @@ async def send_request_and_validate():
     # tags_relations 
     for relation in res_model.tags_relations.added:
         assert len(relation.parent_id)==UUID_LENGTH
+        assert len(relation.child_id)==UUID_LENGTH
     for relation in res_model.tags_relations.deleted:
         assert len(relation.parent_id)==UUID_LENGTH
+        assert len(relation.child_id)==UUID_LENGTH
         
     # new_tags
     for tag in res_model.new_tags:
