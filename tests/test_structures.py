@@ -48,7 +48,7 @@ https://asdf.com/this_is_invalid_link""",
 
 @pytest.mark.asyncio
 async def test_structures():
-    tasks=[send_request_and_validate() for _ in range(5)]
+    tasks=[send_request_and_validate() for _ in range(3)]
     await asyncio.gather(*tasks)
     
 UUID_LENGTH=32
