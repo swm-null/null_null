@@ -24,7 +24,9 @@ T 멤버십 VIP 혜택
 
 https://www.tworld.co.kr/web/product/callplan/NA00008719
 https://asdf.com/this_is_invalid_link""",
-            "images": [],
+            "images": [
+                "https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png"
+            ],
             "timestamp": "2024-10-05T16:21:27.136Z"
         }
     ]
