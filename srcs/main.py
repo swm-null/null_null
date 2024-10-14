@@ -14,8 +14,8 @@ from ai.saving.parser import kakao_parser
 
 app = FastAPI(
     title="Oatnote AI",
-    description="after PR #79, https://github.com/swm-null/null_null/pull/79",
-    version="0.2.29",
+    description="after PR #80, https://github.com/swm-null/null_null/pull/78",
+    version="0.2.30",
 )
 init(app)
     
@@ -36,8 +36,8 @@ def post_get_metadata(body: Body_get_metadata):
     return extract_metadata(body.content)
 
 @app.post("/get-metadata-with-embedding", response_model=Res_get_metadata_with_embedding)
-def post_get_meta_data_with_embedding(body: Body_get_metadata_with_embedding):
-    metadata=extract_metadata(body.content).metadata
+def post_get_metadata_with_embedding(body: Body_get_metadata_with_embedding):
+    metadata=extract_metadata(body.content)
     
     return Res_get_metadata_with_embedding(
         metadata=metadata,

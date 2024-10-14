@@ -17,6 +17,8 @@ langchain = "^0.3.3"
 langchain-mongodb = "^0.2.0"
 langchain-openai = "^0.2.2"
 langchain-community = "^0.3.2"
+aiohttp = "^3.10.10"
+trafilatura = "^1.12.2"
 
 
 [build-system]

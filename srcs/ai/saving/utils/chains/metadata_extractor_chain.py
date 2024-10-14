@@ -1,14 +1,10 @@
 from operator import itemgetter
-from langchain_core.output_parsers import PydanticOutputParser
-from pydantic import BaseModel, Field
+from langchain_core.output_parsers import StrOutputParser
 from ai.utils.llm import llm4o
 from langchain_core.prompts import PromptTemplate
 
 
-class Metadata_extractor_chain_output(BaseModel):
-    metadata: str=Field(description="metadata of memo")
-
-_parser = PydanticOutputParser(pydantic_object=Metadata_extractor_chain_output)
+_parser = StrOutputParser()
 
 _metadata_extractor_chain_prompt=PromptTemplate.from_template(
 """
@@ -22,12 +18,7 @@ If the note is about a series of addresses, we don't know where, but we can add 
 
 User's language: {lang}              
 Memo's content: {content}
-
-{format}
-""",
-    partial_variables={
-        "format": _parser.get_format_instructions()
-    }
+"""
 )
 
 metadata_extractor_chain=(
