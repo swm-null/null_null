@@ -35,8 +35,8 @@ def post_get_metadata(body: Body_get_metadata):
     return extract_metadata(body.content)
 
 @app.post("/get-metadata-with-embedding", response_model=Res_get_metadata_with_embedding)
-def post_get_meta_data_with_embedding(body: Body_get_metadata_with_embedding):
-    metadata=extract_metadata(body.content).metadata
+def post_get_metadata_with_embedding(body: Body_get_metadata_with_embedding):
+    metadata=extract_metadata(body.content)
     
     return Res_get_metadata_with_embedding(
         metadata=metadata,
