@@ -6,13 +6,14 @@ from ai.utils.llm import llm4o
 from langchain_core.prompts import PromptTemplate
 
 
-class _generate_similarity_result_chain_output(BaseModel):
+class Similarity_result_with_memo_chain_output(BaseModel):
+    answerable: bool
     answer: str=Field(description="answer to the user's question")
     used_memo_ids: list[str]=Field(description="used memo ids")
 
-_parser = PydanticOutputParser(pydantic_object=_generate_similarity_result_chain_output)
+_parser = PydanticOutputParser(pydantic_object=Similarity_result_with_memo_chain_output)
 
-_generate_similarity_result_chain_prompt=PromptTemplate.from_template(
+_similarity_result_with_memo_chain_prompt=PromptTemplate.from_template(
 """
 You need to answer user questions.
 Answer in the user's language.
@@ -22,16 +23,16 @@ If a user asks a time-related question, consider the current time and the time t
 
 1. Determine if you can answer the user's question with the information provided.
 
-2-1. If you can, create an answer to the user's question using the information provided and end this prompt. 
-2-2. If you can't, print that you can't answer the user's question with the given notes. Then use the Internet to create and print an answer to the question and end this prompt.
+2-1. If you can, set the field answerable True and create an answer to the user's question using the information provided and end this prompt. 
+2-2. If you can't, set the field answerable False and exit.
 
-Language: {lang}
+Language: {language}
 Current time: {current_time}
-The user's question: {query}
+The user's question: {question}
 
 Notes
 [
-{context}    
+{memo_context}    
 ]
 
 {format}
@@ -43,13 +44,13 @@ If you use a memo to answer, write the ID of the memo in used_memo_ids.
     }
 )
 
-generate_similarity_result_chain=(
+similarity_result_with_memo_chain=(
     {
-        "query": itemgetter("query"),
-        "context": itemgetter("context"),
-        "lang": itemgetter("lang"),
+        "question": itemgetter("question"),
+        "memo_context": itemgetter("memo_context"),
+        "language": itemgetter("language"),
     }
-    | _generate_similarity_result_chain_prompt
+    | _similarity_result_with_memo_chain_prompt
     | llm4o
     | _parser
 )
