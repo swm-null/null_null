@@ -14,8 +14,8 @@ from ai.saving.parser import kakao_parser
 
 app = FastAPI(
     title="Oatnote AI",
-    description="after PR #80, https://github.com/swm-null/null_null/pull/78",
-    version="0.2.30",
+    description="after PR #81, https://github.com/swm-null/null_null/pull/81",
+    version="0.2.31",
 )
 init(app)
     
@@ -45,16 +45,16 @@ def post_get_metadata_with_embedding(body: Body_get_metadata_with_embedding):
     )
 
 @app.post("/memo/tags", response_model=Res_post_memo_tags)
-def post_memo_tags(body: Body_post_memo_tags):
-    return Res_post_memo_tags(tags=asyncio.run(create_tags(body.user_id, body.raw_memos)))
+async def post_memo_tags(body: Body_post_memo_tags):
+    return Res_post_memo_tags(tags=await create_tags(body.user_id, body.raw_memos))
 
 @app.post("/memo/tag", response_model=Res_post_memo_tag)
-def post_memo_tag(body: Body_post_memo_tag):
-    return Res_post_memo_tag(tags=asyncio.run(create_tag(body.user_id, body.raw_memo)))
+async def post_memo_tag(body: Body_post_memo_tag):
+    return Res_post_memo_tag(tags=await create_tag(body.user_id, body.raw_memo))
 
 @app.post("/memo/structures", response_model=Res_post_memo_structures)
-def post_memo_structures(body: Body_post_memo_structures):
-    processed_memos, relations, tags=asyncio.run(process_memos(body.user_id, body.memos))
+async def post_memo_structures(body: Body_post_memo_structures):
+    processed_memos, relations, tags=await process_memos(body.user_id, body.memos)
     structure: dict[str, list[str]]=get_structure(body.user_id, relations)
 
     validate_ids(relations, tags)
@@ -76,13 +76,13 @@ def validate_ids(relations: list[Memo_tag_relation], tags: list[Memo_tag]):
             raise HTTPException(500)
         
 @app.post("/kakao-parser", response_model=Res_post_memo_structures)
-def post_kakao_parser(body: Body_post_kakao_parser):
+async def post_kakao_parser(body: Body_post_kakao_parser):
     parsed_contents: list[tuple[str, datetime]]=kakao_parser(content=body.content, type=body.type)
     raw_memos: list[Memo_raw_memo]=[
         Memo_raw_memo(content=content, timestamp=timestamp)
         for content, timestamp in parsed_contents
     ]
-    tag_results: list[list[Memo_tag_name_and_id]]=Res_post_memo_tags(tags=asyncio.run(create_tags(body.user_id, raw_memos))).tags
+    tag_results: list[list[Memo_tag_name_and_id]]=Res_post_memo_tags(tags=await create_tags(body.user_id, raw_memos)).tags
     
     return post_memo_structures(
         Body_post_memo_structures(

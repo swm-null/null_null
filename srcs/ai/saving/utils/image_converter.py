@@ -7,7 +7,7 @@ async def convert_image_to_content(image_urls: list[str], lang: str) -> str:
     extract_description_from_image_tasks=[asyncio.to_thread(_extract_description_from_image, image, lang) for image in image_urls]
     extracted_description_from_image: list[str]=await asyncio.gather(*extract_description_from_image_tasks)
     
-    return "image desciption:\n"+"\n".join(extracted_description_from_image)
+    return "image description:\n"+"\n".join(extracted_description_from_image)
 
 def _extract_description_from_image(url: str, lang: str) -> str:
     result=llm4o.invoke(
