@@ -1,9 +1,24 @@
 import asyncio
-from ai.saving.utils import image_to_text
+from ai.utils.llm import llm4o
+from langchain_core.messages import HumanMessage
 
 
 async def convert_image_to_content(image_urls: list[str], lang: str) -> str:
-    image_to_text_tasks=[asyncio.to_thread(image_to_text, image, lang) for image in image_urls]
-    image_to_texts: list[str]=await asyncio.gather(*image_to_text_tasks)
+    extract_description_from_image_tasks=[asyncio.to_thread(_extract_description_from_image, image, lang) for image in image_urls]
+    extracted_description_from_image: list[str]=await asyncio.gather(*extract_description_from_image_tasks)
     
-    return "image desciption:\n"+"\n".join(image_to_texts)
+    return "image desciption:\n"+"\n".join(extracted_description_from_image)
+
+def _extract_description_from_image(url: str, lang: str) -> str:
+    result=llm4o.invoke(
+        [
+            HumanMessage(
+                content=[
+                    {"type": "text", "text": f"Summarize the image for me. If there is text, please add the OCR of the original text to the image description. Summarize it in {lang}."},
+                    {"type": "image_url", "image_url": {"url": url}}
+                ]
+            )
+        ]
+    )
+    
+    return str(result.content)
