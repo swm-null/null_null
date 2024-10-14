@@ -11,6 +11,7 @@ from ai.saving.structure import process_memos, get_structure
 from ai.saving.utils import extract_metadata
 from ai.saving.parser import kakao_parser
 
+
 app = FastAPI(
     title="Oatnote AI",
     description="after PR #80, https://github.com/swm-null/null_null/pull/78",

@@ -1,6 +1,6 @@
 from re import Pattern
 from models.search import Res_post_search
-from ai.searching.utils import generate_similarity_result, retrieve_similar_memos_from_db, query_analyzer, generate_regex
+from ai.searching.utils import generate_similarity_result, query_analyzer, generate_regex
 from ai.searching._models import Memo
 from models.search import Search_query_type
 
@@ -22,10 +22,7 @@ def _regex(query: str, lang: str="Korean") -> Res_post_search:
     )
     
 def _similarity(query: str, user_id: str, lang: str="Korean") -> Res_post_search:
-    similar_memos: list[Memo]=retrieve_similar_memos_from_db(query, user_id)
-    generated_answer: str
-    used_memo_ids: list[str]
-    generated_answer, used_memo_ids=generate_similarity_result(query, similar_memos, lang)
+    generated_answer, used_memo_ids=generate_similarity_result(user_id, query, lang)
     
     return Res_post_search(
         type=Search_query_type.similarity,
