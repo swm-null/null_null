@@ -1,6 +1,7 @@
 import asyncio
 from collections import defaultdict
 from typing import Optional
+from ai.saving.structure.utils.get_tag_name_to_id_dict import get_tag_dict
 from models.memo import Memo_memo_and_tags, Memo_processed_memo
 from ai.saving._models import Tag
 from ai.saving.structure._models import Memo
@@ -44,17 +45,28 @@ async def _process_memo(memo_and_tags: Memo) -> Memo_processed_memo:
     )
     
 def _locate_memos(user_id: str, memos: dict[int, Memo], tags: list[Tag], lang: str) -> tuple[list[Memo], list[Directory_relation], list[Tag]]:
-    new_tags, exist_tags=_categorize_tags(tags)
-    
+    new_tags, existing_tags=_categorize_new_tags_and_existing_tags(user_id, tags)
     relations, located_tags=locate_tags(user_id, new_tags, memos, lang)
     located_and_merged_tags=_merge_located_tags_and_new_tags(located_tags, new_tags)
     merged_relations=_merge_relations_and_new_tags(relations, new_tags)
-    located_memos_and_tags: list[Memo]=_link_memos_and_tags(memos, located_and_merged_tags+exist_tags)
+    located_memos_and_tags: list[Memo]=_link_memos_and_tags(memos, located_and_merged_tags+existing_tags)
     
     return located_memos_and_tags, merged_relations, located_and_merged_tags
         
-def _categorize_tags(tags: list[Tag]) -> tuple[list[Tag], list[Tag]]:
-    return [tag for tag in tags if tag.is_new], [tag for tag in tags if not tag.is_new]
+def _categorize_new_tags_and_existing_tags(user_id: str, tags: list[Tag]) -> tuple[list[Tag], list[Tag]]:
+    _, tag_name_to_id=get_tag_dict(user_id)
+    
+    new_tags: list[Tag]=[tag for tag in tags if tag.name not in tag_name_to_id]
+    existing_tags: list[Tag]=[
+        Tag(
+            id=tag_name_to_id[tag.name],
+            name=tag.name,
+            is_new=False,
+            connected_memo_id=tag.connected_memo_id
+        ) for tag in tags if tag.name in tag_name_to_id
+    ]
+    
+    return new_tags, existing_tags
 
 def _merge_located_tags_and_new_tags(located_tags: list[Tag], new_tags: list[Tag]) -> list[Tag]:
     tag_name_to_original_tag: dict[str, tuple[str, Optional[int]]]={tag.name: (tag.id, tag.connected_memo_id) for tag in new_tags}

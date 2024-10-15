@@ -7,12 +7,12 @@ from ai.saving.structure.utils.locator.chains import get_new_relations_and_tags_
 from ai.saving.structure.utils.locator.chains.get_new_relations_and_tags_chain import Relation_for_chain
 from ai.saving.structure.utils.locator.chains.get_new_relations_and_tags_chain import get_new_relations_and_tags_chain, Get_new_relations_and_tags_chain_output
 from ai.saving.structure._models.memo import Memo
-from ai.saving.structure.utils.get_tag_name_to_id_dict import get_tag_name_to_id_dict
+from ai.saving.structure.utils import get_tag_dict
 
 
 def locate_tags(user_id: str, tags: list[Tag], memos: dict[int, Memo], lang: str) -> tuple[list[Directory_relation], list[Tag]]:
-    formatted_directories: str=get_formatted_directories(user_id)
-    tag_name_to_id: dict=get_tag_name_to_id_dict(user_id)
+    tag_id_to_name, tag_name_to_id=get_tag_dict(user_id)
+    formatted_directories: str=get_formatted_directories(user_id, tag_id_to_name, tag_name_to_id)
     new_dir_relations, new_tags=_get_new_relations_and_tags(tags, memos, lang, formatted_directories, tag_name_to_id)
     logging.info("[locate_tags]\n## new_dir_relations:\n%s\n\n## new tags:\n%s\n\n", new_dir_relations, new_tags)
     
