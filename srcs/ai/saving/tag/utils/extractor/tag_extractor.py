@@ -13,9 +13,10 @@ async def extract_tags(query: str, user_id: str, lang: str="Korean") -> list[Tag
     chain_result=await asyncio.to_thread(chain.invoke, {"query": query, "lang": lang, "user_id": user_id, "tag_names": format_tags(similar_tags)})
     logging.info("[extract_tags]\n## existing tags:\n%s\n\n## new tags:\n%s\n\n", chain_result["existing"].tag_list, chain_result["new"].name)
     
-    extracted_tags: list[Tag]=[]
-    extracted_tags.extend(_convert_existing_chain_result(chain_result["existing"].tag_list, similar_tags))
-    extracted_tags.extend(_convert_new_chain_result(chain_result["new"].name))
+    extracted_tags: list[Tag]=_convert_existing_chain_result(chain_result["existing"].tag_list, similar_tags)
+    if not chain_result["new"].name in chain_result["existing"].tag_list:
+        extract_tags.extend(_convert_new_chain_result(chain_result["new"].name))
+    logging.info("[extract_tags]\n## uniqued extracted tags:\n%s\n\n", extracted_tags)
     
     return extracted_tags
 
@@ -28,7 +29,6 @@ def _convert_existing_chain_result(selected_tag_names: list[str], tags: list[Tag
         )
         for tag in tags if tag.name in selected_tag_names
     ]
-    
 
 def _convert_new_chain_result(tag_name: str) -> list[Tag]:
     return [
