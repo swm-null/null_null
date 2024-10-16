@@ -23,7 +23,6 @@ async def _extract_and_assign_metadata(id: int, memo: Memo, lang: str) -> tuple[
         tasks.append(convert_link_to_content(extracted_links, lang))
     
     extracted_metadata: list[str]=await asyncio.gather(*tasks)
-    print(extracted_metadata)
     
     return id, Memo(
         content=memo.content,
