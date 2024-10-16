@@ -8,7 +8,6 @@ class Body_post_memo_structures(BaseModel):
     
 class Res_post_memo_structures(BaseModel):
     processed_memos: list[Memo_processed_memo]
-    tags_relations: Memo_relations=Field(description="relations between tags")
     new_tags: list[Memo_tag]
     new_structure: dict[str, list[str]]=Field(examples=[{
         "parent_tag_id1": ["child_tag_id1", "child_tag_id2", ],

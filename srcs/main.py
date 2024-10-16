@@ -59,7 +59,6 @@ async def post_memo_structures(body: Body_post_memo_structures):
     
     return Res_post_memo_structures(
         processed_memos=processed_memos,
-        tags_relations=Memo_relations(added=relations, deleted=[]),
         new_tags=tags,
         new_structure=structure,
         new_reversed_structure=reversed_structure
