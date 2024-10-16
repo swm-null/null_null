@@ -8,7 +8,7 @@ def get_structure(user_id: str, relations: list[Memo_tag_relation]) -> tuple[dic
     for relation in relations:
         graph[relation.parent_id].append(relation.child_id)
     
-    reversed_graph: defaultdict[str, list[str]]=defaultdict()
+    reversed_graph: defaultdict[str, list[str]]=defaultdict(list[str])
     for parent, childs in graph.items():
         for child in childs:
             reversed_graph[child].append(parent)
