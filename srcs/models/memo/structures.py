@@ -14,3 +14,7 @@ class Res_post_memo_structures(BaseModel):
         "parent_tag_id1": ["child_tag_id1", "child_tag_id2", ],
         "parent_tag_id2": ["child_tag_id2", "child_tag_id3", ],
     }])
+    new_reversed_structure: dict[str, list[str]]=Field(examples=[{
+        "child_tag_id1": ["parent_tag_id1", "parent_tag_id2", ],
+        "child_tag_id2": ["parent_tag_id2", "parent_tag_id3", ],
+    }])
