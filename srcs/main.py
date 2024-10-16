@@ -14,8 +14,8 @@ from ai.saving.parser import kakao_parser
 
 app = FastAPI(
     title="Oatnote AI",
-    description="after PR #83, https://github.com/swm-null/null_null/pull/83",
-    version="0.2.33",
+    description="after PR #84, https://github.com/swm-null/null_null/pull/84",
+    version="0.2.34",
 )
 init(app)
     
