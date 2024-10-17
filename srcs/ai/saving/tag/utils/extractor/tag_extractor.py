@@ -15,7 +15,7 @@ async def extract_tags(query: str, user_id: str, lang: str="Korean") -> list[Tag
     
     extracted_tags: list[Tag]=_convert_existing_chain_result(chain_result["existing"].tag_list, similar_tags)
     if not chain_result["new"].name in chain_result["existing"].tag_list:
-        extract_tags.extend(_convert_new_chain_result(chain_result["new"].name))
+        extracted_tags.extend(_convert_new_chain_result(chain_result["new"].name))
     logging.info("[extract_tags]\n## uniqued extracted tags:\n%s\n\n", extracted_tags)
     
     return extracted_tags
