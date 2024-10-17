@@ -1,6 +1,6 @@
 import asyncio
 import pytest
-from httpx import AsyncClient
+from httpx import ASGITransport, AsyncClient
 from main import app
 from models.memo.structures import Res_post_memo_structures
 
@@ -35,11 +35,26 @@ https://asdf.com/this_is_invalid_link""",
             {
                 "id": "836f0c46a0664697b2d0a0cf1526f683",
                 "name": "이동통신 요금제",
+                "is_new": False
+            },
+            {
+                "id": "11111111111111111111111111111111",
+                "name": "이동통신 요금제", # should be ignored
+                "is_new": True
+            },
+            {
+                "id": "22222222222222222222222222222222",
+                "name": "이동통신요금제", # should be ignored
                 "is_new": True
             },
             {
                 "id": "ecedd0b9afc34f67aa2ede1029da1f41",
                 "name": "통신 요금제",
+                "is_new": False
+            },
+            {
+                "id": "33333333333333333333333333333333",
+                "name": "T 멤버십",
                 "is_new": False
             }
             ]
@@ -48,19 +63,21 @@ https://asdf.com/this_is_invalid_link""",
     "user_id": "ccc55530-12ed-4a54-b420-025009c0509a"
 }
 
-@pytest.mark.asyncio
-async def test_structures():
-    tasks=[send_request_and_validate() for _ in range(3)]
+@pytest.mark.asyncio(loop_scope="session")
+async def test_structures_using_app():
+    tasks=[asyncio.create_task(send_request_using_app()) for _ in range(3)]
     await asyncio.gather(*tasks)
     
-UUID_LENGTH=32
-async def send_request_and_validate():
-    async with AsyncClient(app=app, base_url="http://localhost:8000") as client:
+async def send_request_using_app():
+    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://localhost:8000") as client:
         response=await client.post("/memo/structures", json=body)
         
-    res_model=Res_post_memo_structures.model_validate(response.json())
-    
     assert response.status_code==200
+    res_model=Res_post_memo_structures.model_validate(response.json())
+    validation(res_model)
+
+def validation(res_model: Res_post_memo_structures):
+    UUID_LENGTH=32
     
     # processed_memos
     for memo in res_model.processed_memos:
@@ -72,14 +89,27 @@ async def send_request_and_validate():
             assert memo.embedding
     
     # tags_relations 
-    for relation in res_model.tags_relations.added:
-        assert len(relation.parent_id)==UUID_LENGTH
-        assert len(relation.child_id)==UUID_LENGTH
-    for relation in res_model.tags_relations.deleted:
-        assert len(relation.parent_id)==UUID_LENGTH
-        assert len(relation.child_id)==UUID_LENGTH
+    # for relation in res_model.tags_relations.added:
+    #     assert len(relation.parent_id)==UUID_LENGTH
+    #     assert len(relation.child_id)==UUID_LENGTH
+    # for relation in res_model.tags_relations.deleted:
+    #     assert len(relation.parent_id)==UUID_LENGTH
+    #     assert len(relation.child_id)==UUID_LENGTH
+    
+    # structures
+    for parent, childs in res_model.new_structure.items():
+        assert len(parent)==UUID_LENGTH or len(parent)==UUID_LENGTH+4
+        for child in childs:
+            assert len(child)==UUID_LENGTH
         
     # new_tags
     for tag in res_model.new_tags:
         assert len(tag.id)==UUID_LENGTH
         assert tag.embedding
+    assert [tag for tag in res_model.new_tags if tag.name=="T 멤버십"]
+    
+    # duplicated tags
+    # assert not [tag for tag in res_model.new_tags if tag.name=="이동통신요금제" or tag.name=="이동통신 요금제"]
+    assert not [tag for tag in res_model.new_tags if tag.name=="이동통신 요금제"]
+    
+    

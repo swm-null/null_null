@@ -1,6 +1,6 @@
 import asyncio
 import pytest
-from httpx import AsyncClient
+from httpx import ASGITransport, AsyncClient
 from main import app
 from models.memo.tags import Res_post_memo_tags
 
@@ -32,20 +32,21 @@ https://asdf.com/this_is_invalid_link""",
     ]
 }
 
-@pytest.mark.asyncio
+@pytest.mark.asyncio(loop_scope="session")
 async def test_tags():
-    tasks=[send_request_and_validate() for _ in range(3)]
+    tasks=[asyncio.create_task(send_request_and_validate()) for _ in range(3)]
     await asyncio.gather(*tasks)
     
 UUID_LENGTH=32
 async def send_request_and_validate():
-    async with AsyncClient(app=app, base_url="http://localhost:8000") as client:
+    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://localhost:8000") as client:
         response=await client.post("/memo/tags", json=body)
         
-    res_model=Res_post_memo_tags.model_validate(response.json())
-    
     assert response.status_code==200
+    res_model=Res_post_memo_tags.model_validate(response.json())
+    validation(res_model)
     
+def validation(res_model: Res_post_memo_tags):
     # tags
     assert len(res_model.tags)
     for tags in res_model.tags:
