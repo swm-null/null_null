@@ -14,8 +14,8 @@ from ai.saving.parser import kakao_parser
 
 app = FastAPI(
     title="Oatnote AI",
-    description="after PR #83, https://github.com/swm-null/null_null/pull/83",
-    version="0.2.33",
+    description="after PR #86, https://github.com/swm-null/null_null/pull/86",
+    version="0.2.36",
 )
 init(app)
     
@@ -55,7 +55,7 @@ async def post_memo_tag(body: Body_post_memo_tag):
 @app.post("/memo/structures", response_model=Res_post_memo_structures)
 async def post_memo_structures(body: Body_post_memo_structures):
     processed_memos, relations, tags=await process_memos(body.user_id, body.memos)
-    structure: dict[str, list[str]]=get_structure(body.user_id, relations)
+    structure: dict[str, list[str]]=await get_structure(body.user_id, relations)
 
     validate_ids(relations, tags)
     
@@ -77,7 +77,7 @@ def validate_ids(relations: list[Memo_tag_relation], tags: list[Memo_tag]):
         
 @app.post("/kakao-parser", response_model=Res_post_memo_structures)
 async def post_kakao_parser(body: Body_post_kakao_parser):
-    parsed_contents: list[tuple[str, datetime]]=kakao_parser(content=body.content, type=body.type)
+    parsed_contents: list[tuple[str, datetime]]=await kakao_parser(content=body.content, type=body.type)
     raw_memos: list[Memo_raw_memo]=[
         Memo_raw_memo(content=content, timestamp=timestamp)
         for content, timestamp in parsed_contents
