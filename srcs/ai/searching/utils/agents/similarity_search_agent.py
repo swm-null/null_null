@@ -59,7 +59,7 @@ similarity_search_agent = create_react_agent(
 
 similarity_search_executor=AgentExecutor(agent=similarity_search_agent, tools=tools, verbose=True)
 
-def invoke_similarity_search_agent(user_id: str, query: str, lang: str) -> tuple[str, list[str]]:
-    agent_result: dict[str, Any]=similarity_search_executor.invoke({"user_id": user_id, "question": query, "language": lang})
+async def invoke_similarity_search_agent(user_id: str, query: str, lang: str) -> tuple[str, list[str]]:
+    agent_result: dict[str, Any]=await similarity_search_executor.ainvoke({"user_id": user_id, "question": query, "language": lang})
     
     return agent_result["answer"], agent_result["used_memo_ids"]

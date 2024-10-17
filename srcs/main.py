@@ -24,8 +24,8 @@ async def default():
     return "yes. it works."
 
 @app.post("/search", response_model=Res_post_search)
-def post_search(body: Arg_post_search):
-    return search_memo(body.content, body.user_id)
+async def post_search(body: Arg_post_search):
+    return await search_memo(body.content, body.user_id)
 
 @app.post("/get-embedding", response_model=Res_get_embedding)
 def get_embedding(body: Arg_get_embedding):
