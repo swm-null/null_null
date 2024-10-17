@@ -14,8 +14,8 @@ from ai.saving.parser import kakao_parser
 
 app = FastAPI(
     title="Oatnote AI",
-    description="after PR #84, https://github.com/swm-null/null_null/pull/84",
-    version="0.2.34",
+    description="after PR #85, https://github.com/swm-null/null_null/pull/85",
+    version="0.2.35",
 )
 init(app)
     
@@ -55,26 +55,15 @@ async def post_memo_tag(body: Body_post_memo_tag):
 @app.post("/memo/structures", response_model=Res_post_memo_structures)
 async def post_memo_structures(body: Body_post_memo_structures):
     processed_memos, relations, tags=await process_memos(body.user_id, body.memos)
-    structure: dict[str, list[str]]=get_structure(body.user_id, relations)
-
-    validate_ids(relations, tags)
+    structure, reversed_structure=get_structure(body.user_id, relations)
     
     return Res_post_memo_structures(
         processed_memos=processed_memos,
-        tags_relations=Memo_relations(added=relations, deleted=[]),
         new_tags=tags,
-        new_structure=structure
+        new_structure=structure,
+        new_reversed_structure=reversed_structure
     )
 
-def validate_ids(relations: list[Memo_tag_relation], tags: list[Memo_tag]):
-    from fastapi import HTTPException
-    for relation in relations:
-        if (len(relation.child_id) != 32 and len(relation.child_id) != 36) or (len(relation.parent_id) != 32 and len(relation.parent_id) != 36):
-            raise HTTPException(500)
-    for tag in tags:
-        if len(tag.id) != 32:
-            raise HTTPException(500)
-        
 @app.post("/kakao-parser", response_model=Res_post_memo_structures)
 async def post_kakao_parser(body: Body_post_kakao_parser):
     parsed_contents: list[tuple[str, datetime]]=kakao_parser(content=body.content, type=body.type)
