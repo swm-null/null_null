@@ -5,22 +5,23 @@ from datetime import datetime
 import logging
 import re
 from fastapi import HTTPException
+from ai.saving.utils.link_content_fetcher import get_contents_from_link
 from models.kakao_parser import kakao_parser_type
 from typing import Optional
 from urllib.request import urlopen
 from urllib.parse import quote
 
 
-def kakao_parser(content: str, type: kakao_parser_type) -> list[tuple[str, datetime]]:
+async def kakao_parser(content: str, type: kakao_parser_type) -> list[tuple[str, datetime]]:
     parsed_memolist: list[tuple[str, datetime]]
     
-    parsed_content=_parse_from_url(content)
+    parsed_content=await _parse_from_url(content)
     
     if type == kakao_parser_type.CSV:
         csv_reader: csv.DictReader=_get_csv_reader_from_string(parsed_content)
-        parsed_memolist: list[tuple[str, datetime]]=_parse_csv_reader(csv_reader)    
+        parsed_memolist=_parse_csv_reader(csv_reader)    
     elif type == kakao_parser_type.TXT:
-        parsed_memolist: list[tuple[str, datetime]]=_parse_txt_string(parsed_content)
+        parsed_memolist=_parse_txt_string(parsed_content)
     else:
         logging.error("[KP] invalid content type: %s", type)
         raise HTTPException(status_code=500, headers={"KP": "invalid content type"})
@@ -28,13 +29,13 @@ def kakao_parser(content: str, type: kakao_parser_type) -> list[tuple[str, datet
     unique_parsed_memolist: list[tuple[str, datetime]]=_remove_duplicated_memos(parsed_memolist)
     return unique_parsed_memolist
 
-def _parse_from_url(url: str) -> str:
+async def _parse_from_url(url: str) -> str:
     encoded_url = quote(url, safe=':/')
-    data: str=urlopen(encoded_url).read().decode('utf-8', 'ignore')
-    data=data.replace("\ufeff", "")
+    data: list[str]=await get_contents_from_link(list(encoded_url))
+    data[0]=data[0].replace("\ufeff", "")
     
-    return data
-    
+    return data[0]
+
 def _get_csv_reader_from_string(content: str) -> csv.DictReader:
     virtual_csv_file=StringIO(content)
     return csv.DictReader(virtual_csv_file, delimiter=',')
