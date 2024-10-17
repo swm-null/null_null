@@ -1,7 +1,9 @@
+import asyncio
 import logging
 from ai.searching._models import Memo
 from ai.database.collections.memo_store import *
 from ai.utils import embedder
+from fastapi.concurrency import run_in_threadpool
 
 def retrieve_similar_memos_from_db(query: str, user_id: str) -> list[Memo]:
     memos: set[Memo]=_get_memos_from_db_using_content(query, user_id) | _get_memos_from_db_using_metadata(query, user_id)
@@ -9,8 +11,15 @@ def retrieve_similar_memos_from_db(query: str, user_id: str) -> list[Memo]:
     
     return list(memos)
     
+async def aretrieve_similar_memos_from_db(query: str, user_id: str) -> list[Memo]:
+    memos: set[Memo]=set().union(*(await asyncio.gather(
+        run_in_threadpool(_get_memos_from_db_using_content, query, user_id),
+        run_in_threadpool(_get_memos_from_db_using_metadata, query, user_id)
+    )))
+    logging.info("[retrieved memos]\n## %s\n%s\n\n", user_id, memos)
     
-# TODO: async query vector
+    return list(memos)
+    
 def _get_memos_from_db_using_content(query: str, user_id: str) -> set[Memo]:
     raw_memos=memo_collection.aggregate([
         {

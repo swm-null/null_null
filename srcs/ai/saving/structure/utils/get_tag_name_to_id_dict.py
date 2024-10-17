@@ -1,8 +1,9 @@
 from ai.database.collections.tag_store import tag_collection, TAG_UID_NAME, TAG_ID_NAME, TAG_CONTENT_NAME, TAG_ROOT_NAME
+from fastapi.concurrency import run_in_threadpool
 
 
-def get_tag_dict(user_id: str) -> tuple[dict[str, str], dict[str, str]]:
-    tag_id_to_name, tag_name_to_id=_get_tags_from_db(user_id)
+async def get_tag_dict(user_id: str) -> tuple[dict[str, str], dict[str, str]]:
+    tag_id_to_name, tag_name_to_id=await run_in_threadpool(_get_tags_from_db, user_id)
     
     return tag_id_to_name, tag_name_to_id
     

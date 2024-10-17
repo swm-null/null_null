@@ -14,8 +14,8 @@ from ai.saving.parser import kakao_parser
 
 app = FastAPI(
     title="Oatnote AI",
-    description="after PR #85, https://github.com/swm-null/null_null/pull/85",
-    version="0.2.35",
+    description="after PR #86, https://github.com/swm-null/null_null/pull/86",
+    version="0.2.36",
 )
 init(app)
     
@@ -24,8 +24,8 @@ async def default():
     return "yes. it works."
 
 @app.post("/search", response_model=Res_post_search)
-def post_search(body: Arg_post_search):
-    return search_memo(body.content, body.user_id)
+async def post_search(body: Arg_post_search):
+    return await search_memo(body.content, body.user_id)
 
 @app.post("/get-embedding", response_model=Res_get_embedding)
 def get_embedding(body: Arg_get_embedding):
@@ -55,7 +55,7 @@ async def post_memo_tag(body: Body_post_memo_tag):
 @app.post("/memo/structures", response_model=Res_post_memo_structures)
 async def post_memo_structures(body: Body_post_memo_structures):
     processed_memos, relations, tags=await process_memos(body.user_id, body.memos)
-    structure, reversed_structure=get_structure(body.user_id, relations)
+    structure, reversed_structure=await get_structure(body.user_id, relations)
     
     return Res_post_memo_structures(
         processed_memos=processed_memos,
@@ -66,7 +66,7 @@ async def post_memo_structures(body: Body_post_memo_structures):
 
 @app.post("/kakao-parser", response_model=Res_post_memo_structures)
 async def post_kakao_parser(body: Body_post_kakao_parser):
-    parsed_contents: list[tuple[str, datetime]]=kakao_parser(content=body.content, type=body.type)
+    parsed_contents: list[tuple[str, datetime]]=await kakao_parser(content=body.content, type=body.type)
     raw_memos: list[Memo_raw_memo]=[
         Memo_raw_memo(content=content, timestamp=timestamp)
         for content, timestamp in parsed_contents

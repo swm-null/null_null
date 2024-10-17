@@ -10,9 +10,9 @@ from ai.saving.structure._models.memo import Memo
 from ai.saving.structure.utils import get_tag_dict
 
 
-def locate_tags(user_id: str, tags: list[Tag], memos: dict[int, Memo], lang: str) -> tuple[list[Directory_relation], list[Tag]]:
-    tag_id_to_name, tag_name_to_id=get_tag_dict(user_id)
-    formatted_directories: str=get_formatted_directories(user_id, tag_id_to_name, tag_name_to_id)
+async def locate_tags(user_id: str, tags: list[Tag], memos: dict[int, Memo], lang: str) -> tuple[list[Directory_relation], list[Tag]]:
+    tag_id_to_name, tag_name_to_id=await get_tag_dict(user_id)
+    formatted_directories: str=await get_formatted_directories(user_id, tag_id_to_name, tag_name_to_id)
     new_dir_relations, new_tags=_get_new_relations_and_tags(tags, memos, lang, formatted_directories, tag_name_to_id)
     logging.info("[locate_tags]\n## new_dir_relations:\n%s\n\n## new tags:\n%s\n\n", new_dir_relations, new_tags)
     

@@ -22,9 +22,9 @@ async def _process_metadata(raw_memo: Memo_raw_memo, lang) -> None:
     
     tasks=[]
     if raw_memo.image_urls:
-        tasks.append(convert_image_to_content(raw_memo.image_urls, lang))
+        tasks.append(asyncio.create_task(convert_image_to_content(raw_memo.image_urls, lang)))
     if extracted_links:
-        tasks.append(convert_link_to_content(extracted_links, lang))
+        tasks.append(asyncio.create_task(convert_link_to_content(extracted_links, lang)))
     
     converted_contents: list[str]=await asyncio.gather(*tasks)    
     raw_memo.content+="\n"+"\n".join(converted_contents)
