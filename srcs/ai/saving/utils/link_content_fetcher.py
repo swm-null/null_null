@@ -37,6 +37,9 @@ def _extract_og_data(html: str) -> str:
         if property and property.startswith("og:"):
             og_data[property]=meta.get("content", "")
     
-    return "\n".join([og_data["og:title"], og_data["og:description"]])
+    return "\n".join([
+        og_data.get("og:title", ""), 
+        og_data.get("og:description", "")
+    ])
     
     
