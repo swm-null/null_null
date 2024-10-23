@@ -6,10 +6,13 @@ from ai.utils.llm import llm4o
 from langchain_core.prompts import PromptTemplate
 
 
-class _generate_regex_chain_output(BaseModel):
+class _Generate_regex_chain_input(BaseModel):
+    query: str
+
+class _Generate_regex_chain_output(BaseModel):
     regex: Pattern[str]=Field(description="regex string")
 
-_parser = PydanticOutputParser(pydantic_object=_generate_regex_chain_output)
+_parser = PydanticOutputParser(pydantic_object=_Generate_regex_chain_output)
 
 _generate_regex_chain_prompt=PromptTemplate.from_template(
 """
@@ -26,7 +29,7 @@ Don't add ^ or $ to a pattern unless you're asking to create a regex that begins
 주민등록번호: \\d{{6}}-\\d{{7}}
 전화번호: \\d{{2,3}}-\\d{{3,4}}-\\d{{4}}
 
-Sentence: {query}
+{input_json}
 
 {format}
 """,
@@ -35,7 +38,7 @@ Sentence: {query}
     }
 )
 
-generate_regex_chain=(
+_generate_regex_chain=(
     {
         "lang": itemgetter("lang"),
         "query": itemgetter("query"),
@@ -44,3 +47,8 @@ generate_regex_chain=(
     | llm4o
     | _parser
 )
+
+async def generate_regex_using_chain(query: str, lang: str) -> _Generate_regex_chain_output:
+    input_json_model=_Generate_regex_chain_input(query=query)
+    
+    return await _generate_regex_chain.ainvoke({"input_json": input_json_model.model_dump_json(), "lang": lang})
