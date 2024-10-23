@@ -57,16 +57,16 @@ async def _categorize_new_tags_and_existing_tags(user_id: str, tags: list[Tag]) 
     _, tag_name_to_id=await get_tag_dict(user_id)
     
     new_tags: list[Tag]=[tag for tag in tags if tag.name not in tag_name_to_id]
-    existing_tags: list[Tag]=[
-        Tag(
+    existing_tags: dict[str, Tag]={
+        tag.name: Tag(
             id=tag_name_to_id[tag.name],
             name=tag.name,
             is_new=False,
             connected_memo_id=tag.connected_memo_id
         ) for tag in tags if tag.name in tag_name_to_id
-    ]
+    }
     
-    return new_tags, existing_tags
+    return new_tags, list(existing_tags.values())
 
 def _merge_located_tags_and_new_tags(located_tags: list[Tag], new_tags: list[Tag]) -> list[Tag]:
     tag_name_to_original_tag: dict[str, tuple[str, Optional[int]]]={tag.name: (tag.id, tag.connected_memo_id) for tag in new_tags}
