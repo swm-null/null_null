@@ -8,8 +8,8 @@ from langchain_core.prompts import PromptTemplate
 
 class Similarity_result_with_memo_chain_output(BaseModel):
     answerable: bool
-    answer: str=Field(description="answer to the user's question")
-    used_memo_ids: list[str]=Field(description="used memo ids")
+    answer: str=Field(description="answer to the user's question", default=[""])
+    used_memo_ids: list[str]=Field(description="used memo ids", default=[[]])
 
 _parser = PydanticOutputParser(pydantic_object=Similarity_result_with_memo_chain_output)
 
