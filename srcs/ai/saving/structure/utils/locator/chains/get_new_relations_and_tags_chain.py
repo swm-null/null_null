@@ -10,7 +10,7 @@ class _Tag(BaseModel):
     name: str
     linked_memo: int
     
-class _get_new_relations_and_tags_chain_input(BaseModel):
+class _Get_new_relations_and_tags_chain_input(BaseModel):
     lang: str=Field(description="user's language")
     new_tags: list[_Tag]=Field(description="new tags")
     memo_metadatas: dict[str, str]=Field(description="metadatas of target memos")
@@ -63,7 +63,7 @@ _get_new_relations_and_tags_chain=(
 )
 
 async def get_new_relations_and_tags(tags: list[Tag], memos: dict[int, Memo], lang: str, directories: dict[str, list[str]]):
-    input_json_model=_get_new_relations_and_tags_chain_input(
+    input_json_model=_Get_new_relations_and_tags_chain_input(
         lang=lang,
         new_tags=[
             _Tag(

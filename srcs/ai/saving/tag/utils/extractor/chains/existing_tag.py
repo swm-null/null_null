@@ -6,15 +6,15 @@ from ai.utils import llm4o
 from langchain_core.prompts import PromptTemplate
 
 
-class _get_existing_tag_chain_input(BaseModel):
+class _Get_existing_tag_chain_input(BaseModel):
     query: str
     tag_names: list[str]
     lang: str
     
-class _get_existing_tag_chain_output(BaseModel):
+class _Get_existing_tag_chain_output(BaseModel):
     tag_list: list[str]=Field(description="list of tag names")
 
-_parser = PydanticOutputParser(pydantic_object=_get_existing_tag_chain_output)
+_parser = PydanticOutputParser(pydantic_object=_Get_existing_tag_chain_output)
 
 _existing_chain_prompt=PromptTemplate.from_template(
 """
@@ -47,7 +47,7 @@ _get_existing_tag_chain=(
 )
 
 async def get_existing_tag(query: str, similar_tags: list[Tag], lang: str):
-    input_json_model=_get_existing_tag_chain_input(
+    input_json_model=_Get_existing_tag_chain_input(
         query=query,
         tag_names=[tag.name for tag in similar_tags],
         lang=lang

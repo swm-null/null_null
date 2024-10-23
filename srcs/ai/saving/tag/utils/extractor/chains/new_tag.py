@@ -5,14 +5,14 @@ from ai.utils import llm4o
 from langchain_core.prompts import PromptTemplate
 
 
-class _get_new_tag_chain_input(BaseModel):
+class _Get_new_tag_chain_input(BaseModel):
     query: str
     lang: str
     
-class _get_new_tag_chain_output(BaseModel):
+class _Get_new_tag_chain_output(BaseModel):
     name: str
 
-_parser = PydanticOutputParser(pydantic_object=_get_new_tag_chain_output)
+_parser = PydanticOutputParser(pydantic_object=_Get_new_tag_chain_output)
 
 _get_new_tag_chain_prompt=PromptTemplate.from_template(
 """
@@ -45,7 +45,7 @@ _get_new_tag_chain=(
 )
 
 async def get_new_tag(query: str, lang: str):
-    input_json_model=_get_new_tag_chain_input(
+    input_json_model=_Get_new_tag_chain_input(
         query=query,
         lang=lang
     )
