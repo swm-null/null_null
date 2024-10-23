@@ -1,7 +1,7 @@
 from operator import itemgetter
 from langchain_core.output_parsers import PydanticOutputParser
 from pydantic import BaseModel, Field
-from ai.utils.llm import llm4o
+from ai.utils.llm import llm4o_mini
 from langchain_core.prompts import PromptTemplate
 from models.search import Search_query_type
 
@@ -37,7 +37,7 @@ Else, print 'similarity'.
 _query_analyzer_chain=(
     { "input_json": itemgetter("input_json") }
     | _query_analyzer_chain_prompt
-    | llm4o
+    | llm4o_mini
     | _parser
 )
 

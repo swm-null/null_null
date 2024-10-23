@@ -2,7 +2,7 @@ from operator import itemgetter
 from langchain_core.output_parsers import PydanticOutputParser
 from pydantic import BaseModel, Field
 from ai.saving._models import Tag
-from ai.utils import llm4o
+from ai.utils import llm4o_mini
 from langchain_core.prompts import PromptTemplate
 
 
@@ -42,7 +42,7 @@ Look at the json below, and generate the results.
 _get_existing_tag_chain=(
     { "input_json": itemgetter("input_json") }
     | _existing_chain_prompt
-    | llm4o
+    | llm4o_mini
     | _parser
 )
 

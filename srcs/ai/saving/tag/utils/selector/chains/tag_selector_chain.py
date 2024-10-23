@@ -2,7 +2,7 @@ from operator import itemgetter
 from langchain_core.output_parsers import PydanticOutputParser
 from pydantic import BaseModel, Field
 from ai.saving._models.tag import Tag
-from ai.utils.llm import llm4o
+from ai.utils.llm import llm4o_mini
 from langchain_core.prompts import PromptTemplate
 from ai.saving.tag._configs import TAG_SELECTION_COUNT
 
@@ -51,7 +51,7 @@ Look at the json below, and generate the results.
 _select_tags_chain=(
     { "input_json": itemgetter("input_json") }
     | _select_tags_chain_prompt
-    | llm4o 
+    | llm4o_mini
     | _parser
 )
 
