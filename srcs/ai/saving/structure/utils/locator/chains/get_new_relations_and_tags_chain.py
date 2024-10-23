@@ -41,6 +41,9 @@ However, you can also create a new tag in the middle, rather than attaching it d
 For example, if you have a tag called “food” and the new tag to be created is “banana”, it would be unnatural to create a “food”-“banana” relationship right away.
 Instead, you could create a tag called 'fruit', and then create the tag so that the relationship is 'food'-'fruit'-'banana'.
 
+Use ' ' as a space for tag name, and don't use special characters like '_'.
+Be careful not to misspell spaces.
+
 When creating new tags, consider the user's language and create them in that language.
 However, don't create any new tags when the new_tags field in the json is empty.
 
