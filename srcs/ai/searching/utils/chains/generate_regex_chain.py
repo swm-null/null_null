@@ -39,7 +39,10 @@ Don't add ^ or $ to a pattern unless you're asking to create a regex that begins
 )
 
 _generate_regex_chain=(
-    { "input_json": itemgetter("input_json") }
+    { 
+        "input_json": itemgetter("input_json"),
+        "lang": itemgetter("lang")
+    }
     | _generate_regex_chain_prompt
     | llm4o
     | _parser
