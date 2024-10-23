@@ -55,7 +55,7 @@ _select_tags_chain=(
     | _parser
 )
 
-async def select_tag(memo_content: str, candidate_tags: list[Tag], lang: str):
+async def select_tag(memo_content: str, candidate_tags: list[Tag], lang: str) -> _Select_tags_chain_output:
     input_json_model=_Select_tags_chain_input(
         memo=memo_content,
         candidate_tags=[

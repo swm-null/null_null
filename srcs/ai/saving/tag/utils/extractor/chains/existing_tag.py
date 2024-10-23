@@ -46,7 +46,7 @@ _get_existing_tag_chain=(
     | _parser
 )
 
-async def get_existing_tag(query: str, similar_tags: list[Tag], lang: str):
+async def get_existing_tag(query: str, similar_tags: list[Tag], lang: str) -> _Get_existing_tag_chain_output:
     input_json_model=_Get_existing_tag_chain_input(
         query=query,
         tag_names=[tag.name for tag in similar_tags],

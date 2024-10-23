@@ -44,7 +44,7 @@ _get_new_tag_chain=(
     | _parser
 )
 
-async def get_new_tag(query: str, lang: str):
+async def get_new_tag(query: str, lang: str) -> _Get_new_tag_chain_output:
     input_json_model=_Get_new_tag_chain_input(
         query=query,
         lang=lang

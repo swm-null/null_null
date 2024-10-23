@@ -62,7 +62,7 @@ _get_new_relations_and_tags_chain=(
     | _parser
 )
 
-async def get_new_relations_and_tags(tags: list[Tag], memos: dict[int, Memo], lang: str, directories: dict[str, list[str]]):
+async def get_new_relations_and_tags(tags: list[Tag], memos: dict[int, Memo], lang: str, directories: dict[str, list[str]]) -> Get_new_relations_and_tags_chain_output:
     input_json_model=_Get_new_relations_and_tags_chain_input(
         lang=lang,
         new_tags=[
