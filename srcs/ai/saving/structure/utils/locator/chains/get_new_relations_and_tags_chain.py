@@ -1,9 +1,21 @@
 from operator import itemgetter
 from langchain_core.output_parsers import PydanticOutputParser
 from pydantic import BaseModel, Field
+from ai.saving._models.tag import Tag
+from ai.saving.structure._models.memo import Memo
 from ai.utils.llm import llm4o
 from langchain_core.prompts import PromptTemplate
 
+class _Tag(BaseModel):
+    name: str
+    linked_memo: int
+    
+class Get_new_relations_and_tags_chain_input(BaseModel):
+    lang: str=Field(description="user's language")
+    new_tags: list[_Tag]=Field(description="new tags")
+    memo_metadatas: dict[str, str]=Field(description="metadatas of target memos")
+    current_tag_structures: dict[str, list[str]]=Field(description="adjacent list of tag structures")
+        
 class Relation_for_chain(BaseModel):
     parent_name: str
     child_name: str
@@ -16,27 +28,25 @@ _parser = PydanticOutputParser(pydantic_object=Get_new_relations_and_tags_chain_
 
 _get_new_relations_and_tags_chain_prompt=PromptTemplate.from_template(
 """
-You're an expert at categorizing files.
-Given a new directory, your job is to determine how it should be organized.
-Choose a directory based on how normal people organize their notes.
-You can use the directory's metadata to categorize it correctly.
+You're an expert at organizing memos.
+Your memos are categorized using tags, and each tag can have subtags that belong to the tag.
 
-In addition to putting new directories into existing directories, you can also create new directories of your own.
-For example, if you have an existing directory called 'plants' and you need to organize the directory 'apples', you can create a new relationship 'plants'-'apples', but also create a new directory called 'fruits', such as 'plants'-'fruits', 'fruits'-'apples', etc.
-However, do not create a new tag with the same name as an existing tag. 
+The user is about to add a new memo.
+You'll be given a new tag to categorize it.
+The new tag is linked with the new memo the user added.
+You need to look at the memo's description (metadata) and place the tags appropriately.
 
-I'm attaching the existing directory structure.
-The directory with the name '@' is the root.
-When the number of '-'s increases, it means you're inside that directory.
-Write the directory's name in the user's language.
+To do this, you can attach the new tag to a child of an existing tag.
+However, you can also create a new tag in the middle, rather than attaching it directly to an existing tag.
+For example, if you have a tag called “food” and the new tag to be created is “banana”, it would be unnatural to create a “food”-“banana” relationship right away.
+Instead, you could create a tag called 'fruit', and then create the tag so that the relationship is 'food'-'fruit'-'banana'.
 
-Language: {lang}
-New directories: {tags}
-Memos' metadatas: {metadatas}
+When creating new tags, consider the user's language and create them in that language.
+However, don't create any new tags when the new_tags field in the json is empty.
 
-Current directories: [
-{directories}
-]
+Look at the json below, and generate the results.
+
+{input_json}
 
 {format}
 """,
@@ -46,13 +56,23 @@ Current directories: [
 )
 
 get_new_relations_and_tags_chain=(
-    {
-        "tags": itemgetter("tags"),
-        "metadatas": itemgetter("metadatas"),
-        "lang": itemgetter("lang"),
-        "directories": itemgetter("directories"),
-    }
+    { "input_json": itemgetter("input_json") }
     | _get_new_relations_and_tags_chain_prompt
     | llm4o
     | _parser
 )
+
+async def get_new_relations_and_tags(tags: list[Tag], memos: dict[int, Memo], lang: str, directories: dict[str, list[str]]):
+    input_json_model=Get_new_relations_and_tags_chain_input(
+        lang=lang,
+        new_tags=[
+            _Tag(
+                name=tag.name,
+                linked_memo=tag.connected_memo_id
+            ) for tag in tags if tag.connected_memo_id
+        ],
+        memo_metadatas={str(idx): memo.metadata for idx, memo in memos.items()},
+        current_tag_structures=directories,
+    )
+    
+    return await get_new_relations_and_tags_chain.ainvoke({"input_json": input_json_model.model_dump_json()})
