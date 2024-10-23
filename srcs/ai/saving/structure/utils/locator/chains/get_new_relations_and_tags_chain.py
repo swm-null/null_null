@@ -30,13 +30,13 @@ The directory with the name '@' is the root.
 When the number of '-'s increases, it means you're inside that directory.
 Write the directory's name in the user's language.
 
-Language: {lang}
-New directories: {tags}
-Memos' metadatas: {metadatas}
+Note that the given "New Directories" may be empty. If it is empty, do not create ANYTHING.
 
-Current directories: [
-{directories}
-]
+Language: [ {lang} ]
+New directories: [ {tags} ] 
+Memos' metadatas: [ {metadatas} ]
+
+Current directories: [ {directories} ]
 
 {format}
 """,
