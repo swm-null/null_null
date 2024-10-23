@@ -10,7 +10,7 @@ class _Tag(BaseModel):
     name: str
     linked_memo: int
     
-class Get_new_relations_and_tags_chain_input(BaseModel):
+class _get_new_relations_and_tags_chain_input(BaseModel):
     lang: str=Field(description="user's language")
     new_tags: list[_Tag]=Field(description="new tags")
     memo_metadatas: dict[str, str]=Field(description="metadatas of target memos")
@@ -55,7 +55,7 @@ Look at the json below, and generate the results.
     }
 )
 
-get_new_relations_and_tags_chain=(
+_get_new_relations_and_tags_chain=(
     { "input_json": itemgetter("input_json") }
     | _get_new_relations_and_tags_chain_prompt
     | llm4o
@@ -63,7 +63,7 @@ get_new_relations_and_tags_chain=(
 )
 
 async def get_new_relations_and_tags(tags: list[Tag], memos: dict[int, Memo], lang: str, directories: dict[str, list[str]]):
-    input_json_model=Get_new_relations_and_tags_chain_input(
+    input_json_model=_get_new_relations_and_tags_chain_input(
         lang=lang,
         new_tags=[
             _Tag(
@@ -75,4 +75,4 @@ async def get_new_relations_and_tags(tags: list[Tag], memos: dict[int, Memo], la
         current_tag_structures=directories,
     )
     
-    return await get_new_relations_and_tags_chain.ainvoke({"input_json": input_json_model.model_dump_json()})
+    return await _get_new_relations_and_tags_chain.ainvoke({"input_json": input_json_model.model_dump_json()})
