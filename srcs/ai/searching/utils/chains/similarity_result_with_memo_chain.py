@@ -2,9 +2,21 @@ from datetime import datetime
 from operator import itemgetter
 from langchain_core.output_parsers import PydanticOutputParser
 from pydantic import BaseModel, Field
+from ai.searching._models.memo import Memo
 from ai.utils.llm import llm4o
 from langchain_core.prompts import PromptTemplate
 
+
+class _Memo(BaseModel):
+    id: str
+    content: str
+    metadata: str
+    timestamp: datetime
+    
+class _Similarity_result_with_memo_chain_input(BaseModel):
+    question: str
+    memos: list[_Memo]
+    lang: str
 
 class Similarity_result_with_memo_chain_output(BaseModel):
     answerable: bool
@@ -17,26 +29,20 @@ _similarity_result_with_memo_chain_prompt=PromptTemplate.from_template(
 """
 You need to answer user questions.
 Answer in the user's language.
+If you use a memo to answer, write the ID of the memo in used_memo_ids.
 
 I'm attaching some pre-written notes from the user that might help you answer this question.
 If a user asks a time-related question, consider the current time and the time the note was written.
+Current time: {current_time}
 
 1. Determine if you can answer the user's question with the information provided.
 
 2-1. If you can, set the field answerable True and create an answer to the user's question using the information provided and end this prompt. 
 2-2. If you can't, set the field answerable False and exit.
 
-Language: {language}
-Current time: {current_time}
-The user's question: {question}
-
-Notes
-[
-{memo_context}    
-]
+{input_json}
 
 {format}
-If you use a memo to answer, write the ID of the memo in used_memo_ids.
 """,
     partial_variables={
         "format": _parser.get_format_instructions(),
@@ -44,13 +50,41 @@ If you use a memo to answer, write the ID of the memo in used_memo_ids.
     }
 )
 
-similarity_result_with_memo_chain=(
-    {
-        "question": itemgetter("question"),
-        "memo_context": itemgetter("memo_context"),
-        "language": itemgetter("language"),
-    }
+_similarity_result_with_memo_chain=(
+    { "input_json": itemgetter("input_json") }
     | _similarity_result_with_memo_chain_prompt
     | llm4o
     | _parser
 )
+
+def similarity_result_with_memo(question: str, memos: list[Memo], lang: str) -> Similarity_result_with_memo_chain_output:
+    input_json_model=_Similarity_result_with_memo_chain_input(
+        question=question,
+        memos=[
+            _Memo(
+                id=memo.id,
+                content=memo.content,
+                metadata=memo.metadata,
+                timestamp=memo.timestamp
+            ) for memo in memos
+        ],
+        lang=lang
+    )
+    
+    return _similarity_result_with_memo_chain.invoke({"input_json": input_json_model.model_dump_json()})
+
+async def asimilarity_result_with_memo(question: str, memos: list[Memo], lang: str) -> Similarity_result_with_memo_chain_output:
+    input_json_model=_Similarity_result_with_memo_chain_input(
+        question=question,
+        memos=[
+            _Memo(
+                id=memo.id,
+                content=memo.content,
+                metadata=memo.metadata,
+                timestamp=memo.timestamp
+            ) for memo in memos
+        ],
+        lang=lang
+    )
+    
+    return await _similarity_result_with_memo_chain.ainvoke({"input_json": input_json_model.model_dump_json()})
