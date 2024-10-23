@@ -2,4 +2,3 @@ from ai.searching.utils.generate_similarity_result import generate_similarity_re
 from ai.searching.utils.retrieve_similar_memos_from_db import retrieve_similar_memos_from_db
 from ai.searching.utils.generate_regex import generate_regex
 from ai.searching.utils.query_analyzer import query_analyzer
-from ai.searching.utils.format_memos import format_memos
