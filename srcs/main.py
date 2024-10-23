@@ -1,4 +1,3 @@
-import asyncio
 from fastapi import FastAPI
 import uvicorn
 
@@ -8,7 +7,7 @@ from ai.utils import embedder
 from ai.searching import search_memo
 from ai.saving.tag import create_tag, create_tags
 from ai.saving.structure import process_memos, get_structure
-from ai.saving.utils import extract_metadata
+from ai.saving.utils import process_metadata
 from ai.saving.parser import kakao_parser
 
 
@@ -31,17 +30,13 @@ async def post_search(body: Arg_post_search):
 def get_embedding(body: Arg_get_embedding):
     return Res_get_embedding(embedding=embedder.embed_query(body.content))
 
-@app.post("/get-metadata", response_model=Res_get_metadata)
-def post_get_metadata(body: Body_get_metadata):
-    return extract_metadata(body.content)
-
 @app.post("/get-metadata-with-embedding", response_model=Res_get_metadata_with_embedding)
-def post_get_metadata_with_embedding(body: Body_get_metadata_with_embedding):
-    metadata=extract_metadata(body.content)
+async def post_get_metadata_with_embedding(body: Body_get_metadata_with_embedding):
+    metadata=await process_metadata(body.content, body.images)
     
     return Res_get_metadata_with_embedding(
         metadata=metadata,
-        embedding_metadata=embedder.embed_query(body.content)
+        embedding_metadata=await embedder.aembed_query(metadata)
     )
 
 @app.post("/memo/tags", response_model=Res_post_memo_tags)
@@ -89,3 +84,9 @@ async def post_kakao_parser(body: Body_post_kakao_parser):
 
 if __name__ == '__main__':
     uvicorn.run(app)
+
+# deprecated
+from ai.saving.utils.metadata_extractor import _extract_metadata_from_content
+@app.post("/get-metadata", response_model=Res_get_metadata, deprecated=True)
+async def post_get_metadata(body: Body_get_metadata):
+    return await _extract_metadata_from_content(body.content, "Korean")

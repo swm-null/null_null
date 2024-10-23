@@ -6,7 +6,7 @@ from ai.saving.structure.utils.directory_format import get_formatted_directories
 from ai.saving.structure.utils.locator.chains import get_new_relations_and_tags_chain
 from ai.saving.structure.utils.locator.chains.get_new_relations_and_tags_chain import Relation_for_chain
 from ai.saving.structure.utils.locator.chains.get_new_relations_and_tags_chain import get_new_relations_and_tags_chain, Get_new_relations_and_tags_chain_output
-from ai.saving.structure._models.memo import Memo
+from ai.saving._models.memo import Memo
 from ai.saving.structure.utils import get_tag_dict
 
 
