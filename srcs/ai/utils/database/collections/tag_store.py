@@ -1,6 +1,4 @@
-from langchain_mongodb import MongoDBAtlasVectorSearch
 from ai.utils.database.connection import client, DB_NAME
-from ai.utils import embedder
 
 
 TAG_COLLECTION_NAME="tags"
@@ -11,9 +9,3 @@ TAG_UID_NAME="uId"
 TAG_ROOT_NAME="@"
 
 tag_collection=client[DB_NAME][TAG_COLLECTION_NAME]
-tag_store=MongoDBAtlasVectorSearch(
-    collection=tag_collection,
-    embedding=embedder,
-    index_name=TAG_INDEX_NAME,
-    text_key=TAG_CONTENT_NAME,
-)
