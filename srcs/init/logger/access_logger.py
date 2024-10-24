@@ -14,7 +14,7 @@ def init():
     access_logger = logging.getLogger("uvicorn.access")
     logging.getLogger("uvicorn.access").addFilter(EndpointHealthCheckFilter())
     handler = logging.handlers.TimedRotatingFileHandler(
-        filename=f'..../logs/access/access_log',
+        filename=f'../../logs/access/access_log',
         when='midnight', 
         interval=1, 
         backupCount=15
