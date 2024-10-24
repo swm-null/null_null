@@ -4,27 +4,31 @@ from pydantic import BaseModel
 from ai.utils import llm4o
 from langchain_core.prompts import PromptTemplate
 
-class _Tag_name(BaseModel):
+
+class _Get_new_tag_chain_input(BaseModel):
+    query: str
+    lang: str
+    
+class _Get_new_tag_chain_output(BaseModel):
     name: str
 
-_parser = PydanticOutputParser(pydantic_object=_Tag_name)
+_parser = PydanticOutputParser(pydantic_object=_Get_new_tag_chain_output)
 
-_new_tag_chain_prompt=PromptTemplate.from_template(
+_get_new_tag_chain_prompt=PromptTemplate.from_template(
 """
-You're an expert at categorizing documents.
-Given a document, you create a category to encompass it.
-Create based on how the average person categorizes notes.
-Not just a category for this document, but a category for anything similar to this document. 
-But I don't want the category to be so broad that it could contain too many documents.
-Use ' ' and do not use '_'.
+You're an expert at organizing memos.
+Your memos are categorized using tags, and each tag can have subtags that belong to the tag.
 
-I'm attaching a document for you.
-Create the category in the user's language.
-Categories can be one or two words.
-The document is given between ᝃ. Sometimes it can be empty.
+The user is about to add a new memo.
+Please suggest a tag name to categorize this note.
+The tags you recommend will be automatically placed among existing tags later. Be careful not to name tags too specifically.
 
-User's language: {lang}
-Document: ᝃ{query}ᝃ
+Use ' ' as a space, and don't use special characters like '_'.
+Be careful not to misspell spaces.
+
+Create tags in the language of your users.
+
+{input_json}
 
 {format}
 """,
@@ -33,12 +37,17 @@ Document: ᝃ{query}ᝃ
     }
 )
 
-new_tag_chain=(
-    {
-        "query": itemgetter("query"),
-        "lang": itemgetter("lang"),
-    }
-    | _new_tag_chain_prompt
+_get_new_tag_chain=(
+    { "input_json": itemgetter("input_json") }
+    | _get_new_tag_chain_prompt
     | llm4o
     | _parser
 )
+
+async def get_new_tag(query: str, lang: str) -> _Get_new_tag_chain_output:
+    input_json_model=_Get_new_tag_chain_input(
+        query=query,
+        lang=lang
+    )
+    
+    return await _get_new_tag_chain.ainvoke({"input_json": input_json_model.model_dump_json()})

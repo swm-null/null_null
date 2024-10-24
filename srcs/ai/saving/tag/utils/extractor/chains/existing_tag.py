@@ -1,32 +1,36 @@
 from operator import itemgetter
-from langchain_core.runnables import RunnableLambda
 from langchain_core.output_parsers import PydanticOutputParser
 from pydantic import BaseModel, Field
-from ai.saving.tag.utils.extractor.similar_tags_retriever import retrieve_similar_tags
 from ai.saving._models import Tag
-from ai.utils import llm4o
+from ai.utils import llm4o_mini
 from langchain_core.prompts import PromptTemplate
 
 
-class _existing_tag_output(BaseModel):
+class _Get_existing_tag_chain_input(BaseModel):
+    query: str
+    tag_names: list[str]
+    lang: str
+    
+class _Get_existing_tag_chain_output(BaseModel):
     tag_list: list[str]=Field(description="list of tag names")
 
-_parser = PydanticOutputParser(pydantic_object=_existing_tag_output)
+_parser = PydanticOutputParser(pydantic_object=_Get_existing_tag_chain_output)
 
 _existing_chain_prompt=PromptTemplate.from_template(
 """
-You're an expert at categorizing documents.
-Given a document, you choose the best categorization you think fits.
-Choose based on how the average person categorizes notes.
-You might not choose one if you don't think it's a good fit, or you might choose multiple if you think there are several that are very good fits.
-If such a category does not exist, you don't have to select it.
+You're an expert at organizing memos.
+Your memos are categorized using tags, and each tag can have subtags that belong to the tag.
 
-I've attached the document and the categorizations for you.
-The document is given between ᝃ. Sometimes it can be empty.
+The user is about to add a new memo.
+You need to decide which of the existing tags to associate this memo under to categorize it.
 
-Language: {lang}
-Document: ᝃ{query}ᝃ
-List of categories: [{tag_names}]
+If you don't think there's a suitable tag, you can select none of them.
+Or, if you think multiple tags are appropriate, you can select multiple tags.
+When choosing a tag, there may be multiple similar tags, so pick the most “specific” and “detailed” one. It's more likely to be under a broader tag.
+
+Look at the json below, and generate the results.
+
+{input_json}
 
 {format}
 """,
@@ -35,13 +39,18 @@ List of categories: [{tag_names}]
     }
 )
 
-existing_tag_chain=(
-    {
-        "query": itemgetter("query"),
-        "lang": itemgetter("lang"),
-        "tag_names": itemgetter("tag_names")
-    }
+_get_existing_tag_chain=(
+    { "input_json": itemgetter("input_json") }
     | _existing_chain_prompt
-    | llm4o
+    | llm4o_mini
     | _parser
 )
+
+async def get_existing_tag(query: str, similar_tags: list[Tag], lang: str) -> _Get_existing_tag_chain_output:
+    input_json_model=_Get_existing_tag_chain_input(
+        query=query,
+        tag_names=[tag.name for tag in similar_tags],
+        lang=lang
+    )
+    
+    return await _get_existing_tag_chain.ainvoke({"input_json": input_json_model.model_dump_json()})

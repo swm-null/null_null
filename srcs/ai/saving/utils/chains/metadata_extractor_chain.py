@@ -1,6 +1,6 @@
 from operator import itemgetter
 from langchain_core.output_parsers import StrOutputParser
-from ai.utils.llm import llm4o
+from ai.utils.llm import llm4o_mini
 from langchain_core.prompts import PromptTemplate
 
 
@@ -27,6 +27,6 @@ metadata_extractor_chain=(
         "lang": itemgetter("lang"),
     }
     | _metadata_extractor_chain_prompt
-    | llm4o
+    | llm4o_mini
     | _parser
 )

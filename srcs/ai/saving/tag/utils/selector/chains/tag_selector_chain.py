@@ -1,32 +1,44 @@
 from operator import itemgetter
-from langchain_core.runnables import RunnableLambda
 from langchain_core.output_parsers import PydanticOutputParser
 from pydantic import BaseModel, Field
-from ai.utils.llm import llm4o
+from ai.saving._models.tag import Tag
+from ai.utils.llm import llm4o_mini
 from langchain_core.prompts import PromptTemplate
 from ai.saving.tag._configs import TAG_SELECTION_COUNT
-from ai.saving.tag.utils.selector.chains.utils.tag_formater_with_is_new import format_tags_with_is_new
 
 
-class _selected_tag_output(BaseModel):
+class _Tag(BaseModel):
+    name: str
+    is_new: bool
+
+class _Select_tags_chain_input(BaseModel):
+    memo: str
+    candidate_tags: list[_Tag]
+    lang: str
+
+class _Select_tags_chain_output(BaseModel):
     tag_names: list[str] = Field(description="selected tag names")
 
-_parser = PydanticOutputParser(pydantic_object=_selected_tag_output)
+_parser = PydanticOutputParser(pydantic_object=_Select_tags_chain_output)
 
-_tag_selector_chain_prompt=PromptTemplate.from_template(
+_select_tags_chain_prompt=PromptTemplate.from_template(
 """
-You're an expert at categorizing documents.
-Given a document and a set of categories, you choose which category this document can belong to.
-Pick up to '{selection_count}' of the most relevant categories that this article could belong to.
-You don't have to select all {selection_count} categories if you think they are less relevant.
-Dismiss new tags that is very similar to existing tag like "짧은 질문" and "짧은질문".
+You're an expert at organizing memos.
+Your memos are categorized using tags, and each tag can have subtags that belong to the tag.
 
-I'll attach the document and the categories for you.
-The document is given between ᝃ. Sometimes it can be empty.
+The user is about to add a new memo.
+You need to pick out some of the selected tags.
 
-Language: {lang}
-Document: ᝃ{query}ᝃ
-List of categories: [{tags}]
+Given the content of a note and a set of selected tags, choose which of those tags this note belongs to.
+You can choose up to {selection_count} tags, and you don't have to choose {selection_count} tags if the right tag is a relief.
+
+Instead, if a new tag exists that is very similar to an already existing tag (is_new field is false), don't pick that new tag (is_new field is true).
+For example, if there are virtually identical tags that differ only in spacing, such as “짧은 질문” and “짧은질문”, ignore the new tag.
+If you have virtually identical tags, such as “항공사 마일리지” and “항공 마일리지”, ignore the new tag.
+
+Look at the json below, and generate the results.
+
+{input_json}
 
 {format}
 """,
@@ -36,13 +48,23 @@ List of categories: [{tags}]
     }
 )
 
-tag_selector_chain=(
-    {
-        "query": itemgetter("query"),
-        "tags": itemgetter("tags") | RunnableLambda(format_tags_with_is_new),
-        "lang": itemgetter("lang"),
-    }
-    | _tag_selector_chain_prompt
-    | llm4o 
+_select_tags_chain=(
+    { "input_json": itemgetter("input_json") }
+    | _select_tags_chain_prompt
+    | llm4o_mini
     | _parser
 )
+
+async def select_tag(memo_content: str, candidate_tags: list[Tag], lang: str) -> _Select_tags_chain_output:
+    input_json_model=_Select_tags_chain_input(
+        memo=memo_content,
+        candidate_tags=[
+            _Tag(
+                name=tag.name,
+                is_new=tag.is_new
+            ) for tag in candidate_tags
+        ],
+        lang=lang
+    )
+    
+    return await _select_tags_chain.ainvoke({"input_json": input_json_model.model_dump_json()})
