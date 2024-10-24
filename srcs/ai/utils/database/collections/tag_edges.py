@@ -1,4 +1,4 @@
-from ai.database.connection.client import client, DB_NAME
+from ai.utils.database.connection import client, DB_NAME
 
 
 COLLECTION_NAME="tag_edges"

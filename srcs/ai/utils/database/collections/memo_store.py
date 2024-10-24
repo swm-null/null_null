@@ -1,5 +1,5 @@
 from langchain_mongodb import MongoDBAtlasVectorSearch
-from ai.database.connection.client import client, DB_NAME
+from ai.utils.database.connection import client, DB_NAME
 from ai.utils import embedder
 
 
