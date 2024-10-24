@@ -7,7 +7,7 @@ def init():
     logging.basicConfig(level=logging.INFO) 
 
     handler = logging.handlers.TimedRotatingFileHandler(
-        filename=f'..../logs/exec/exec_log', 
+        filename=f'../../logs/exec/exec_log', 
         when='midnight', 
         interval=1, 
         backupCount=15

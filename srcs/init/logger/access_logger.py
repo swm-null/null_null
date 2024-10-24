@@ -9,7 +9,7 @@ class EndpointHealthCheckFilter(logging.Filter):
         return True
 
 def init():
-    create_directory("..../logs/access")
+    create_directory("../../logs/access")
 
     access_logger = logging.getLogger("uvicorn.access")
     logging.getLogger("uvicorn.access").addFilter(EndpointHealthCheckFilter())
