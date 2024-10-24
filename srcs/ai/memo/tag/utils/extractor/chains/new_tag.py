@@ -1,4 +1,5 @@
 from operator import itemgetter
+import textwrap
 from langchain_core.output_parsers import PydanticOutputParser
 from pydantic import BaseModel
 from ai.utils import llm4o
@@ -14,24 +15,23 @@ class _Get_new_tag_chain_output(BaseModel):
 
 _parser = PydanticOutputParser(pydantic_object=_Get_new_tag_chain_output)
 
-_get_new_tag_chain_prompt=PromptTemplate.from_template(
-"""
-You're an expert at organizing memos.
-Your memos are categorized using tags, and each tag can have subtags that belong to the tag.
+_get_new_tag_chain_prompt=PromptTemplate.from_template(textwrap.dedent("""
+    You're an expert at organizing memos.
+    Your memos are categorized using tags, and each tag can have subtags that belong to the tag.
 
-The user is about to add a new memo.
-Please suggest a tag name to categorize this note.
-The tags you recommend will be automatically placed among existing tags later. Be careful not to name tags too specifically.
+    The user is about to add a new memo.
+    Please suggest a tag name to categorize this note.
+    The tags you recommend will be automatically placed among existing tags later. Be careful not to name tags too specifically.
 
-Use ' ' as a space, and don't use special characters like '_'.
-Be careful not to misspell spaces.
+    Use ' ' as a space, and don't use special characters like '_'.
+    Be careful not to misspell spaces.
 
-Create tags in the language of your users.
+    Create tags in the language of your users.
 
-{input_json}
+    {input_json}
 
-{format}
-""",
+    {format}
+    """),
     partial_variables={
         "format": _parser.get_format_instructions()
     }

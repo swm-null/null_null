@@ -1,4 +1,5 @@
 from operator import itemgetter
+import textwrap
 from langchain_core.output_parsers import PydanticOutputParser
 from pydantic import BaseModel, Field
 from ai.memo._models import Tag
@@ -16,24 +17,23 @@ class _Get_existing_tag_chain_output(BaseModel):
 
 _parser = PydanticOutputParser(pydantic_object=_Get_existing_tag_chain_output)
 
-_existing_chain_prompt=PromptTemplate.from_template(
-"""
-You're an expert at organizing memos.
-Your memos are categorized using tags, and each tag can have subtags that belong to the tag.
+_existing_chain_prompt=PromptTemplate.from_template(textwrap.dedent("""
+    You're an expert at organizing memos.
+    Your memos are categorized using tags, and each tag can have subtags that belong to the tag.
 
-The user is about to add a new memo.
-You need to decide which of the existing tags to associate this memo under to categorize it.
+    The user is about to add a new memo.
+    You need to decide which of the existing tags to associate this memo under to categorize it.
 
-If you don't think there's a suitable tag, you can select none of them.
-Or, if you think multiple tags are appropriate, you can select multiple tags.
-When choosing a tag, there may be multiple similar tags, so pick the most “specific” and “detailed” one. It's more likely to be under a broader tag.
+    If you don't think there's a suitable tag, you can select none of them.
+    Or, if you think multiple tags are appropriate, you can select multiple tags.
+    When choosing a tag, there may be multiple similar tags, so pick the most “specific” and “detailed” one. It's more likely to be under a broader tag.
 
-Look at the json below, and generate the results.
+    Look at the json below, and generate the results.
 
-{input_json}
+    {input_json}
 
-{format}
-""",
+    {format}
+    """),
     partial_variables={
         "format": _parser.get_format_instructions()
     }

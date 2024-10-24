@@ -1,4 +1,5 @@
 from operator import itemgetter
+import textwrap
 from langchain_core.output_parsers import PydanticOutputParser
 from pydantic import BaseModel, Field
 from ai.utils import llm4o_mini
@@ -15,20 +16,19 @@ class _Query_analyzer_chain_output(BaseModel):
 
 _parser = PydanticOutputParser(pydantic_object=_Query_analyzer_chain_output)
 
-_query_analyzer_chain_prompt=PromptTemplate.from_template(
-"""
-You need to analyze the sentence to figure out what the user wants.
-Analyze the sentence according to the following rules and print ONE correct answer.
-Apply the rules in the order they are written, and if any of them are correct, print them out.
+_query_analyzer_chain_prompt=PromptTemplate.from_template(textwrap.dedent("""
+    You need to analyze the sentence to figure out what the user wants.
+    Analyze the sentence according to the following rules and print ONE correct answer.
+    Apply the rules in the order they are written, and if any of them are correct, print them out.
 
--- Rules -- 
-If the sentence is a request to find information that fits a specific pattern, print 'regex'.
-Else, print 'similarity'.
+    -- Rules -- 
+    If the sentence is a request to find information that fits a specific pattern, print 'regex'.
+    Else, print 'similarity'.
 
-{input_json}
+    {input_json}
 
-{format}
-""",
+    {format}
+    """),
     partial_variables={
         "format": _parser.get_format_instructions()
     }

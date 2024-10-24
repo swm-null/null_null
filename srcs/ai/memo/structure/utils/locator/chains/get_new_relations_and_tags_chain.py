@@ -1,4 +1,5 @@
 from operator import itemgetter
+import textwrap
 from langchain_core.output_parsers import PydanticOutputParser
 from pydantic import BaseModel, Field
 from ai.memo._models.tag import Tag
@@ -27,33 +28,32 @@ class Get_new_relations_and_tags_chain_output(BaseModel):
 
 _parser = PydanticOutputParser(pydantic_object=Get_new_relations_and_tags_chain_output)
 
-_get_new_relations_and_tags_chain_prompt=PromptTemplate.from_template(
-"""
-You're an expert at organizing memos.
-Your memos are categorized using tags, and each tag can have subtags that belong to the tag.
+_get_new_relations_and_tags_chain_prompt=PromptTemplate.from_template(textwrap.dedent("""
+    You're an expert at organizing memos.
+    Your memos are categorized using tags, and each tag can have subtags that belong to the tag.
 
-The user is about to add a new memo.
-You'll be given a new tag to categorize it.
-The new tag is linked with the new memo the user added.
-You need to look at the memo's description (metadata) and place the tags appropriately.
+    The user is about to add a new memo.
+    You'll be given a new tag to categorize it.
+    The new tag is linked with the new memo the user added.
+    You need to look at the memo's description (metadata) and place the tags appropriately.
 
-To do this, you can attach the new tag to a child of an existing tag.
-However, you can also create a new tag in the middle, rather than attaching it directly to an existing tag.
-For example, if you have a tag called “food” and the new tag to be created is “banana”, it would be unnatural to create a “food”-“banana” relationship right away.
-Instead, you could create a tag called 'fruit', and then create the tag so that the relationship is 'food'-'fruit'-'banana'.
+    To do this, you can attach the new tag to a child of an existing tag.
+    However, you can also create a new tag in the middle, rather than attaching it directly to an existing tag.
+    For example, if you have a tag called “food” and the new tag to be created is “banana”, it would be unnatural to create a “food”-“banana” relationship right away.
+    Instead, you could create a tag called 'fruit', and then create the tag so that the relationship is 'food'-'fruit'-'banana'.
 
-Use ' ' as a space for tag name, and don't use special characters like '_'.
-Be careful not to misspell spaces.
+    Use ' ' as a space for tag name, and don't use special characters like '_'.
+    Be careful not to misspell spaces.
 
-When creating new tags, consider the user's language and create them in that language.
-However, don't create any new tags when the new_tags field in the json is empty.
+    When creating new tags, consider the user's language and create them in that language.
+    However, don't create any new tags when the new_tags field in the json is empty.
 
-Look at the json below, and generate the results.
+    Look at the json below, and generate the results.
 
-{input_json}
+    {input_json}
 
-{format}
-""",
+    {format}
+    """),
     partial_variables={
         "format": _parser.get_format_instructions()
     }
