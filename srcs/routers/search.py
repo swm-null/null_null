@@ -1,4 +1,6 @@
 from fastapi import APIRouter
+from routers._models.search import *
+from ai.search import search_memo
 
 
 router=APIRouter(tags=["search"])

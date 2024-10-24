@@ -1,5 +1,6 @@
 from fastapi import APIRouter
-from routers._models.embedding import *
+from ai.memo.utils import process_metadata
+from routers._models import *
 from ai.utils import embedder
 
 
@@ -17,9 +18,3 @@ async def post_get_metadata_with_embedding(body: Body_get_metadata_with_embeddin
         metadata=metadata,
         embedding_metadata=await embedder.aembed_query(metadata)
     )
-
-# deprecated
-from ai.saving.utils.metadata_extractor import _extract_metadata_from_content
-@router.post("/get-metadata", response_model=Res_get_metadata, deprecated=True)
-async def post_get_metadata(body: Body_get_metadata):
-    return await _extract_metadata_from_content(body.content, "Korean")

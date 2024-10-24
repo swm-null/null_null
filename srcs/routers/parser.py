@@ -1,5 +1,7 @@
 from datetime import datetime
 from fastapi import APIRouter
+from ai.memo.tag import create_tags
+from ai.parser import kakao_parser
 from routers._models import *
 from routers.memo import post_memo_structures
 

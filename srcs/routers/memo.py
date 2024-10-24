@@ -1,5 +1,7 @@
 from fastapi import APIRouter
-from routers._models.memo import *
+from ai.memo.structure import process_memos, get_structure
+from ai.memo.tag import create_tag, create_tags
+from routers._models import *
 
 
 router=APIRouter(tags=["memo"])
