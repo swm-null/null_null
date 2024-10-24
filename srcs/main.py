@@ -32,7 +32,7 @@ def get_embedding(body: Arg_get_embedding):
 
 @app.post("/get-metadata-with-embedding", response_model=Res_get_metadata_with_embedding)
 async def post_get_metadata_with_embedding(body: Body_get_metadata_with_embedding):
-    metadata=await process_metadata(body.content, body.images)
+    metadata=await process_metadata(body.content, body.image_urls)
     
     return Res_get_metadata_with_embedding(
         metadata=metadata,
