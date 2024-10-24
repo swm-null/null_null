@@ -1,10 +1,11 @@
 from ai.utils.embedder import embedder
 from ai.utils.database import TAG_CONTENT_NAME, TAG_ID_NAME, TAG_INDEX_NAME, TAG_UID_NAME, tag_collection
 from ai.memo._models import Tag
+from fastapi.concurrency import run_in_threadpool
 
 
-def retrieve_similar_tags(query: str, user_id: str) -> list[Tag]:
-    tag_list: list[Tag]=_get_similar_tags_from_db(query, user_id)
+async def retrieve_similar_tags(query: str, user_id: str) -> list[Tag]:
+    tag_list: list[Tag]=await run_in_threadpool(_get_similar_tags_from_db, query, user_id)
     
     return tag_list
 

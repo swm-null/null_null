@@ -2,4 +2,4 @@ from .memo_and_tags_converter import convert_memos_and_tags
 from .tag_converter import convert_tag
 from .relations_converter import convert_relations
 from .metadata_extractor import extract_and_assign_metadata
-from .get_tag_relations_from_db import get_tag_relations_from_db, aget_tag_relations_from_db
+from .get_tag_relations_from_db import get_tag_relations_from_db
