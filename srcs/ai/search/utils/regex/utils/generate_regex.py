@@ -1,6 +1,6 @@
 import logging
 from re import Pattern
-from ai.searching.utils.chains import generate_regex_using_chain
+from ai.search.utils.regex.utils.chains import generate_regex_using_chain
 
 
 async def generate_regex(query: str, lang: str="Korean") -> Pattern[str]:

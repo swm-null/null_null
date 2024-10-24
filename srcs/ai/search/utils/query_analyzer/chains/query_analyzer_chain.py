@@ -1,9 +1,9 @@
 from operator import itemgetter
 from langchain_core.output_parsers import PydanticOutputParser
 from pydantic import BaseModel, Field
-from ai.utils.llm import llm4o_mini
+from ai.utils import llm4o_mini
 from langchain_core.prompts import PromptTemplate
-from models.search import Search_query_type
+from routers._models.search import Search_query_type
 
 
 class _Query_analyzer_chain_input(BaseModel):

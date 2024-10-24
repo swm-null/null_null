@@ -1,7 +1,7 @@
 import asyncio
 import logging
-from ai.searching._models import Memo
-from ai.database.collections.memo_store import *
+from ai.search._models import Memo
+from ai.utils.database import *
 from ai.utils import embedder
 from fastapi.concurrency import run_in_threadpool
 

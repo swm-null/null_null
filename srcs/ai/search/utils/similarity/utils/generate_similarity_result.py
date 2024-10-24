@@ -1,8 +1,7 @@
 import asyncio
 import logging
-from ai.searching.utils.agents.similarity_search_agent import invoke_similarity_search_agent
-from ai.searching.utils.agents.tools import amemo_answerer
-from ai.searching.utils.chains.similarity_result_with_memo_chain import Similarity_result_with_memo_chain_output
+from ai.search.utils.similarity.utils import invoke_similarity_search_agent, amemo_answerer
+from ai.search.utils.similarity.utils.chains.similarity_result_with_memo_chain import Similarity_result_with_memo_chain_output
 
 
 async def generate_similarity_result(user_id: str, query: str, lang: str="Korean") -> tuple[str, list[str]]:

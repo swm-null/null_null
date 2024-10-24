@@ -1,9 +1,9 @@
 from langchain_core.tools import tool
 from openai import BaseModel
 from pydantic import Field
-from ai.searching._models.memo import Memo
-from ai.searching.utils.retrieve_similar_memos_from_db import retrieve_similar_memos_from_db
-from ai.searching.utils.chains.similarity_result_with_memo_chain import asimilarity_result_with_memo, similarity_result_with_memo, Similarity_result_with_memo_chain_output
+from ai.search._models.memo import Memo
+from ai.search.utils.similarity.utils.retrieve_similar_memos_from_db import retrieve_similar_memos_from_db
+from ai.search.utils.similarity.utils.chains.similarity_result_with_memo_chain import asimilarity_result_with_memo, similarity_result_with_memo, Similarity_result_with_memo_chain_output
 from fastapi.concurrency import run_in_threadpool
 
 
