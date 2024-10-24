@@ -56,7 +56,14 @@ async def _locate_memos(user_id: str, memos: dict[int, Memo], tags: list[Tag], l
 async def _categorize_new_tags_and_existing_tags(user_id: str, tags: list[Tag]) -> tuple[list[Tag], list[Tag]]:
     _, tag_name_to_id=await get_tag_dict(user_id)
     
-    new_tags: list[Tag]=[tag for tag in tags if tag.name not in tag_name_to_id]
+    new_tags: list[Tag]=[
+        Tag(
+            id=tag.id,
+            name=tag.name,
+            is_new=True,
+            connected_memo_id=tag.connected_memo_id
+        ) for tag in tags if tag.name not in tag_name_to_id
+    ]
     existing_tags: dict[str, Tag]={
         tag.name: Tag(
             id=tag_name_to_id[tag.name],

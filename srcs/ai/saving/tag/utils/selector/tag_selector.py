@@ -1,11 +1,10 @@
-from collections import defaultdict
 import logging
 from ai.saving._models import Tag
-from ai.saving.tag.utils.selector.chains import tag_selector_chain
+from ai.saving.tag.utils.selector.chains import select_tag
 
 
 async def select_tags(query: str, tags: list[Tag], lang: str="Korean") -> list[Tag]:
-    chain_result=await tag_selector_chain.ainvoke({"query": query, "tags": tags, "lang": lang})
+    chain_result=await select_tag(query, tags, lang)
     uniqued_tags: list[Tag]=_get_uniqued_tags(chain_result.tag_names, tags)
     logging.info("[select_tags]\n## selected tags:\n%s\n\n", uniqued_tags)
     
