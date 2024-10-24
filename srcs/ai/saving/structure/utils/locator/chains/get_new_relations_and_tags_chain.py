@@ -2,7 +2,7 @@ from operator import itemgetter
 from langchain_core.output_parsers import PydanticOutputParser
 from pydantic import BaseModel, Field
 from ai.saving._models.tag import Tag
-from ai.saving.structure._models.memo import Memo
+from ai.saving._models.memo import Memo
 from ai.utils.llm import llm4o
 from langchain_core.prompts import PromptTemplate
 

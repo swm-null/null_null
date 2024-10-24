@@ -1,7 +1,6 @@
 from datetime import datetime
 from models.memo import Memo_memo_and_tags
-from ai.saving._models import Tag
-from ai.saving.structure._models import Memo
+from ai.saving._models import Tag, Memo
 
 
 def convert_memos_and_tags(memos_and_tags: list[Memo_memo_and_tags]) -> tuple[dict[int, Memo], list[Tag]]:
