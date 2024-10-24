@@ -2,7 +2,7 @@ import asyncio
 import pytest
 from httpx import ASGITransport, AsyncClient
 from main import app
-from models.search import Res_post_search
+from routers._models.search import Res_post_search
 
 
 similarity_body={
