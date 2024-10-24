@@ -6,7 +6,7 @@ from ai.memo._models import Tag
 
 
 async def extract_tags(query: str, user_id: str, lang: str="Korean") -> list[Tag]:
-    similar_tags: list[Tag]=retrieve_similar_tags(query, user_id)
+    similar_tags: list[Tag]=await retrieve_similar_tags(query, user_id)
     existing_candidtate_tags_chain_result, new_candidate_tag_chain_result=await asyncio.gather(
         get_existing_tag(query, similar_tags, lang),
         get_new_tag(query, lang)
