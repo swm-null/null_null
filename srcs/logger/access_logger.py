@@ -4,7 +4,7 @@ from logger.utils.create_directory import create_directory
 class EndpointHealthCheckFilter(logging.Filter):
     def filter(self, record: logging.LogRecord) -> bool:
         if record.args and len(record.args) >= 3:
-            endpoint_name: str=str(record.args[2])
+            endpoint_name: str=str(record.args[2]) # type: ignore
             return endpoint_name!="/"
         return True
 
