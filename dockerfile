@@ -31,4 +31,4 @@ ENV FLOW=${FLOW} \
     SENTRY_DSN=${SENTRY_DSN}
 
 WORKDIR /srcs/srcs
-ENTRYPOINT ["poetry", "run", "uvicorn", "main:app", "--reload", "--host", "0.0.0.0", "--port", "8000"]
+ENTRYPOINT ["poetry", "run", "uvicorn", "main:app", "--workers=4", "--host", "0.0.0.0", "--port", "8000"]
