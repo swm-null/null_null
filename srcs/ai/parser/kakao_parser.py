@@ -5,22 +5,21 @@ from datetime import datetime
 import logging
 import re
 from fastapi import HTTPException
-from ai.saving.utils.link_content_fetcher import get_contents_from_link
-from models.kakao_parser import kakao_parser_type
+from ai.utils.link_content_fetcher import get_contents_from_link
+from routers._models import Kakao_parser_type
 from typing import Optional
-from urllib.request import urlopen
 from urllib.parse import quote
 
 
-async def kakao_parser(content: str, type: kakao_parser_type) -> list[tuple[str, datetime]]:
+async def kakao_parser(content: str, type: Kakao_parser_type) -> list[tuple[str, datetime]]:
     parsed_memolist: list[tuple[str, datetime]]
     
     parsed_content=await _parse_from_url(content)
     
-    if type == kakao_parser_type.CSV:
+    if type == Kakao_parser_type.CSV:
         csv_reader: csv.DictReader=_get_csv_reader_from_string(parsed_content)
         parsed_memolist=_parse_csv_reader(csv_reader)    
-    elif type == kakao_parser_type.TXT:
+    elif type == Kakao_parser_type.TXT:
         parsed_memolist=_parse_txt_string(parsed_content)
     else:
         logging.error("[KP] invalid content type: %s", type)
