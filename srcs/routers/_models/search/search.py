@@ -1,12 +1,8 @@
 from re import Pattern
 from typing import Optional
 from pydantic import BaseModel, Field
-from enum import Enum
+from routers._models.search import Search_query_type
 
-
-class Search_query_type(Enum):
-    regex = "regex"
-    similarity = "similarity"
 
 class Arg_post_search(BaseModel):
     user_id: str

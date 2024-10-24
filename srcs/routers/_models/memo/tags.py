@@ -1,5 +1,5 @@
 from pydantic import BaseModel, Field
-from models.memo import Memo_raw_memo, Memo_tag_name_and_id
+from routers._models.memo import Memo_raw_memo, Memo_tag_name_and_id
 
 
 class Body_post_memo_tags(BaseModel):

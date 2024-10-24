@@ -1,5 +1,5 @@
 from pydantic import BaseModel, Field
-from models.memo import Memo_tag, Memo_relations, Memo_processed_memo, Memo_memo_and_tags
+from routers._models.memo import Memo_tag, Memo_processed_memo, Memo_memo_and_tags
 
     
 class Body_post_memo_structures(BaseModel):
