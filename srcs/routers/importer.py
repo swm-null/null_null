@@ -6,7 +6,7 @@ from routers._models import *
 from routers.memo import post_memo_structures
 
 
-router=APIRouter(tags=["parser"])
+router=APIRouter(tags=["importer"])
 
 @router.post("/kakao-parser", response_model=Res_post_memo_structures)
 async def post_kakao_parser(body: Body_post_kakao_parser):

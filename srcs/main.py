@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 import uvicorn
 from init import init
-from routers import embedding, memo, parser, search
+from routers import embedding, importer, memo, search
 
 app = FastAPI(
     title="Oatnote AI",
@@ -16,7 +16,7 @@ async def default():
 
 app.include_router(embedding.router)
 app.include_router(memo.router)
-app.include_router(parser.router)
+app.include_router(importer.router)
 app.include_router(search.router)
 
 if __name__ == '__main__':
