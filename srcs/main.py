@@ -5,7 +5,7 @@ from routers import embedding, importer, memo, search
 
 app = FastAPI(
     title="Oatnote AI",
-    description="after PR #92, https://github.com/swm-null/null_null/pull/91",
+    description="after PR #92, https://github.com/swm-null/null_null/pull/92",
     version="0.2.42",
 )
 init(app)
