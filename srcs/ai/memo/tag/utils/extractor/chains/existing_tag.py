@@ -27,7 +27,8 @@ _existing_chain_prompt=PromptTemplate.from_template(textwrap.dedent("""
     If you don't think there's a suitable tag, you can select none of them.
     Or, if you think multiple tags are appropriate, you can select multiple tags.
     When choosing a tag, there may be multiple similar tags, so pick the most “specific” and “detailed” one. It's more likely to be under a broader tag.
-
+    If no tags are given, don't select anything.
+    
     Look at the json below, and generate the results.
 
     {input_json}

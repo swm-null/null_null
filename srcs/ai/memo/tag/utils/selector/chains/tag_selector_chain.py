@@ -28,13 +28,14 @@ _select_tags_chain_prompt=PromptTemplate.from_template(textwrap.dedent("""
 
     The user is about to add a new memo.
     You need to pick out some of the selected tags.
+    You must select at least one tag.
+    Do not select tags named '@' as it points to the root.
 
-    Given the content of a note and a set of selected tags, choose which of those tags this note belongs to.
+    Given the content of a memo and a set of selected tags, choose which of those tags this memo belongs to.
+    Please choose the one that best captures the meaning of the key part of the memo.
     You can choose up to {selection_count} tags, and you don't have to choose {selection_count} tags if the right tag is a relief.
 
-    Instead, if a new tag exists that is very similar to an already existing tag (is_new field is false), don't pick that new tag (is_new field is true).
-    For example, if there are virtually identical tags that differ only in spacing, such as “짧은 질문” and “짧은질문”, ignore the new tag.
-    If you have virtually identical tags, such as “항공사 마일리지” and “항공 마일리지”, ignore the new tag.
+    Don't choose a new tag if an existing tag is virtually identical to the new tag. A new tag is a tag whose is_new field is true.
 
     Look at the json below, and generate the results.
 

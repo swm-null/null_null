@@ -21,11 +21,14 @@ async def get_contents_from_link(links: list[str]) -> list[str]:
     return [text for text in texts if text]
 
 async def _fetch(session, link: str) -> Optional[str]:
-    async with session.get(link) as response:
-        if response.status == 200:
-            return await response.text()
-        else:
-            return None
+    try:
+        async with session.get(link) as response:
+            if response.status == 200:
+                return await response.text()
+            else:
+                return None
+    except:
+        return None
 
 def _extract_og_data(html: str) -> str:
     soup=bs4.BeautifulSoup(html, "html.parser")

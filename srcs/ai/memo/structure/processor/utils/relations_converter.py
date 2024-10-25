@@ -1,4 +1,4 @@
-from ai.memo.structure._models.directory_relation import Directory_relation
+from ai.memo.structure.processor._models.directory_relation import Directory_relation
 from routers._models import Memo_tag_relation
 
 

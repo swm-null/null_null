@@ -1,4 +1,4 @@
-from ai.utils.database.collections.tag_store import tag_collection, TAG_UID_NAME, TAG_ID_NAME, TAG_CONTENT_NAME, TAG_ROOT_NAME
+from ai.utils.database.collections.tag_store import tag_collection, TAG_UID_NAME, TAG_ID_NAME, TAG_CONTENT_NAME
 from fastapi.concurrency import run_in_threadpool
 
 

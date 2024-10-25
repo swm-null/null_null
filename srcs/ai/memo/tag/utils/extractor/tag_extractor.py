@@ -11,15 +11,22 @@ async def extract_tags(query: str, user_id: str, lang: str="Korean") -> list[Tag
         get_existing_tag(query, similar_tags, lang),
         get_new_tag(query, lang)
     )
-    logging.info("[extract_tags]\n## existing tags:\n%s\n\n## new tags:\n%s\n\n", existing_candidtate_tags_chain_result, new_candidate_tag_chain_result)
+    extracted_existing_tag_names: list[str]=existing_candidtate_tags_chain_result.tag_list
+    extracted_new_tag_name: str=new_candidate_tag_chain_result.name
+    logging.info("[extract_tags]\n## existing tags:\n%s\n\n## new tags:\n%s\n\n", extracted_existing_tag_names, extracted_new_tag_name)
     
-    extracted_tags: list[Tag]=_convert_existing_chain_result(existing_candidtate_tags_chain_result.tag_list, similar_tags)
-    if not new_candidate_tag_chain_result.name in existing_candidtate_tags_chain_result.tag_list:
-        extracted_tags.extend(_convert_new_chain_result(new_candidate_tag_chain_result.name))
+    extracted_tags: list[Tag]=_get_uniqued_extracted_tags(extracted_existing_tag_names, extracted_new_tag_name, similar_tags)
     logging.info("[extract_tags]\n## uniqued extracted tags:\n%s\n\n", extracted_tags)
     
     return extracted_tags
 
+def _get_uniqued_extracted_tags(extracted_existing_tag_names: list[str], extracted_new_tag_name: str, original_tags: list[Tag]):
+    extracted_tags: list[Tag]=_convert_existing_chain_result(extracted_existing_tag_names, original_tags)
+    if not extracted_new_tag_name in extracted_existing_tag_names:
+        extracted_tags.extend(_convert_new_chain_result(extracted_new_tag_name))
+    
+    return extracted_tags
+        
 def _convert_existing_chain_result(selected_tag_names: list[str], tags: list[Tag]) -> list[Tag]:
     return [
         Tag(

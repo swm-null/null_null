@@ -3,7 +3,7 @@ import textwrap
 from langchain_core.output_parsers import PydanticOutputParser
 from pydantic import BaseModel, Field
 from ai.memo._models.tag import Tag
-from ai.memo.structure._models.memo import Memo
+from ai.memo.structure.processor._models.memo import Memo
 from ai.utils.llm import llm4o
 from langchain_core.prompts import PromptTemplate
 
@@ -24,7 +24,7 @@ class Relation_for_chain(BaseModel):
 
 class Get_new_relations_and_tags_chain_output(BaseModel):
     relations: list[Relation_for_chain]=Field(description="relations of new directory")
-    new_directories: list[str]=Field(description="name of given directories and a newly created directory by you")
+    new_tags: list[str]=Field(description="name of given tags and newly created tags by you")
 
 _parser = PydanticOutputParser(pydantic_object=Get_new_relations_and_tags_chain_output)
 

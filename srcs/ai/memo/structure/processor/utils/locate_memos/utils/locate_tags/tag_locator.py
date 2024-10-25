@@ -1,27 +1,32 @@
 import logging
 import uuid
 from ai.memo._models import Tag
-from ai.memo.structure._models.directory_relation import Directory_relation
-from ai.memo.structure.utils.locator.utils import get_structure_dict, get_tag_dict
-from ai.memo.structure.utils.locator.chains import get_new_relations_and_tags, Get_new_relations_and_tags_chain_output, Relation_for_chain
-from ai.memo.structure._models.memo import Memo
+from ai.memo.structure.processor._models.directory_relation import Directory_relation
+from ai.memo.structure.processor.utils.locate_memos.utils.get_tag_dict import get_tag_dict
+from ai.memo.structure.processor.utils.locate_memos.utils.locate_tags.utils import get_structure_dict
+from ai.memo.structure.processor.utils.locate_memos.utils.locate_tags.chains import get_new_relations_and_tags, Get_new_relations_and_tags_chain_output, Relation_for_chain
+from ai.memo.structure.processor._models.memo import Memo
 
 
 async def locate_tags(user_id: str, tags: list[Tag], memos: dict[int, Memo], lang: str) -> tuple[list[Directory_relation], list[Tag]]:
     tag_id_to_name, tag_name_to_id=await get_tag_dict(user_id)
-    formatted_directories: dict[str, list[str]]=await get_structure_dict(user_id, tag_id_to_name, tag_name_to_id)
-    new_dir_relations, new_tags=await _get_new_relations_and_tags(tags, memos, lang, formatted_directories, tag_name_to_id)
+    current_structure: dict[str, list[str]]=await get_structure_dict(user_id, tag_id_to_name, tag_name_to_id)
+    
+    new_dir_relations, new_tags=await _get_new_relations_and_tags(tags, memos, lang, current_structure, tag_name_to_id)
     logging.info("[locate_tags]\n## new_dir_relations:\n%s\n\n## new tags:\n%s\n\n", new_dir_relations, new_tags)
     
     return new_dir_relations, new_tags
     
 async def _get_new_relations_and_tags(tags: list[Tag], memos: dict[int, Memo], lang:str, directories: dict[str, list[str]], tag_name_to_id: dict[str, str]) -> tuple[list[Directory_relation], list[Tag]]:
     chain_result: Get_new_relations_and_tags_chain_output=await get_new_relations_and_tags(tags, memos, lang, directories)
-    tag_name_to_tag: dict[str, Tag]=_assign_id_to_new_tags(chain_result.new_directories)
-    merged_tag_name_to_id: dict[str, str]=_merge_new_tag_ids_and_existing_tag_ids(tag_name_to_tag, tag_name_to_id)
-    modified_relations: list[Directory_relation]=_modify_id_on_new_relations(chain_result.relations, merged_tag_name_to_id)
+    new_tag_names: list[str]=chain_result.new_tags
+    new_relations: list[Relation_for_chain]=chain_result.relations
     
-    return modified_relations, [*tag_name_to_tag.values()]
+    tag_name_to_new_tags_with_id: dict[str, Tag]=_assign_id_to_new_tags(new_tag_names)
+    existing_and_new_tag_name_to_id: dict[str, str]=_merge_new_tag_ids_and_existing_tag_ids(tag_name_to_new_tags_with_id, tag_name_to_id)
+    new_tag_relations: list[Directory_relation]=_modify_id_on_new_relations(new_relations, existing_and_new_tag_name_to_id)
+    
+    return new_tag_relations, [*tag_name_to_new_tags_with_id.values()]
 
 def _assign_id_to_new_tags(tag_names: list[str]) -> dict[str, Tag]:
     tag_name_to_tag: dict[str, Tag]={}
