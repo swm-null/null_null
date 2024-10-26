@@ -10,4 +10,3 @@ async def similarity(query: str, user_id: str, lang: str="Korean") -> Res_post_s
         processed_message=generated_answer,
         ids=used_memo_ids
     )
-    
