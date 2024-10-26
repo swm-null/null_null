@@ -24,9 +24,10 @@ _metadata_extractor_chain_prompt=PromptTemplate.from_template(textwrap.dedent(""
     If the memo contains specific elements like a social security number or phone number, identify the relevant country (based on the memo's language or content) and adapt the format to match the conventions used in that country.
     
     2. **Time-Related Expressions**:
-    Replace time-sensitive references like “next Saturday” with the precise date that matches the context, based on today's date.
+    Replace time-sensitive references like “다음 주 토요일” with the precise date that matches the context, based on today's date.
     Ensure the summary reflects the adjusted time reference accurately to avoid confusion when reviewed later.
-    Write down the original text and the time so that I can find the note later.
+    We'll use it later, so in the Key field, we'll write “something about time” as it was written by the user, and in the Value field, we'll write the converted time.
+    For example, If a user uses the phrase "내일" and it's November 12, 2024, "내일": “2024-11-12” in the field.
 
     Current time: {current_time}
     
