@@ -36,6 +36,7 @@ _get_new_relations_and_tags_chain_prompt=PromptTemplate.from_template(textwrap.d
     You'll be given a new tag to categorize it.
     The new tag is linked with the new memo the user added.
     You need to look at the memo's description (metadata) and place the tags appropriately.
+    The tag named @ is the root of this tag structure.
 
     To do this, you can attach the new tag to a child of an existing tag.
     However, you can also create a new tag in the middle, rather than attaching it directly to an existing tag.
