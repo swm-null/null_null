@@ -30,6 +30,7 @@ _similarity_result_with_memo_chain_prompt=PromptTemplate.from_template(textwrap.
     You need to answer user questions.
     Answer in the user's language.
     If you use a memo to answer, write the ID of the memo in used_memo_ids.
+    But don't just write the ID of the memo in your reply.
 
     I'm attaching some pre-written notes from the user that might help you answer this question.
     If a user asks a time-related question, consider the current time and the time the note was written.
