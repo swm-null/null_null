@@ -2,7 +2,7 @@ import asyncio
 import pytest
 from httpx import ASGITransport, AsyncClient
 from main import app
-from models.memo.structures import Res_post_memo_structures
+from routers._models.memo.structures import Res_post_memo_structures
 
 
 body_with_tag={
