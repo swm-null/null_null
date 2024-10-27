@@ -24,8 +24,10 @@ jobs:
           PR_URL="${{ github.event.pull_request.html_url }}"
           DESCRIPTION="after PR ${{ github.event.pull_request.title }}(#${{ github.event.pull_request.number }}), $PR_URL"
           
-          sed -i "s/version=\"$VERSION\"/version=\"$NEW_VERSION\"/" srcs/main.py
-          sed -i "s/description=\"[^\"]*\"/description=\"$DESCRIPTION\"/" srcs/main.py
+          ESCAPED_DESCRIPTION=$(echo "$DESCRIPTION" | sed 's/[&/\]/\\&/g')
+
+          sed -i "s|version=\"$VERSION\"|version=\"$NEW_VERSION\"|" srcs/main.py
+          sed -i "s|description=\"[^\"]*\"|description=\"$ESCAPED_DESCRIPTION\"|" srcs/main.py
 
       - name: Commit changes
         run: |
