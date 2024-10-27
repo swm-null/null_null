@@ -4,7 +4,7 @@ import textwrap
 from langchain_core.output_parsers import PydanticOutputParser
 from pydantic import BaseModel, Field
 from ai.search._models.memo import Memo
-from ai.utils.llm import llm4o
+from ai.utils.llm import llm4o_mini
 from langchain_core.prompts import PromptTemplate
 
 
@@ -27,19 +27,34 @@ class Similarity_result_with_memo_chain_output(BaseModel):
 _parser = PydanticOutputParser(pydantic_object=Similarity_result_with_memo_chain_output)
 
 _similarity_result_with_memo_chain_prompt=PromptTemplate.from_template(textwrap.dedent("""
-    You need to answer user questions.
-    Answer in the user's language.
-    If you use a memo to answer, write the ID of the memo in used_memo_ids.
-    But don't just write the ID of the memo in your reply.
+You need to answer user questions based on the provided memos. Follow these guidelines carefully:
+    ---
 
-    I'm attaching some pre-written notes from the user that might help you answer this question.
-    If a user asks a time-related question, consider the current time and the time the note was written.
-    Current time: {current_time}
+    ## **Instructions**:
 
-    1. Determine if you can answer the user's question with the information provided.
-
-    2-1. If you can, set the field answerable True and create an answer to the user's question using the information provided and end this prompt. 
-    2-2. If you can't, set the field answerable False and exit.
+    1. **Language and Memo Usage**:
+    - Answer in the user’s language.
+    - If you use a memo to generate the response, list its ID(s) in the used_memo_ids field.
+    
+    2. **Generate answer using memos**:
+    - The information in the content field is the content of the memo entered by the user.
+    - The information in the metadata field is a description of the content of this memo. There is various information such as what the content of the memo means, a description of the image attached to the memo, etc. 
+    - Use the most of these two fields.
+    
+    3. **Handling Time-sensitive Queries**:
+    - If a user asks a time-related question, such as next week's schedule, don't use “time-related expressions” in the memo's content.
+    - Instead, use the converted “time-related expressions” in the memo's metadata to answer the question.
+    - The converted time-related expressions are the result of converting the “time-related expressions” in the memo to a specific time based on when the memo was created.
+    - As much as possible, try to analyze the user's intent in writing memos and the intent of the question so that you can provide the desired answer.
+    - Users write memos based on when they write them without thinking, but when they hear the answer, they want it in the present.
+    
+    4. **Decision Logic for Answerable Status**:
+        3.1. **If** a relevant memo matches the query based on content (such as time-based phrases), mark answerable = True.
+            - Provide the answer using the memo’s information.
+            - Include the memo ID(s) in the used_memo_ids.
+        3.2. **If no memo** provides relevant content, mark answerable = False.
+    
+    ## **Current Time**: {current_time}
 
     {input_json}
 
@@ -54,7 +69,7 @@ _similarity_result_with_memo_chain_prompt=PromptTemplate.from_template(textwrap.
 _similarity_result_with_memo_chain=(
     { "input_json": itemgetter("input_json") }
     | _similarity_result_with_memo_chain_prompt
-    | llm4o
+    | llm4o_mini
     | _parser
 )
 

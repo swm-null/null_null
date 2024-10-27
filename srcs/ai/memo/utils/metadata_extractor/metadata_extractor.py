@@ -1,9 +1,14 @@
 import asyncio
-from ai.memo.utils.metadata_extractor.chains import metadata_extractor_chain
+from typing import Any
+from openai import BaseModel
+from ai.memo.utils.metadata_extractor.chains import metadata_extractor
 from ai.memo.utils.metadata_extractor.utils import image_to_text, link_to_text
 from ai.memo.utils.link_extractor import extract_link
 
 
+class _Metadata(BaseModel):
+    metadata: list[Any]
+    
 async def process_metadata(content: str, image_urls: list[str], lang: str="Korean") -> str:
     extracted_links: list[str]=extract_link(content)
     
@@ -15,9 +20,15 @@ async def process_metadata(content: str, image_urls: list[str], lang: str="Korea
     if extracted_links:
         tasks.append(asyncio.create_task(link_to_text(extracted_links, lang)))
     
-    extracted_metadata: list[str]=await asyncio.gather(*tasks)
+    extracted_metadata=await asyncio.gather(*tasks)
+    metadata=_Metadata(
+        metadata=extracted_metadata
+    ).model_dump_json()
     
-    return "\n".join(extracted_metadata)
+    print(metadata)
+    
+    return metadata
 
 async def _extract_metadata_from_content(content: str, lang: str):
-    return await metadata_extractor_chain.ainvoke({"content": content, "lang": lang})
+    return await metadata_extractor(content, lang)
+ 

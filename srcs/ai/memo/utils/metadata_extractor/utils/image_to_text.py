@@ -1,24 +1,39 @@
 import asyncio
+import json
+from openai import BaseModel
 from ai.utils.llm import llm4o
 from langchain_core.messages import HumanMessage
+import textwrap
 
 
-async def image_to_text(image_urls: list[str], lang: str) -> str:
+class Image_description(BaseModel):
+    description: str
+    ocr_text: str
+
+async def image_to_text(image_urls: list[str], lang: str) -> list[Image_description]:
     extract_description_from_image_tasks=[asyncio.create_task(_extract_description_from_image(image, lang)) for image in image_urls]
-    extracted_description_from_image: list[str]=await asyncio.gather(*extract_description_from_image_tasks)
+    extracted_description_from_image: list[Image_description]=await asyncio.gather(*extract_description_from_image_tasks)
     
-    return "image description:\n"+"\n".join(extracted_description_from_image)
+    return extracted_description_from_image
 
-async def _extract_description_from_image(url: str, lang: str) -> str:
+async def _extract_description_from_image(url: str, lang: str) -> Image_description:
     result=await llm4o.ainvoke(
         [
             HumanMessage(
                 content=[
-                    {"type": "text", "text": f"Summarize the image for me. If there is text, please add the OCR of the original text to the image description. Summarize it in {lang}."},
+                    {"type": "text", "text": textwrap.dedent(f"""
+                        Please provide the following response in **JSON** format:
+                        {{
+                        "image_description": "<image summary in {lang}>",
+                        "ocr_text": "<OCR text if any>"
+                        }}
+                    """)},
                     {"type": "image_url", "image_url": {"url": url}}
                 ]
             )
         ]
     )
     
-    return str(result.content)
+    raw_content = result.content[8:-4]
+
+    return json.loads(raw_content) # type: ignore

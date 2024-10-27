@@ -1,0 +1,34 @@
+name: Update Version and Description
+
+on:
+  pull_request:
+    types: [closed]
+    branches:
+      - develop
+
+jobs:
+  update-version-and-description:
+    runs-on: ubuntu-latest
+    if: github.event.pull_request.merged == true
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Update version and description in main.py
+        run: |
+          VERSION=$(grep -oP '(?<=version=")[^"]*' srcs/main.py)
+          NEW_VERSION=$((VERSION + 1))
+
+          PR_URL="${{ github.event.pull_request.html_url }}"
+          DESCRIPTION="after PR ${{ github.event.pull_request.title }}(#${{ github.event.pull_request.number }}), $PR_URL"
+          
+          sed -i "s/version=\"$VERSION\"/version=\"$NEW_VERSION\"/" srcs/main.py
+          sed -i "s/description=\"[^\"]*\"/description=\"$DESCRIPTION\"/" srcs/main.py
+
+      - name: Commit changes
+        run: |
+          git config --local user.name "Taesik Jo"
+          git config --local user.email "r4pidstart@gmail.com"
+          git add srcs/main.py
+          git commit -m "Update version to $NEW_VERSION and description"
+          git push
