@@ -4,11 +4,11 @@ from pydantic import BaseModel, Field
 from routers._models.search import Search_query_type
 
 
-class Arg_post_search(BaseModel):
+class Arg_post_search_ai(BaseModel):
     user_id: str
     content: str
 
-class Res_post_search(BaseModel):
+class Res_post_search_ai(BaseModel):
     type: Search_query_type
     # similarity
     processed_message: Optional[str]=Field(default=None)
