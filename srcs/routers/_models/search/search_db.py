@@ -6,4 +6,4 @@ class Arg_post_search_db(BaseModel):
     content: str
 
 class Res_post_search_db(BaseModel):
-    memos: list[str]
+    memo_ids: list[str]

@@ -42,5 +42,5 @@ def search_memo_using_db(query: str, user_id: str) -> Res_post_search_db:
     ])
     
     return Res_post_search_db(
-        memos=[memo[MEMO_ID_NAME] for memo in search_result]
+        memo_ids=[memo[MEMO_ID_NAME] for memo in search_result]
     )
