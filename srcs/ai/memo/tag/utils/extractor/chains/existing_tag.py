@@ -18,19 +18,27 @@ class _Get_existing_tag_chain_output(BaseModel):
 _parser = PydanticOutputParser(pydantic_object=_Get_existing_tag_chain_output)
 
 _existing_chain_prompt=PromptTemplate.from_template(textwrap.dedent("""
-    You're an expert at organizing memos.
-    Your memos are categorized using tags, and each tag can have subtags that belong to the tag.
+    You are an expert at organizing memos by assigning appropriate existing tags.
 
-    The user is about to add a new memo.
-    You need to decide which of the existing tags to associate this memo under to categorize it.
+    ### Objective:
+    - Determine which tag(s) from the provided list best categorize the new memo.  
+    - If no suitable tag exists, select **none**.  
+    - If multiple similar tags are appropriate, select **the most specific and detailed** ones.
 
-    If you don't think there's a suitable tag, you can select none of them.
-    Or, if you think multiple tags are appropriate, you can select multiple tags.
-    When choosing a tag, there may be multiple similar tags, so pick the most “specific” and “detailed” one. It's more likely to be under a broader tag.
-    If no tags are given, don't select anything.
-    Don't arbitrarily create tags that aren't in the given list.
-    
-    Look at the json below, and generate the results.
+    ### Instructions:
+    1. **Handling Tags:**
+    - **Select from the given list** only. Do **not create new tags** arbitrarily.
+    - If multiple similar tags seem relevant, pick the **most specific and detailed**.
+    - The chosen tags may belong under a broader tag structure.
+
+    2. **Scenarios to Address:**
+    - If no tag fits, select **none**.
+    - If the input tag list is **empty**, select **none**.
+    - If multiple tags apply, return a **list of tags**.
+
+    3. **Expected Output:**
+    - Generate the result based on the `input_json` below.
+    - Return the appropriate tag(s) or `none` if no valid tags are suitable.
 
     {input_json}
 
