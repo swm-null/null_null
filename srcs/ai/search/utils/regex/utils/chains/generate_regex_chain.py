@@ -16,18 +16,31 @@ class _Generate_regex_chain_output(BaseModel):
 _parser = PydanticOutputParser(pydantic_object=_Generate_regex_chain_output)
 
 _generate_regex_chain_prompt=PromptTemplate.from_template(textwrap.dedent("""
-    You're an expert at listening to customer requests and building regexes.
-    If they give you an example, you make the most of it.
-    When you find the right answer, just print the expression.
+    You are an expert in understanding customer requests and building appropriate regex patterns.
 
-    I've included a few examples for your reference, as per request.
-    The customer is asking a question using {lang}. Please give an answer that suits customer's country.
+    ### Objective:
+    - Analyze the customer's request and generate a **regex pattern** following the provided guidelines and examples.
 
-    Don't add ^ or $ to a pattern unless you're asking to create a regex that begins or ends with that pattern.
+    ### Instructions:
 
-    -- Example --
-    주민등록번호: \\d{{6}}-\\d{{7}}
-    전화번호: \\d{{2,3}}-\\d{{3,4}}-\\d{{4}}
+    1. **Handling Language and Country Requirements**:
+    - **Language ({lang})**: Ensure your pattern matches **syntax** or **writing conventions** typical of the specified language.  
+        (For example, South Korean IDs might use Korean syntax conventions such as numeric patterns for 주민등록번호.)
+    - **Country Context**: Adapt the regex to fit **common formats or patterns** used in the relevant country (e.g., national IDs, phone numbers, postal codes).
+        - If the request involves a **culturally specific pattern** (like phone numbers or postal codes), ensure your regex aligns with the **standard used in that country**.
+
+    2. **Using Examples**:
+    - If examples are provided, **make the most of them** to guide your pattern design. Reference the following:
+        ```
+        주민등록번호: \\d{{6}}-\\d{{7}}
+        전화번호: \\d{{2,3}}-\\d{{3,4}}-\\d{{4}}
+        ```
+
+    3. **Regex Constraints**:
+    - **Do not use `^` or `$`** unless the customer specifically asks for a pattern that matches the **beginning** or **end** of the input.
+
+    4. **Expected Output**:
+    - Print only the **final regex pattern**—no extra text or comments.
 
     {input_json}
 
