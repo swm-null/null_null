@@ -73,6 +73,7 @@ def _link_memos_and_tags(memos: dict[int, Memo], tags: list[Tag]) -> list[Memo]:
         Memo(
             content=memo.content,
             image_urls=memo.image_urls,
+            record_urls=memo.record_urls,
             metadata=memo.metadata,
             parent_tag_ids=[tag.id for tag in linked_memo_id_to_tags[memo_id]],
             timestamp=memo.timestamp
