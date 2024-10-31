@@ -31,6 +31,7 @@ async def _process_memo(memo_and_tags: Memo) -> Memo_processed_memo:
     return Memo_processed_memo(
             content=memo_and_tags.content,
             image_urls=memo_and_tags.image_urls,
+            record_urls=memo_and_tags.record_urls,
             metadata=str(memo_and_tags.metadata),
             parent_tag_ids=memo_and_tags.parent_tag_ids,
             timestamp=memo_and_tags.timestamp,
