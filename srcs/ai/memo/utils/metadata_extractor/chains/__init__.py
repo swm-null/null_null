@@ -1,1 +1,2 @@
+from .record_summarizer_chain import record_summarizer, Record_summarizer_chain_output
 from .metadata_extractor_chain import metadata_extractor
