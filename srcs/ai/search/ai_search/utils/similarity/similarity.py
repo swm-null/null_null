@@ -1,4 +1,4 @@
-from ai.search.utils.similarity.utils import generate_similarity_result
+from ai.search.ai_search.utils.similarity.utils import generate_similarity_result
 from routers._models import Res_post_search_ai, Search_query_type
 
 

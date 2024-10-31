@@ -1,8 +1,9 @@
-from ai.utils.database.collections import memo_collection, MEMO_UID_NAME, MEMO_CONTENT_NAME, MEMO_METADATA_NAME, MEMO_SEARCH_INDEX_NAME, MEMO_ID_NAME
-from routers._models.search import Res_post_search_db
+from datetime import datetime
+from ai.search.db_search._models.search_result import Search_result
+from ai.utils.database.collections.memo_store import *
 
 
-def search_memo_using_db(query: str, user_id: str) -> Res_post_search_db:
+def perform_keyword_query_by_keyword(query: str, start_time: datetime, end_time: datetime, user_id: str) -> list[Search_result]: 
     search_result=memo_collection.aggregate([
         {
             "$search": {
@@ -17,7 +18,7 @@ def search_memo_using_db(query: str, user_id: str) -> Res_post_search_db:
                         }, 
                         {
                             "autocomplete": {
-                                "query": query, 
+                                "query": query,
                                 "path": MEMO_METADATA_NAME
                             }
                         }
@@ -28,19 +29,32 @@ def search_memo_using_db(query: str, user_id: str) -> Res_post_search_db:
         }, 
         {
             "$match": {
-                MEMO_UID_NAME: user_id
+                MEMO_UID_NAME: user_id,
+                MEMO_UTIME_NAME: {
+                    "$gte": start_time,
+                    "$lte": end_time
+                }
             }
         },
         {
-            "$limit": 3
-        }, 
+            "$addFields": {
+                "score": {
+                "$meta": "searchScore"
+                }
+            }
+        },
+        { "$limit": 10 },
         {
             "$project": {
                 MEMO_ID_NAME: 1,
+                "score": 1 # [0, inf?]
             }
         }
     ])
     
-    return Res_post_search_db(
-        memo_ids=[memo[MEMO_ID_NAME] for memo in search_result]
-    )
+    return [
+        Search_result(
+            memo_id=memo[MEMO_ID_NAME],
+            score=memo["score"]
+        ) for memo in search_result
+    ]
