@@ -12,7 +12,7 @@ class _Voice_record_summarizer_chain_input(BaseModel):
     
 class Voice_record_summarizer_chain_output(BaseModel):
     record_transcription: str
-    transcription_summarty: str
+    transcription_summary: str
 
 _parser = PydanticOutputParser(pydantic_object=Voice_record_summarizer_chain_output)
 
@@ -26,6 +26,7 @@ _record_summarizer_chain_prompt=PromptTemplate.from_template(textwrap.dedent("""
     - Correct any errors to ensure clarity and accuracy.
 
     2. **Summarization**:
+    - Briefly explain what this voice script is.
     - Summarize the corrected transcription in **concise language**.
     - Ensure the summary is in the **user's specified language** for consistency.
 
