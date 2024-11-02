@@ -13,8 +13,8 @@ async def _process_metadata_for_memo(memo: Memo, lang: str) -> Memo:
     return Memo(
         content=memo.content,
         image_urls=memo.image_urls,
-        record_urls=memo.record_urls,
-        metadata=await process_metadata(memo.content, memo.image_urls, memo.record_urls, lang),
+        voice_record_urls=memo.voice_record_urls,
+        metadata=await process_metadata(memo.content, memo.image_urls, memo.voice_record_urls, lang),
         parent_tag_ids=memo.parent_tag_ids,
         timestamp=memo.timestamp
     )

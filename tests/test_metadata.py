@@ -25,7 +25,7 @@ metadata_body={
     "image_urls": [
         "https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png"
     ],
-    "record_urls": [
+    "voice_record_urls": [
         "https://sample-files-online.com/ko/samples/countdownload/17"
     ]
 }

@@ -25,7 +25,7 @@ body_with_tag={
                 https://www.tworld.co.kr/web/product/callplan/NA00008719
                 https://asdf.com/this_is_invalid_link"""),
             "image_urls": [],
-            "record_urls": [],
+            "voice_record_urls": [],
             "tags": [
                 {
                     "id": "a70ab49dda364995ae34a1c76d52d8ef",
@@ -82,7 +82,7 @@ body_without_tag={
                 https://www.tworld.co.kr/web/product/callplan/NA00008719
                 https://asdf.com/this_is_invalid_link"""),
             "image_urls": [],
-            "record_urls": [],
+            "voice_record_urls": [],
             "tags": []
         }
     ],

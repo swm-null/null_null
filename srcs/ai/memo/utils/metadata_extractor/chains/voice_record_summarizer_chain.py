@@ -6,15 +6,15 @@ from ai.utils.llm import llm4o_mini
 from langchain_core.prompts import PromptTemplate
 
 
-class _Record_summarizer_chain_input(BaseModel):
+class _Voice_record_summarizer_chain_input(BaseModel):
     raw_transcript: str
     users_language: str
     
-class Record_summarizer_chain_output(BaseModel):
+class Voice_record_summarizer_chain_output(BaseModel):
     record_transcription: str
     transcription_summarty: str
 
-_parser = PydanticOutputParser(pydantic_object=Record_summarizer_chain_output)
+_parser = PydanticOutputParser(pydantic_object=Voice_record_summarizer_chain_output)
 
 _record_summarizer_chain_prompt=PromptTemplate.from_template(textwrap.dedent("""
     You will receive a transcription of a recorded file. Your task is to proofread the transcription for accuracy and then summarize it concisely in the user's language.
@@ -49,8 +49,8 @@ _record_summarizer_chain=(
     | _parser
 )
 
-async def record_summarizer(raw_transcript: str, lang: str) -> Record_summarizer_chain_output:
-    input_json_model=_Record_summarizer_chain_input(
+async def voice_record_summarizer(raw_transcript: str, lang: str) -> Voice_record_summarizer_chain_output:
+    input_json_model=_Voice_record_summarizer_chain_input(
         raw_transcript=raw_transcript,
         users_language=lang
     )
