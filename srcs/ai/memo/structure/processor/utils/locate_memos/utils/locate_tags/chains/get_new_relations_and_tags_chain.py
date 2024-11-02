@@ -24,32 +24,37 @@ class Relation_for_chain(BaseModel):
 
 class Get_new_relations_and_tags_chain_output(BaseModel):
     relations: list[Relation_for_chain]=Field(description="relations of new directory")
-    new_tags: list[str]=Field(description="name of given tags and newly created tags by you")
+    new_tags: list[str]=Field(description="name of given new_tags and newly created intermediate tags by you")
 
 _parser = PydanticOutputParser(pydantic_object=Get_new_relations_and_tags_chain_output)
 
 _get_new_relations_and_tags_chain_prompt=PromptTemplate.from_template(textwrap.dedent("""
-    You're an expert at organizing memos.
-    Your memos are categorized using tags, and each tag can have subtags that belong to the tag.
+    You are an expert at organizing memos by creating and structuring appropriate tags.
 
-    The user is about to add a new memo.
-    You'll be given a new tag to categorize it.
-    The new tag is linked with the new memo the user added.
-    You need to look at the memo's description (metadata) and place the tags appropriately.
-    The tag named @ is the root of this tag structure.
+    ### Objective:
+    - Use the **metadata in the memo description** to categorize the memo correctly by placing its **new tag** within the existing tag structure.
+    - If necessary, **create intermediate tags** to maintain a logical tag hierarchy.
 
-    To do this, you can attach the new tag to a child of an existing tag.
-    However, you can also create a new tag in the middle, rather than attaching it directly to an existing tag.
-    For example, if you have a tag called “food” and the new tag to be created is “banana”, it would be unnatural to create a “food”-“banana” relationship right away.
-    Instead, you could create a tag called 'fruit', and then create the tag so that the relationship is 'food'-'fruit'-'banana'.
+    ### Instructions:
 
-    Use ' ' as a space for tag name, and don't use special characters like '_'.
-    Be careful not to misspell spaces.
+    1. **Handling Tags and Hierarchy**:
+    - **Root Tag**: The tag named `'@'` is the **root** of the tag structure. 
+    - The Root Tag is always exists.
+    - You can **attach the new tag** directly to an existing tag, or **create intermediate tags** when appropriate.
+        - Example: If you have a tag called `"food"` and the new tag is `"banana"`, it would be more logical to first create `"fruit"` as an intermediate tag.  
+        Result: `"food"` → `"fruit"` → `"banana"`.
 
-    When creating new tags, consider the user's language and create them in that language.
-    However, don't create any new tags when the new_tags field in the json is empty.
+    2. **Tag Naming Rules**:
+    - Use **spaces** (' ') between words—**do not use special characters** like underscores ('_').
+    - Ensure all **spaces are correctly placed** to avoid spelling mistakes.
+    - **Use the user's language** for creating any new tags.
 
-    Look at the json below, and generate the results.
+    3. **New Tag Creation Constraints**:
+    - If the **new_tags** field in the provided JSON is **empty**, do not create any new tags.
+
+    4. **Expected Output**:
+    - Look at the **JSON metadata** below and generate the appropriate tags and relationships.
+    - 
 
     {input_json}
 

@@ -17,13 +17,17 @@ class _Query_analyzer_chain_output(BaseModel):
 _parser = PydanticOutputParser(pydantic_object=_Query_analyzer_chain_output)
 
 _query_analyzer_chain_prompt=PromptTemplate.from_template(textwrap.dedent("""
-    You need to analyze the sentence to figure out what the user wants.
-    Analyze the sentence according to the following rules and print ONE correct answer.
-    Apply the rules in the order they are written, and if any of them are correct, print them out.
+    Analyze the provided sentence to determine the user's intent and output ONE correct answer.
 
-    -- Rules -- 
-    If the sentence is a request to find information that fits a specific pattern, print 'regex'.
-    Else, print 'similarity'.
+    ### Objective:
+    - Apply the rules **in sequence**, and print the result of the **first rule** that matches.
+
+    ### Rules:
+    1. **If** the sentence requests information that fits a **specific pattern**, print `'regex'`.  
+    2. **Otherwise**, print `'similarity'`.
+
+    ### Expected Output:
+    - Return only the word `'regex'` or `'similarity'`, based on the analysis.
 
     {input_json}
 

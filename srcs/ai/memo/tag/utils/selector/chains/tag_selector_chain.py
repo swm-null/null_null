@@ -23,21 +23,26 @@ class _Select_tags_chain_output(BaseModel):
 _parser = PydanticOutputParser(pydantic_object=_Select_tags_chain_output)
 
 _select_tags_chain_prompt=PromptTemplate.from_template(textwrap.dedent("""
-    You're an expert at organizing memos.
-    Your memos are categorized using tags, and each tag can have subtags that belong to the tag.
+    You are an expert at organizing memos by selecting the most appropriate tags from a given list.
 
-    The user is about to add a new memo.
-    You need to pick out some of the selected tags.
-    You must select at least one tag.
-    Do not select tags named '@' as it points to the root.
+    ### Objective:
+    - Choose the **most relevant tags** that accurately represent the memo's content, based on the provided options.
 
-    Given the content of a memo and a set of selected tags, choose which of those tags this memo belongs to.
-    Please choose the one that best captures the meaning of the key part of the memo.
-    You can choose up to {selection_count} tags, and you don't have to choose {selection_count} tags if the right tag is a relief.
+    ### Instructions:
 
-    Don't choose a new tag if an existing tag is virtually identical to the new tag. A new tag is a tag whose is_new field is true.
+    1. **Tag Selection Rules**:
+    - **Minimum Selection**: You must select **at least one tag**.
+    - **Maximum Selection**: You may select **up to {selection_count} tags**.
+        - If the memo’s content aligns with fewer than {selection_count} tags, select only the most relevant ones.
 
-    Look at the json below, and generate the results.
+    2. **Exclusion Rules**:
+    - **Do not select the root tag** (`'@'`), as it serves only as a placeholder for the tag structure.
+    - **New vs. Existing Tags**:  
+        - If an **existing tag** is **virtually identical** to a **new tag** (i.e., `is_new = true`), choose the **existing tag** to maintain consistency.
+
+    3. **Expected Output**:
+    - Based on the **memo content and the available tags** from the `input_json`, return only the selected tag(s).
+    - Ensure your selection **best captures the key meaning** of the memo's content.
 
     {input_json}
 

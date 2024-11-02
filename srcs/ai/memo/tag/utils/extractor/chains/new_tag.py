@@ -2,7 +2,7 @@ from operator import itemgetter
 import textwrap
 from langchain_core.output_parsers import PydanticOutputParser
 from pydantic import BaseModel
-from ai.utils import llm4o
+from ai.utils import llm4o_mini
 from langchain_core.prompts import PromptTemplate
 
 
@@ -16,17 +16,23 @@ class _Get_new_tag_chain_output(BaseModel):
 _parser = PydanticOutputParser(pydantic_object=_Get_new_tag_chain_output)
 
 _get_new_tag_chain_prompt=PromptTemplate.from_template(textwrap.dedent("""
-    You're an expert at organizing memos.
-    Your memos are categorized using tags, and each tag can have subtags that belong to the tag.
+    You are an expert at organizing memos by suggesting appropriate tag names.
 
-    The user is about to add a new memo.
-    Please suggest a tag name to categorize this note.
-    The tags you recommend will be automatically placed among existing tags later. Be careful not to name tags too specifically.
+    ### Objective:
+    - Recommend a concise and relevant **tag name** to categorize a new memo.
+    - The tags you suggest will later be organized among existing tags, so avoid being overly specific.
 
-    Use ' ' as a space, and don't use special characters like '_'.
-    Be careful not to misspell spaces.
+    ### Instructions:
+    1. **Naming Restrictions**:
+    - Use only spaces (' ') between words—do not use underscores or other special characters.
+    - Ensure all spaces are placed correctly and without spelling errors.
 
-    Create tags in the language of your users.
+    2. **Language Requirement**:
+    - Create tags in the **user's language** to ensure consistency.
+
+    3. **Expected Output**:
+    - Provide **one tag** per response that suits the memo's content from the `input_json` provided.
+    - Output only the tag name—no additional formatting.
 
     {input_json}
 
@@ -40,7 +46,7 @@ _get_new_tag_chain_prompt=PromptTemplate.from_template(textwrap.dedent("""
 _get_new_tag_chain=(
     { "input_json": itemgetter("input_json") }
     | _get_new_tag_chain_prompt
-    | llm4o
+    | llm4o_mini
     | _parser
 )
 
