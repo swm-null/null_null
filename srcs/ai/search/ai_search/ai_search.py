@@ -1,5 +1,5 @@
 from routers._models import Res_post_search_ai, Search_query_type
-from ai.search.utils import regex, similarity, query_analyzer
+from ai.search.ai_search.utils import regex, similarity, query_analyzer
 
 
 async def search_memo_using_ai(query: str, user_id: str, lang: str="Korean") -> Res_post_search_ai:
