@@ -1,5 +1,4 @@
 import asyncio
-import json
 from openai import BaseModel
 from ai.utils.llm import llm4o
 from langchain_core.messages import HumanMessage
@@ -35,4 +34,4 @@ async def _extract_description_from_image(url: str, lang: str) -> Image_descript
     )
     raw_content = result.content[8:-4]
 
-    return Image_description.model_validate_json(raw_content)
+    return Image_description.model_validate_json(raw_content) # type: ignore
