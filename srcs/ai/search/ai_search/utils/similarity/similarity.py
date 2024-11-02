@@ -8,5 +8,5 @@ async def similarity(query: str, user_id: str, lang: str="Korean") -> Res_post_s
     return Res_post_search_ai(
         type=Search_query_type.similarity,
         processed_message=generated_answer,
-        ids=used_memo_ids
+        memo_ids=used_memo_ids
     )
