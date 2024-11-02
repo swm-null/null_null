@@ -15,7 +15,7 @@ async def create_tag(user_id: str, raw_memo: Memo_raw_memo, lang: str="Korean") 
     return assigned_tags
 
 async def _get_memo_content_and_metadata(raw_memo: Memo_raw_memo, lang: str) -> str: 
-    return await process_metadata(raw_memo.content, raw_memo.image_urls, raw_memo.voice_record_urls, lang)
+    return await process_metadata(raw_memo.content, raw_memo.image_urls, raw_memo.voice_urls, lang)
     
 def _assign_tags(selected_tags: list[Tag]) -> list[Memo_tag_name_and_id]:
     return [

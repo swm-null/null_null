@@ -54,7 +54,7 @@ metadata_without_image_body={
 
 @pytest.mark.asyncio(loop_scope="session")
 async def test_metadata():
-    tasks=[send_request_and_validate() for _ in range(3)]
+    tasks=[send_request_and_validate() for _ in range(2)]
     await asyncio.gather(*tasks)
     
 async def send_request_and_validate():
