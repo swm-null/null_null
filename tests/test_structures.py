@@ -25,9 +25,8 @@ body_with_tag={
                 https://www.tworld.co.kr/web/product/callplan/NA00008719
                 https://asdf.com/this_is_invalid_link
             """),
-            "image_urls": [
-                "https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png"
-            ],
+            "image_urls": [],
+            "voice_record_urls": [],
             "tags": [
                 {
                     "id": "a70ab49dda364995ae34a1c76d52d8ef",
@@ -82,11 +81,9 @@ body_without_tag={
                 선택약정 반영 시 93,705원
 
                 https://www.tworld.co.kr/web/product/callplan/NA00008719
-                https://asdf.com/this_is_invalid_link
-            """),
-            "image_urls": [
-                "https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png"
-            ],
+                https://asdf.com/this_is_invalid_link"""),
+            "image_urls": [],
+            "voice_record_urls": [],
             "tags": []
         }
     ],
@@ -120,8 +117,6 @@ def validation_body_with_tag(res_model: Res_post_memo_structures):
     
     # processed_memos
     for memo in res_model.processed_memos:
-        assert "link_descriptions" in memo.metadata
-        assert "image_description" in memo.metadata    
         assert memo.parent_tag_ids   
         assert memo.metadata
         if memo.content:

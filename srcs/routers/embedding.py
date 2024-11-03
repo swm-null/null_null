@@ -12,7 +12,7 @@ def get_embedding(body: Body_get_embedding):
 
 @router.post("/get-metadata-with-embedding", response_model=Res_get_metadata_with_embedding)
 async def post_get_metadata_with_embedding(body: Body_get_metadata_with_embedding):
-    metadata=await process_metadata(body.content, body.image_urls)
+    metadata=await process_metadata(body.content, body.image_urls, body.voice_record_urls)
     
     return Res_get_metadata_with_embedding(
         metadata=metadata,
