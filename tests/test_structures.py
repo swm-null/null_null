@@ -23,7 +23,8 @@ body_with_tag={
                 선택약정 반영 시 93,705원
 
                 https://www.tworld.co.kr/web/product/callplan/NA00008719
-                https://asdf.com/this_is_invalid_link"""),
+                https://asdf.com/this_is_invalid_link
+            """),
             "image_urls": [],
             "voice_record_urls": [],
             "tags": [

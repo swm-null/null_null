@@ -9,7 +9,7 @@ from typing import Union
 from langchain.agents.output_parsers import ReActJsonSingleInputOutputParser
 from langchain_core.output_parsers import PydanticOutputParser
 from langchain.schema import AgentAction, AgentFinish
-from ai.search.utils.similarity.utils.agents.tools import duckduckgo_search
+from ai.search.ai_search.utils.similarity.utils.agents.tools import duckduckgo_search
 
 
 class _Similarity_search_agent_input(BaseModel):

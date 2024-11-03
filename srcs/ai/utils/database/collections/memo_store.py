@@ -3,6 +3,7 @@ from ai.utils.database.connection import client, DB_NAME
 
 MEMO_COLLECTION_NAME="memos"
 MEMO_INDEX_NAME="vector_index_memos"
+MEMO_SEARCH_INDEX_NAME="memo_search_index"
 MEMO_METADATA_INDEX_NAME="vector_index_memos_metadata"
 
 MEMO_ID_NAME="_id"
