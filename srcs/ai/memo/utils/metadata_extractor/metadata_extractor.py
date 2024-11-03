@@ -10,7 +10,7 @@ class _Metadata(BaseModel):
     content_descriptions: Metadata_extractor_chain_output | None=None
     image_descriptions: list[Image_description] | None=None
     voice_record_descriptions: list[Voice_record_summarizer_chain_output] | None=None
-    link_descriptions: Link_descriptions | None=None
+    link_descriptions: list[str] | None=None
     
 async def process_metadata(content: str, image_urls: list[str], voice_record_urls: list[str], lang: str="Korean") -> str:
     extracted_links: list[str]=extract_link(content)
@@ -41,6 +41,7 @@ async def process_metadata(content: str, image_urls: list[str], voice_record_url
         for task, result in zip(tasks, completed_tasks)
     }
     metadata=_Metadata(**metadata_dict)  
+    print(metadata.model_dump_json(exclude_none=True))
     
     return metadata.model_dump_json(exclude_none=True)
 
