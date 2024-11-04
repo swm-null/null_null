@@ -23,8 +23,9 @@ _query_analyzer_chain_prompt=PromptTemplate.from_template(textwrap.dedent("""
     - Apply the rules **in sequence**, and print the result of the **first rule** that matches.
 
     ### Rules:
-    1. **If** the sentence requests information that fits a **specific pattern**, print `'regex'`.  
-    2. **Otherwise**, print `'similarity'`.
+    1. Determine whether this question can be answered using a regular expression. 
+    2. **If** the sentence requests information that fits a **specific pattern**(regular expression). print `'regex'`.
+    3. **Otherwise**, print `'similarity'`.
 
     ### Expected Output:
     - Return only the word `'regex'` or `'similarity'`, based on the analysis.
