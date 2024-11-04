@@ -31,7 +31,8 @@ _query_generator_chain_prompt=PromptTemplate.from_template(textwrap.dedent("""
     - Convert these into focused keywords, emphasizing relevance and avoiding filler words.
 
     3. **Time Period Adjustment**:
-    - If the query specifies a **time frame** (e.g., "first week of last month"), determine **start_time** and **end_time** using current time ({current_time}) for reference.
+    - If the query specifies a **time frame** (e.g., "first week of last month"), determine **start_time** and **end_time**.
+    - Use current time ({current_time}) for specify the time frame.
     - Include only start_time and end_time fields if a time frame is specified in the query.
     
     {input_json}

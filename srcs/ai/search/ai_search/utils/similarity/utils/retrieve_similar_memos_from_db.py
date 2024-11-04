@@ -1,26 +1,28 @@
 import asyncio
+from datetime import datetime
 import logging
 from ai.search._models import Memo
 from ai.utils.database import *
 from ai.utils import embedder
 from fastapi.concurrency import run_in_threadpool
 
-def retrieve_similar_memos_from_db(query: str, user_id: str) -> list[Memo]:
-    memos: set[Memo]=_get_memos_from_db_using_content(query, user_id) | _get_memos_from_db_using_metadata(query, user_id)
+def retrieve_similar_memos_from_db(query: str, user_id: str, start_time: datetime, end_time: datetime,) -> list[Memo]:
+    memos: set[Memo]=_get_memos_from_db_using_content(query, user_id, start_time, end_time) \
+                    | _get_memos_from_db_using_metadata(query, user_id, start_time, end_time)
     logging.info("[retrieved memos]\n## %s\n%s\n\n", user_id, memos)
     
     return list(memos)
     
-async def aretrieve_similar_memos_from_db(query: str, user_id: str) -> list[Memo]:
+async def aretrieve_similar_memos_from_db(query: str, user_id: str, start_time: datetime, end_time: datetime,) -> list[Memo]:
     memos: set[Memo]=set().union(*(await asyncio.gather(
-        run_in_threadpool(_get_memos_from_db_using_content, query, user_id),
-        run_in_threadpool(_get_memos_from_db_using_metadata, query, user_id)
+        run_in_threadpool(_get_memos_from_db_using_content, query, user_id, start_time, end_time),
+        run_in_threadpool(_get_memos_from_db_using_metadata, query, user_id, start_time, end_time)
     )))
     logging.info("[retrieved memos]\n## %s\n%s\n\n", user_id, memos)
     
     return list(memos)
     
-def _get_memos_from_db_using_content(query: str, user_id: str) -> set[Memo]:
+def _get_memos_from_db_using_content(query: str, user_id: str, start_time: datetime, end_time: datetime) -> set[Memo]:
     raw_memos=memo_collection.aggregate([
         {
             "$vectorSearch": 
@@ -30,7 +32,17 @@ def _get_memos_from_db_using_content(query: str, user_id: str) -> set[Memo]:
                 'queryVector': embedder.embed_query(query),
                 'numCandidates': 1000,
                 'limit': 15,
-                'filter': { MEMO_UID_NAME: user_id }
+                'filter': {
+                    "$and": [
+                        { MEMO_UID_NAME: user_id },
+                        {
+                            MEMO_UTIME_NAME: {
+                                "$gte": start_time,
+                                "$lte": end_time
+                            }
+                        }
+                    ]
+                }
             }
         },
         {
@@ -53,7 +65,7 @@ def _get_memos_from_db_using_content(query: str, user_id: str) -> set[Memo]:
         ) for memo in raw_memos
     }
         
-def _get_memos_from_db_using_metadata(query: str, user_id: str) -> set[Memo]:
+def _get_memos_from_db_using_metadata(query: str, user_id: str, start_time: datetime, end_time: datetime) -> set[Memo]:
     raw_memos=memo_collection.aggregate([
         {
             "$vectorSearch": 
@@ -63,7 +75,17 @@ def _get_memos_from_db_using_metadata(query: str, user_id: str) -> set[Memo]:
                 'queryVector': embedder.embed_query(query),
                 'numCandidates': 1000,
                 'limit': 15,
-                'filter': { MEMO_UID_NAME: user_id }
+                'filter': {
+                    "$and": [
+                        { MEMO_UID_NAME: user_id },
+                        {
+                            MEMO_UTIME_NAME: {
+                                "$gte": start_time,
+                                "$lte": end_time
+                            }
+                        }
+                    ]
+                }
             }
         },
         {
