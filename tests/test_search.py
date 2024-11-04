@@ -7,17 +7,17 @@ from routers._models.search import Res_post_search_db
 
 
 similarity_body={
-    "content": "요금제 관련 정보 좀 찾아줘",
+    "query": "요금제 관련 정보 좀 찾아줘",
     "user_id": "ccc55530-12ed-4a54-b420-025009c0509a"
 }
 
 regex_body={
-    "content": "주민등록번호 좀 찾아줘",
+    "query": "주민등록번호 좀 찾아줘",
     "user_id": "ccc55530-12ed-4a54-b420-025009c0509a"
 }
 
 db_body={
-    "content": "주민등록번호 좀 찾아줘",
+    "query": "주민등록번호 좀 찾아줘",
     "user_id": "ccc55530-12ed-4a54-b420-025009c0509a"
 }
 
