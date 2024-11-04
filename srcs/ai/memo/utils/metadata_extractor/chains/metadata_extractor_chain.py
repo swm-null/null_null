@@ -48,7 +48,7 @@ _metadata_extractor_chain=(
     | _parser
 )
 
-async def metadata_extractor(content: str, lang: str) -> str:
+async def metadata_extractor(content: str, lang: str) -> Metadata_extractor_chain_output:
     input_json_model=_Metadata_extractor_chain_input(
         content=content,
         lang=lang

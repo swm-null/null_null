@@ -83,7 +83,7 @@ body_without_tag={
                 https://www.tworld.co.kr/web/product/callplan/NA00008719
                 https://asdf.com/this_is_invalid_link"""),
             "image_urls": [],
-            "voice_record_urls": [],
+            "voice_urls": [],
             "tags": []
         }
     ],

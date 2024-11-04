@@ -1,5 +1,4 @@
 import asyncio
-import json
 from openai import BaseModel
 from ai.utils.llm import llm4o
 from langchain_core.messages import HumanMessage
@@ -7,7 +6,7 @@ import textwrap
 
 
 class Image_description(BaseModel):
-    description: str
+    image_description: str
     ocr_text: str
 
 async def image_to_text(image_urls: list[str], lang: str) -> list[Image_description]:
@@ -33,7 +32,6 @@ async def _extract_description_from_image(url: str, lang: str) -> Image_descript
             )
         ]
     )
-    
     raw_content = result.content[8:-4]
 
-    return json.loads(raw_content) # type: ignore
+    return Image_description.model_validate_json(raw_content) # type: ignore

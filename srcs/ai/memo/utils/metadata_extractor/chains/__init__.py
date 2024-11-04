@@ -1,2 +1,2 @@
 from .voice_record_summarizer_chain import voice_record_summarizer, Voice_record_summarizer_chain_output
-from .metadata_extractor_chain import metadata_extractor
+from .metadata_extractor_chain import metadata_extractor, Metadata_extractor_chain_output
