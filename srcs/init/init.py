@@ -1,4 +1,5 @@
 import logging
+import os
 from dotenv import load_dotenv
 from fastapi import FastAPI
 from sentry_sdk.integrations.asgi import SentryAsgiMiddleware
@@ -13,6 +14,7 @@ def init(app: FastAPI):
     app.add_middleware(SentryAsgiMiddleware)
     
     logging.info(f"Using .env file: {load_dotenv()}")
+    logging.info(f"voyageai: {os.environ['VOYAGE_API_KEY']}")
     
     # init database
     try:
