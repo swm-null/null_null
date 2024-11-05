@@ -12,7 +12,7 @@ class _Metadata_extractor_chain_input(BaseModel):
     content: str
     
 class Metadata_extractor_chain_output(BaseModel):
-    content_description: str
+    description: str
     time_related_expressions: dict[str, str]
 
 _parser = PydanticOutputParser(pydantic_object=Metadata_extractor_chain_output)

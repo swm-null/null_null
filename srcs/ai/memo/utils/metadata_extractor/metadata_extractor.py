@@ -1,5 +1,4 @@
 import asyncio
-from typing import Any
 from openai import BaseModel
 from ai.memo.utils.metadata_extractor.chains import metadata_extractor, Metadata_extractor_chain_output, Voice_record_summarizer_chain_output
 from ai.memo.utils.metadata_extractor.utils import *
@@ -7,7 +6,8 @@ from ai.memo.utils.link_extractor import extract_link
 
 
 class _Metadata(BaseModel):
-    content_descriptions: Metadata_extractor_chain_output | None=None
+    content: str | None
+    content_description: Metadata_extractor_chain_output | None=None
     image_descriptions: list[Image_description] | None=None
     voice_record_descriptions: list[Voice_record_summarizer_chain_output] | None=None
     link_descriptions: list[str] | None=None
@@ -21,7 +21,7 @@ async def process_metadata(content: str, image_urls: list[str], voice_record_url
     if content:
         task=asyncio.create_task(_extract_metadata_from_content(content, lang))
         tasks.append(task)
-        tasks_mapping[task]='content_descriptions'
+        tasks_mapping[task]='content_description'
     if image_urls:
         task=asyncio.create_task(image_to_text(image_urls, lang))
         tasks.append(task)
@@ -40,8 +40,7 @@ async def process_metadata(content: str, image_urls: list[str], voice_record_url
         tasks_mapping[task]: result 
         for task, result in zip(tasks, completed_tasks)
     }
-    metadata=_Metadata(**metadata_dict)  
-    print(metadata.model_dump_json(exclude_none=True))
+    metadata=_Metadata(content=content if content else None, **metadata_dict)
     
     return metadata.model_dump_json(exclude_none=True)
 

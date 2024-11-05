@@ -1,3 +1,3 @@
-from .extractor.tag_extractor import extract_tags
-from .selector import select_tags
-from .check_is_new_tag import is_new_tag
+from .chains import *
+from .get_tags_from_db import get_tags_from_db
+from .get_current_structure import get_current_structure
