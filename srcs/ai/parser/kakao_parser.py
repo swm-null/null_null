@@ -4,21 +4,23 @@ from io import StringIO
 from datetime import datetime
 import logging
 import re
+from urllib.request import urlopen
 from fastapi import HTTPException
 from ai.utils.link_content_fetcher import get_contents_from_link
 from routers._models import Kakao_parser_type
 from typing import Optional
 from urllib.parse import quote
+from fastapi.concurrency import run_in_threadpool
 
 
 async def kakao_parser(content: str, type: Kakao_parser_type) -> list[tuple[str, datetime]]:
     parsed_memolist: list[tuple[str, datetime]]
     
-    parsed_content=await _parse_from_url(content)
+    parsed_content: str=await run_in_threadpool(_parse_from_url, content)
     
     if type == Kakao_parser_type.CSV:
         csv_reader: csv.DictReader=_get_csv_reader_from_string(parsed_content)
-        parsed_memolist=_parse_csv_reader(csv_reader)    
+        parsed_memolist=_parse_csv_reader(csv_reader)
     elif type == Kakao_parser_type.TXT:
         parsed_memolist=_parse_txt_string(parsed_content)
     else:
@@ -28,12 +30,12 @@ async def kakao_parser(content: str, type: Kakao_parser_type) -> list[tuple[str,
     unique_parsed_memolist: list[tuple[str, datetime]]=_remove_duplicated_memos(parsed_memolist)
     return unique_parsed_memolist
 
-async def _parse_from_url(url: str) -> str:
+def _parse_from_url(url: str) -> str:
     encoded_url = quote(url, safe=':/')
-    data: list[str]=await get_contents_from_link(list(encoded_url))
-    data[0]=data[0].replace("\ufeff", "")
+    data: str=urlopen(encoded_url).read().decode('utf-8', 'ignore')
+    data=data.replace("\ufeff", "")
     
-    return data[0]
+    return data
 
 def _get_csv_reader_from_string(content: str) -> csv.DictReader:
     virtual_csv_file=StringIO(content)
