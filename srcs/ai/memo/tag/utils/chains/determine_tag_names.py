@@ -4,7 +4,7 @@ from langchain_core.output_parsers import PydanticOutputParser
 from pydantic import BaseModel, Field
 from ai.utils import llm4o_mini
 from langchain_core.prompts import PromptTemplate
-from ai.memo.tag.deprecated._configs import TAG_SELECTION_COUNT
+from ai.memo.tag._configs import TAG_SELECTION_COUNT
 
 
 class _Determine_tag_names_chain_input(BaseModel):
