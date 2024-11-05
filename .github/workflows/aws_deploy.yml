@@ -27,7 +27,7 @@ permissions: write-all
 jobs:
   deploy:
     name: Deploy
-    if: ${{ github.actor == 'github-actions' }}
+    if: github.actor == 'github-actions'
     runs-on: ubuntu-latest
     environment: production
 
