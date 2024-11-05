@@ -1,3 +1,4 @@
+from datetime import datetime
 from langchain_core.tools import tool
 from openai import BaseModel
 from pydantic import Field
@@ -13,14 +14,14 @@ class _memo_answer_args(BaseModel):
     language: str=Field(description="user's language")
 
 @tool("memo_answerer", args_schema=_memo_answer_args, return_direct=False)
-def memo_answerer(user_id: str, question: str, language: str) -> Similarity_result_with_memo_chain_output:
+def memo_answerer(user_id: str, question: str, start_time: datetime, end_time: datetime, language: str) -> Similarity_result_with_memo_chain_output:
     """Use the user's memos to check if the given question can be answered, and if so, obtain the answer."""
-    retrieved_memos: list[Memo]=retrieve_similar_memos_from_db(question, user_id)
+    retrieved_memos: list[Memo]=retrieve_similar_memos_from_db(question, user_id, start_time, end_time)
     
     return similarity_result_with_memo(question, retrieved_memos, language)
 
-async def amemo_answerer(user_id: str, question: str, language: str) -> Similarity_result_with_memo_chain_output:
+async def amemo_answerer(user_id: str, question: str, start_time: datetime, end_time: datetime, language: str) -> Similarity_result_with_memo_chain_output:
     """Use the user's memos to check if the given question can be answered, and if so, obtain the answer."""
-    retrieved_memos: list[Memo]=await run_in_threadpool(retrieve_similar_memos_from_db, question, user_id)
+    retrieved_memos: list[Memo]=await run_in_threadpool(retrieve_similar_memos_from_db, question, user_id, start_time, end_time)
     
     return await asimilarity_result_with_memo(question, retrieved_memos, language)
