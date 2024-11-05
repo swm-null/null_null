@@ -9,4 +9,4 @@ class Memo_memo_and_tags(BaseModel):
     image_urls: list[str]=[]
     voice_record_urls: list[str]=[]
     timestamp: Optional[datetime]=None
-    tags: list[Memo_tag_name_and_id] 
+    tags: list[Memo_tag_name_and_id]

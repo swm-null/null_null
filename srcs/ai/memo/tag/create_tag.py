@@ -1,6 +1,7 @@
 import asyncio
 import uuid
-from ai.memo.tag.utils import determine_tag_names_chain, Determine_tag_names_chain_output, get_tags_from_db, get_current_structure
+from ai.memo.tag.utils import determine_tag_names_chain, Determine_tag_names_chain_output
+from ai.memo.utils import get_tags_from_db, get_current_structure
 from routers._models.memo import Memo_raw_memo, Memo_tag_name_and_id
 from ai.memo._models import Tag
 from ai.memo.utils import process_metadata

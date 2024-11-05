@@ -1,6 +1,6 @@
 from collections import defaultdict
 from fastapi import HTTPException
-from ai.utils.get_tag_relations_from_db import get_tag_relations_from_db
+from ai.memo.utils.get_tag_relations_from_db import get_tag_relations_from_db
 from ai.utils.database import TAG_ROOT_NAME
 
 

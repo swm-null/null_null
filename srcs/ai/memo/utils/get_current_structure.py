@@ -1,4 +1,4 @@
-from ai.utils import get_structure_dict, get_tag_dict
+from ai.memo.utils import get_structure_dict, get_tag_dict
 
 
 async def get_current_structure(user_id: str) -> dict[str, list[str]]:
