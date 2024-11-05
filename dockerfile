@@ -28,7 +28,8 @@ ENV FLOW=${FLOW} \
     LANGCHAIN_TRACING_V2=${LANGCHAIN_TRACING_V2} \
     MONGO_SRV=${MONGO_SRV} \
     OPENAI_API_KEY=${OPENAI_API_KEY} \
-    SENTRY_DSN=${SENTRY_DSN}
+    SENTRY_DSN=${SENTRY_DSN} \
+    VOYAGE_API_KEY=${VOYAGE_API_KEY}
 
 WORKDIR /srcs/srcs
 ENTRYPOINT ["poetry", "run", "uvicorn", "main:app", "--workers=4", "--host", "0.0.0.0", "--port", "8000"]

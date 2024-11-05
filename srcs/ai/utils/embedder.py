@@ -1,4 +1,4 @@
-from langchain_openai import OpenAIEmbeddings
+from langchain_voyageai import VoyageAIEmbeddings
 
 
-embedder: OpenAIEmbeddings=OpenAIEmbeddings(model="text-embedding-3-small")
+embedder: VoyageAIEmbeddings=VoyageAIEmbeddings(model="voyage-3-lite") # type: ignore
