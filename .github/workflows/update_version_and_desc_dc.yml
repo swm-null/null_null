@@ -4,6 +4,8 @@ on:
   push:
     branches:
       - develop
+      
+permissions: write-all
 
 jobs:
   update-version-and-description_direct_commit:

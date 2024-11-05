@@ -6,6 +6,8 @@ on:
     branches:
       - develop
 
+permissions: write-all
+
 jobs:
   update-version-and-description_pull_request:
     runs-on: ubuntu-latest
