@@ -1,7 +1,7 @@
 import asyncio
 from routers._models.memo import Memo_memo_and_tags, Memo_processed_memo
-from ai.memo.structure.processor._models import Memo
-from ai.memo.structure.processor.utils import convert_tag, convert_relations, convert_memos_and_tags, extract_and_assign_metadata, locate_memos
+from ai.memo.structure.deprecated.processor._models import Memo
+from ai.memo.structure.deprecated.processor.utils import convert_tag, convert_relations, convert_memos_and_tags, extract_and_assign_metadata, locate_memos
 from routers._models.memo import Memo_tag, Memo_tag_relation
 from ai.utils import embedder
 

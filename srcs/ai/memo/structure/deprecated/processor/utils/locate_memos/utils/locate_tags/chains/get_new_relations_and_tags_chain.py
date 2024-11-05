@@ -3,7 +3,7 @@ import textwrap
 from langchain_core.output_parsers import PydanticOutputParser
 from pydantic import BaseModel, Field
 from ai.memo._models.tag import Tag
-from ai.memo.structure.processor._models.memo import Memo
+from ai.memo.structure.deprecated.processor._models.memo import Memo
 from ai.utils.llm import llm4o
 from langchain_core.prompts import PromptTemplate
 

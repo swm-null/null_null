@@ -1,5 +1,5 @@
 from collections import defaultdict
-from ai.memo.structure.processor.utils import get_tag_relations_from_db
+from ai.memo.structure.deprecated.processor.utils import get_tag_relations_from_db
 from routers._models import Memo_tag_relation
 
 

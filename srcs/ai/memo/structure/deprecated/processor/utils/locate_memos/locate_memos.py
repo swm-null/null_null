@@ -1,8 +1,8 @@
 from collections import defaultdict
 from typing import Optional
 from ai.memo._models.tag import Tag
-from ai.memo.structure.processor._models import Memo, Directory_relation
-from ai.memo.structure.processor.utils.locate_memos.utils import get_tag_dict, locate_tags
+from ai.memo.structure.deprecated.processor._models import Memo, Directory_relation
+from ai.memo.structure.deprecated.processor.utils.locate_memos.utils import get_tag_dict, locate_tags
 
 
 async def locate_memos(user_id: str, memos: dict[int, Memo], tags: list[Tag], lang: str) -> tuple[list[Memo], list[Directory_relation], list[Tag]]:

@@ -1,5 +1,5 @@
 from fastapi import APIRouter
-from ai.memo.structure import process_memos, get_structure
+from ai.memo.structure.deprecated import process_memos, get_structure
 from ai.memo.tag import create_tag, create_tags
 from routers._models import *
 

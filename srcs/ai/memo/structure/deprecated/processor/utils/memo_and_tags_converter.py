@@ -1,7 +1,7 @@
 from datetime import datetime
 from routers._models.memo import Memo_memo_and_tags
 from ai.memo._models import Tag
-from ai.memo.structure.processor._models import Memo
+from ai.memo.structure.deprecated.processor._models import Memo
 
 
 def convert_memos_and_tags(memos_and_tags: list[Memo_memo_and_tags]) -> tuple[dict[int, Memo], list[Tag]]:

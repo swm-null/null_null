@@ -1,11 +1,11 @@
 import logging
 import uuid
 from ai.memo._models import Tag
-from ai.memo.structure.processor._models.directory_relation import Directory_relation
-from ai.memo.structure.processor.utils.locate_memos.utils.get_tag_dict import get_tag_dict
-from ai.memo.structure.processor.utils.locate_memos.utils.locate_tags.utils import get_structure_dict
-from ai.memo.structure.processor.utils.locate_memos.utils.locate_tags.chains import get_new_relations_and_tags, Get_new_relations_and_tags_chain_output, Relation_for_chain
-from ai.memo.structure.processor._models.memo import Memo
+from ai.memo.structure.deprecated.processor._models.directory_relation import Directory_relation
+from ai.memo.structure.deprecated.processor.utils.locate_memos.utils.get_tag_dict import get_tag_dict
+from ai.memo.structure.deprecated.processor.utils.locate_memos.utils.locate_tags.utils import get_structure_dict
+from ai.memo.structure.deprecated.processor.utils.locate_memos.utils.locate_tags.chains import get_new_relations_and_tags, Get_new_relations_and_tags_chain_output, Relation_for_chain
+from ai.memo.structure.deprecated.processor._models.memo import Memo
 
 
 async def locate_tags(user_id: str, tags: list[Tag], memos: dict[int, Memo], lang: str) -> tuple[list[Directory_relation], list[Tag]]:

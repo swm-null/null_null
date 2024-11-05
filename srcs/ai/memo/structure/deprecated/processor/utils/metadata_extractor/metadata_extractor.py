@@ -1,5 +1,5 @@
 import asyncio
-from ai.memo.structure.processor._models.memo import Memo
+from ai.memo.structure.deprecated.processor._models.memo import Memo
 from ai.memo.utils import process_metadata
 
 
