@@ -22,7 +22,7 @@ async def get_contents_from_link(links: list[str]) -> list[str]:
 
 async def _fetch(session, link: str) -> Optional[str]:
     try:
-        async with session.get(link) as response:
+        async with session.get(link, headers={"User-Agent": "Mozilla/5.0"}) as response:
             if response.status == 200:
                 return await response.text()
             else:
