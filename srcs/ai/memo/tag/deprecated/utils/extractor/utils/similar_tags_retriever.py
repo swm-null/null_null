@@ -10,7 +10,6 @@ async def retrieve_similar_tags(query: str, user_id: str) -> list[Tag]:
     return tag_list
 
 def _get_similar_tags_from_db(query: str, user_id: str) -> list[Tag]: 
-    raw_tags=tag_collection.find({TAG_UID_NAME: user_id})
     raw_tags=tag_collection.aggregate([
         {
             "$vectorSearch": 

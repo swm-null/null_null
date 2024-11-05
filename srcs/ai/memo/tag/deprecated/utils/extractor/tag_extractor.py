@@ -1,7 +1,7 @@
 import asyncio
 import logging
-from ai.memo.tag.utils.extractor.chains import get_existing_tag, get_new_tag
-from ai.memo.tag.utils.extractor.utils import retrieve_similar_tags
+from ai.memo.tag.deprecated.utils.extractor.chains import get_existing_tag, get_new_tag
+from ai.memo.tag.deprecated.utils.extractor.utils import retrieve_similar_tags
 from ai.memo._models import Tag
 
 

@@ -1,6 +1,6 @@
 import logging
 from ai.memo._models import Tag
-from ai.memo.tag.utils.selector.chains import select_tag
+from ai.memo.tag.deprecated.utils.selector.chains import select_tag
 
 
 async def select_tags(query: str, tags: list[Tag], lang: str="Korean") -> list[Tag]:

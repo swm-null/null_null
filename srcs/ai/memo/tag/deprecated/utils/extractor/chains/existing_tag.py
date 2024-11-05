@@ -64,3 +64,4 @@ async def get_existing_tag(query: str, similar_tags: list[Tag], lang: str) -> _G
     )
     
     return await _get_existing_tag_chain.ainvoke({"input_json": input_json_model.model_dump_json()})
+
