@@ -1,5 +1,5 @@
 from fastapi import APIRouter
-from ai.memo.structure import process_memos, get_structure
+from ai.memo.structure import get_new_structures
 from ai.memo.tag import create_tag, create_tags
 from routers._models import *
 
@@ -16,12 +16,4 @@ async def post_memo_tag(body: Body_post_memo_tag):
 
 @router.post("/memo/structures", response_model=Res_post_memo_structures)
 async def post_memo_structures(body: Body_post_memo_structures):
-    processed_memos, relations, tags=await process_memos(body.user_id, body.memos)
-    structure, reversed_structure=await get_structure(body.user_id, relations)
-    
-    return Res_post_memo_structures(
-        processed_memos=processed_memos,
-        new_tags=tags,
-        new_structure=structure,
-        new_reversed_structure=reversed_structure
-    )
+    return await get_new_structures(body.user_id, body.memos)
