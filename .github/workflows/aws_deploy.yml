@@ -2,7 +2,7 @@ name: Deploy to Amazon ECS
 
 on:
   workflow_run:
-    workflows: ["Update Version and Description on Direct Commit", "Update Version and Description on Pull Request"]
+    workflows: ["Update Version and Description manually", "Update Version and Description on Pull Request"]
     types:
       - completed
 
