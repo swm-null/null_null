@@ -1,9 +1,8 @@
 import asyncio
 import uuid
 from ai.memo.tag.utils import determine_tag_names_chain, Determine_tag_names_chain_output
-from ai.memo.utils import get_tags_from_db, get_current_structure
+from ai.memo.utils import get_tag_name_to_id, get_tags_from_db, get_current_structure
 from routers._models.memo import Memo_raw_memo, Memo_tag_name_and_id
-from ai.memo._models import Tag
 from ai.memo.utils import process_metadata
 from fastapi.concurrency import run_in_threadpool
 
@@ -16,7 +15,7 @@ async def create_tag(user_id: str, raw_memo: Memo_raw_memo, lang: str="Korean") 
     )
     
     selected_tag_names_by_chain: list[str]=await _determine_tag_names(content, current_structure, lang)
-    tag_name_to_id: dict[str, str]=_get_tag_name_to_id(existing_tags)
+    tag_name_to_id: dict[str, str]=get_tag_name_to_id(existing_tags)
     assigned_tags: list[Memo_tag_name_and_id]=_assign_tag_id(selected_tag_names_by_chain, tag_name_to_id)
     
     return assigned_tags
@@ -25,13 +24,6 @@ async def _determine_tag_names(content: str, current_structure: dict[str, list[s
     determined_tag_names: Determine_tag_names_chain_output=await determine_tag_names_chain(content, current_structure, lang)
     
     return determined_tag_names.selected_tag_names + determined_tag_names.new_tag_names
-
-def _get_tag_name_to_id(tags: list[Tag]) -> dict[str, str]:
-    result={}
-    for tag in tags:
-        result[tag.name]=tag.id
-    
-    return result
 
 def _assign_tag_id(selected_tag_names_by_chain: list[str], tag_name_to_id: dict[str, str]) -> list[Memo_tag_name_and_id]:
     return [
