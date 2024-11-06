@@ -76,13 +76,13 @@ async def send_request_and_validate():
 
     
 def validate_metadata_with_all(res_model):
-    assert "content_descriptions" in res_model.metadata
+    assert "content_description" in res_model.metadata
     assert "link_descriptions" in res_model.metadata
     assert "image_descriptions" in res_model.metadata
     assert "voice_record_descriptions" in res_model.metadata
     
 def validate_metadata_without_image(res_model):
-    assert "content_descriptions" in res_model.metadata
+    assert "content_description" in res_model.metadata
     assert "link_descriptions" in res_model.metadata
     assert "image_descriptions" not in res_model.metadata
     assert "voice_record_descriptions" in res_model.metadata

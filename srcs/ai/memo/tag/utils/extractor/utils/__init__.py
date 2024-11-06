@@ -1,1 +1,0 @@
-from .similar_tags_retriever import retrieve_similar_tags
