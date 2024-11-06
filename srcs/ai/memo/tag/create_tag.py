@@ -5,6 +5,7 @@ from ai.memo.utils import get_tag_name_to_id, get_tags_from_db, get_current_stru
 from routers._models.memo import Memo_raw_memo, Memo_tag_name_and_id
 from ai.memo.utils import process_metadata
 from fastapi.concurrency import run_in_threadpool
+from fastapi.concurrency import run_in_threadpool
 
 
 async def create_tag(user_id: str, raw_memo: Memo_raw_memo, lang: str="Korean") -> list[Memo_tag_name_and_id]:    

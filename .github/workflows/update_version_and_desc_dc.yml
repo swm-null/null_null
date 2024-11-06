@@ -1,9 +1,7 @@
-name: Update Version and Description on Direct Commit
+name: Update Version and Description manually
 
 on:
-  push:
-    branches:
-      - develop
+  workflow_dispatch
       
 permissions: write-all
 
