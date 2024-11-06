@@ -38,7 +38,7 @@ _connect_new_tags_prompt=PromptTemplate.from_template(textwrap.dedent("""
     People use tags to find notes. Each tag forms a hierarchy between parents and children.
     People can see memos stored in child tags even when they are browsing the parent tag of a tag, so organize them considering this.
 
-    The root of the tag structure is '@'.
+    The name of the root of the tag structure is '@'.
     Tags form a hierarchy, and tags that belong to the same hierarchy have similar inclusiveness.
     It should be noted that, unlike the general folder structure, a tag can have multiple parents and multiple children.
 
@@ -64,6 +64,7 @@ _connect_new_tags_prompt=PromptTemplate.from_template(textwrap.dedent("""
     The children of the root tag are divided into large units such as "schedule" (contains notes about things to do, or notes about someone's birthday party, etc.), "study" (contains notes related to what user studied), and "memos" (contains notes that user need to check later, such as birthdays and phone numbers).
     And tags with detailed information should be created under each of these tags.
     When creating such tags, remember to name them in the language your users will use.
+    When adding a tag under the root tag, explicitly state that it is connected to the root tag. As mentioned earlier, the name of the root tag is '@'.
 
     Second, when a new tag is created, you need to check if there are multiple things that can be the tag's parents.
     I mentioned earlier that a tag can have multiple parents. Therefore, if you determine that a new tag I provided or an intermediate tag you created can have multiple parents, connect the parents.
