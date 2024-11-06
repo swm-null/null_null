@@ -1,8 +1,9 @@
+import asyncio
 from operator import itemgetter
 import textwrap
 from langchain_core.output_parsers import PydanticOutputParser
 from pydantic import BaseModel, Field
-from ai.utils.llm import llm4o
+from ai.utils.llm import llm4o, llm4o_mini
 from langchain_core.prompts import PromptTemplate
 from routers._models.memo._models import Memo_processed_memo
 
@@ -92,6 +93,13 @@ _connect_new_tags=(
     | _parser
 )
 
+_connect_new_tags_for_test=(
+    { "input_json": itemgetter("input_json") }
+    | _connect_new_tags_prompt
+    | llm4o_mini
+    | _parser
+)
+
 async def connect_new_tags_chain(preprocessed_memos: list[Memo_processed_memo], current_structure: dict[str, list[str]], lang: str) -> Connect_new_tags_output:
     memo_idx=0
     new_tags: dict[str, _Tag]={}
@@ -117,6 +125,10 @@ async def connect_new_tags_chain(preprocessed_memos: list[Memo_processed_memo], 
     )
     
     if new_tags and memos:
-        return await _connect_new_tags.ainvoke({"input_json": input_json_model.model_dump_json()})
+        result, _=await asyncio.gather(
+            _connect_new_tags.ainvoke({"input_json": input_json_model.model_dump_json()}),
+            _connect_new_tags_for_test.ainvoke({"input_json": input_json_model.model_dump_json()})
+        )
+        return result
     else:
         return Connect_new_tags_output()
