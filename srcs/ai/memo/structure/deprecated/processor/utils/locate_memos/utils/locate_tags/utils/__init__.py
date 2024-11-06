@@ -1,1 +1,0 @@
-from .get_structure_dict import get_structure_dict

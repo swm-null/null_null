@@ -1,1 +1,0 @@
-from .metadata_extractor import extract_and_assign_metadata
