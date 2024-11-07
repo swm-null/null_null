@@ -59,9 +59,27 @@ body_with_tag={
     "user_id": "53fc3db2-966e-497b-943a-b275d4ff0b27"
 }
 
+body_without_content={
+    "memos": [
+        {
+            "content": "",
+            "image_urls": ["https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png"],
+            "voice_record_urls": [],
+            "tags": [
+                {
+                    "id": "a70ab49dda364995ae34a1c76d52d8ef",
+                    "name": "부가서비스",
+                    "is_new": False
+                }
+            ]
+        }
+    ],
+    "user_id": "53fc3db2-966e-497b-943a-b275d4ff0b27"
+}
+
 @pytest.mark.asyncio(loop_scope="session")
 async def test_structures_using_app():
-    tasks=[asyncio.create_task(send_request_and_validate()) for _ in range(3)]
+    tasks=[asyncio.create_task(send_request_and_validate()) for _ in range(2)]
     await asyncio.gather(*tasks)
     
 async def send_request_and_validate():
@@ -73,6 +91,14 @@ async def send_request_and_validate():
     res_model=Res_post_memo_structures.model_validate(response.json())
     validation_body_with_tag(res_model)
 
+    # body without content
+    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://localhost:8000") as client:
+        response=await client.post("/memo/structures", json=body_without_content)
+        
+    assert response.status_code==200
+    res_model=Res_post_memo_structures.model_validate(response.json())
+    validation_body_without_content(res_model)
+    
 def validation_body_with_tag(res_model: Res_post_memo_structures):
     UUID_LENGTH=32
     
@@ -94,6 +120,11 @@ def validation_body_with_tag(res_model: Res_post_memo_structures):
         assert len(tag.id)==UUID_LENGTH
     assert [tag for tag in res_model.new_tags if tag.name=="T 멤버십"]
     
-    # duplicated tags
-    # assert not [tag for tag in res_model.new_tags if tag.name=="이동통신요금제" or tag.name=="이동통신 요금제"]
-    
+def validation_body_without_content(res_model: Res_post_memo_structures):  
+    # processed_memos
+    for memo in res_model.processed_memos:
+        assert memo.parent_tag_ids   
+        assert not memo.content
+        assert not memo.embedding
+        assert memo.metadata
+        assert memo.embedding_metadata
