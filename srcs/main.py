@@ -5,8 +5,8 @@ from routers import embedding, importer, memo, search
 
 app = FastAPI(
     title="Oatnote AI",
-    description="after PR NULL-587-hotfix-memo-with-image(#111), https://github.com/swm-null/null_null/pull/111",
-    version="0.2.83",
+    description="after PR NULL-589 modified: changed default relations and new tags value from [[]] to [](#112), https://github.com/swm-null/null_null/pull/112",
+    version="0.2.84",
 )
 init(app)
     
