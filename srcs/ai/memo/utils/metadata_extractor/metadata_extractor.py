@@ -1,4 +1,5 @@
 import asyncio
+import logging
 from openai import BaseModel
 from ai.memo.utils.metadata_extractor.chains import metadata_extractor, Metadata_extractor_chain_output, Voice_record_summarizer_chain_output
 from ai.memo.utils.metadata_extractor.utils import *
@@ -35,12 +36,16 @@ async def process_metadata(content: str, image_urls: list[str], voice_record_url
         tasks.append(task)
         tasks_mapping[task]='link_descriptions'
     
+    logging.info("process_metadata] tasks: " + str(tasks))
     completed_tasks=await asyncio.gather(*tasks)
+    logging.info("process_metadata] completed tasks: " + str(completed_tasks))
     metadata_dict={
-        tasks_mapping[task]: result 
+        tasks_mapping[task]: result
         for task, result in zip(tasks, completed_tasks)
     }
     metadata=_Metadata(content=content if content else None, **metadata_dict)
+    logging.info("process_metadata] metadata: " + str(metadata))
+    
     
     return metadata.model_dump_json(exclude_none=True)
 
