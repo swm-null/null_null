@@ -27,8 +27,8 @@ class Relation_created_by_llm(BaseModel):
     child_name: str
 
 class Connect_new_tags_output(BaseModel):
-    relations: list[Relation_created_by_llm]=Field(description="newly added relations of tag", default=[[]])
-    new_tags: list[str]=Field(description="newly created intermediate tags by you", default=[[]])
+    relations: list[Relation_created_by_llm]=Field(description="newly added relations of tag", default=[])
+    new_tags: list[str]=Field(description="newly created intermediate tags by you", default=[])
 
 _parser = PydanticOutputParser(pydantic_object=Connect_new_tags_output)
 
