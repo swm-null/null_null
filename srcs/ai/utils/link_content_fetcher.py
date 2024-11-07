@@ -20,9 +20,16 @@ async def get_contents_from_link(links: list[str]) -> list[str]:
     
     return [text for text in texts if text]
 
-async def _fetch(session, link: str) -> Optional[str]:
+async def _fetch(session: aiohttp.ClientSession, link: str) -> Optional[str]:
+    headers={
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
+        "Accept-Language": "ko-KR,ko;q=0.9",
+        "Accept-Encoding": "gzip, deflate, br",
+        "Connection": "keep-alive"
+    }
     try:
-        async with session.get(link, headers={"User-Agent": "Mozilla/5.0"}) as response:
+        async with session.get(link, headers=headers, timeout=aiohttp.ClientTimeout(3)) as response:
+            print(response)
             if response.status == 200:
                 return await response.text()
             else:
