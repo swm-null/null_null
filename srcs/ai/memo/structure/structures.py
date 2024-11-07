@@ -11,6 +11,7 @@ from routers._models.memo._models.tag import Memo_tag
 
 
 async def get_new_structures(user_id: str, memos_and_tags: list[Memo_memo_and_tags], lang: str="Korean") -> Res_post_memo_structures:
+    logging.info("get_new_structures]\nuser_id: %s,\nmemos_and_tags: %s\n", user_id, str(memos_and_tags))
     existing_tag_dicts, current_structure_using_name, preprocessed_memos=await asyncio.gather(
         get_tag_dict(user_id),
         get_current_structure(user_id),
@@ -18,6 +19,7 @@ async def get_new_structures(user_id: str, memos_and_tags: list[Memo_memo_and_ta
     )
     _, existing_tag_name_to_id=existing_tag_dicts
     
+    logging.info("get_new_structures]\npreprocessed_memos: %s", str(preprocessed_memos))
     _connect_existing_tags(preprocessed_memos, existing_tag_name_to_id)
     embeddings, connect_new_tag_result=await asyncio.gather(
         _process_embeddings(preprocessed_memos),

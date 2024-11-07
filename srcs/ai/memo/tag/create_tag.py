@@ -10,6 +10,7 @@ from fastapi.concurrency import run_in_threadpool
 
 
 async def create_tag(user_id: str, raw_memo: Memo_raw_memo, lang: str="Korean") -> list[Memo_tag_name_and_id]:    
+    logging.info("create_tag] \nuser_id: %s, \nraw_memo: %s", user_id, raw_memo)
     content, existing_tags, current_structure=await asyncio.gather(
         process_metadata(raw_memo.content, raw_memo.image_urls, raw_memo.voice_urls, lang),
         run_in_threadpool(get_tags_from_db, user_id),

@@ -1,14 +1,15 @@
 import asyncio
 from openai import BaseModel
+from pydantic import Field
 from ai.utils.llm import llm4o
 from langchain_core.messages import HumanMessage
-import textwrap
+from langchain_core.output_parsers import JsonOutputParser
 from ai.utils import retry_on_timeout
 
 
 class Image_description(BaseModel):
-    image_description: str
-    ocr_text: str
+    image_description: str=Field("Description of image in user's language")
+    ocr_text: str=""
 
 async def image_to_text(image_urls: list[str], lang: str) -> list[Image_description]:
     extract_description_from_image_tasks=[retry_on_timeout(lambda: _extract_description_from_image(image, lang), retry_count=3, timeout=20) for image in image_urls]
@@ -17,22 +18,23 @@ async def image_to_text(image_urls: list[str], lang: str) -> list[Image_descript
     return extracted_description_from_image
 
 async def _extract_description_from_image(url: str, lang: str) -> Image_description:
-    result=await llm4o.ainvoke(
+    parser = JsonOutputParser(pydantic_object=Image_description)
+    result = await llm4o.ainvoke(
         [
             HumanMessage(
                 content=[
-                    {"type": "text", "text": textwrap.dedent(f"""
-                        Please provide the following response in **JSON** format:
-                        {{
-                        "image_description": "<image summary in {lang}>",
-                        "ocr_text": "<OCR text if any>"
-                        }}
-                    """)},
-                    {"type": "image_url", "image_url": {"url": url}}
+                    {
+                        "type": "text", 
+                        "text": f"Analyze this image and provide output in the following format and use {lang}:\n{parser.get_format_instructions()}"
+                    },
+                    {
+                        "type": "image_url",
+                        "image_url": {"url": url}
+                    }
                 ]
             )
         ]
     )
-    raw_content = result.content[8:-4]
-
-    return Image_description.model_validate_json(raw_content) # type: ignore
+    parsed_response = parser.parse(result.content) # type: ignore
+    
+    return parsed_response
