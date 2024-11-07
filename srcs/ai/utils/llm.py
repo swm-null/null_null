@@ -12,4 +12,9 @@ llm4o_mini=ChatOpenAI(
     temperature=0
 )
 
+finetunned_for_tag=ChatOpenAI(
+    model="ft:gpt-4o-mini-2024-07-18:oatnote:tags:AQygLx3p",
+    temperature=0
+)
+
 openai_client=OpenAI()

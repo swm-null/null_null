@@ -97,7 +97,7 @@ def save():
     
     qa_pair = {
             "messages": [
-                {"role": "human", "content": input},
+                {"role": "user", "content": input},
                 {"role": "assistant", "content": output}
             ]
         }
