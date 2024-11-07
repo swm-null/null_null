@@ -8,38 +8,52 @@ from langchain_core.prompts import PromptTemplate
 
 
 class _Metadata_extractor_chain_input(BaseModel):
-    lang: str
+    users_language: str
     content: str
+    timestamp: str
     
 class Metadata_extractor_chain_output(BaseModel):
     description: str
-    time_related_expressions: dict[str, str]
+    keywords: list[str]
+    relative_time: dict[str, str]
 
 _parser = PydanticOutputParser(pydantic_object=Metadata_extractor_chain_output)
 
 _metadata_extractor_chain_prompt=PromptTemplate.from_template(textwrap.dedent("""
-    You will receive a memo, and your task is to summarize it briefly in the same language as the original memo. Your summary should capture the essence of the content while considering the following:
+    You will be given a memo.
+    Your job is to transform this memo so that it is easy to categorize and find later.
 
-    First, write something explaining what this memo is about, and then summarize the content.
+    There are so many different types of text that can be written in a memo.
+    It could be a summary of what you studied, a schedule, someone's phone number, someone's birthday, or just random text.
 
-    1. **Formatting Details**:
-    If the memo contains specific elements like a social security number or phone number, identify the relevant country (based on the memo's language or content) and adapt the format to match the conventions used in that country.
-    
-    2. **Time-Related Expressions**:
-    Replace time-sensitive references like “다음 주 토요일” with the precise date that matches the context, based on today's date.
-    Ensure the summary reflects the adjusted time reference accurately to avoid confusion when reviewed later.
-    We'll use it later, so in the Key field, we'll write “something about time” as it was written by the user, and in the Value field, we'll write the converted time.
-    For example, If a user uses the phrase "내일" and it's November 12, 2024, "내일": “2024-11-12” in the field.
+    You need to guess what the memo is for, what it is meant to store.
+    To do this, I will give you the language the user speaks, the content of the memo, and the time the user wrote the memo.
 
-    Current time: {current_time}
+    Here is what you need to do:
+
+    1. Write a description of the memo the user wrote.
+    The user always writes a memo with some intention. You need to guess that intention and write a description of the memo.
+
+    2. Extract keywords so that the user can search the memo.
+    The user may need this memo to find some information later. Extract keywords for that purpose.
+    Think about what keywords the user might use to find this memo.
+
+    3. Extract and convert words that indicate relative time.
+    memos such as schedules may use words that indicate relative time, such as "next week." These should be converted based on the current time so that the user can find them later.
+    I'll give you an example.
+    If a user saved a memo that says "There's a competition next Sunday," "next Sunday" can be converted based on the time the memo was written.
+
+    One thing to keep in mind is that all descriptions and keywords should be written in the language the user speaks so that the user can read them.
+    Even when writing expressions related to relative time, you should use the language the user speaks.
+
+    Here is information about the user's memo.
     
     {input_json}
     
     {format}
     """),
     partial_variables={
-        "format": _parser.get_format_instructions(),
-        "current_time": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+        "format": _parser.get_format_instructions()
     }
 )
 
@@ -53,7 +67,8 @@ _metadata_extractor_chain=(
 async def metadata_extractor(content: str, lang: str) -> Metadata_extractor_chain_output:
     input_json_model=_Metadata_extractor_chain_input(
         content=content,
-        lang=lang
+        users_language=lang,
+        timestamp=datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     )
 
     return await _metadata_extractor_chain.ainvoke({"input_json": input_json_model.model_dump_json()})

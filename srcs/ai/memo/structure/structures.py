@@ -1,5 +1,6 @@
 import asyncio
 from collections import defaultdict
+import logging
 import uuid
 from ai.memo.structure.utils import preprocess_memos
 from ai.memo.structure.utils.chains import connect_new_tags_chain, Connect_new_tags_output
@@ -7,9 +8,11 @@ from ai.memo.utils import get_tag_dict, get_current_structure
 from ai.utils import embedder
 from routers._models.memo import Memo_memo_and_tags, Memo_processed_memo, Res_post_memo_structures
 from routers._models.memo._models.tag import Memo_tag
+from fastapi.concurrency import run_in_threadpool
 
 
 async def get_new_structures(user_id: str, memos_and_tags: list[Memo_memo_and_tags], lang: str="Korean") -> Res_post_memo_structures:
+    logging.info("get_new_structures]\nuser_id: %s,\nmemos_and_tags: %s\n", user_id, str(memos_and_tags))
     existing_tag_dicts, current_structure_using_name, preprocessed_memos=await asyncio.gather(
         get_tag_dict(user_id),
         get_current_structure(user_id),
@@ -17,6 +20,7 @@ async def get_new_structures(user_id: str, memos_and_tags: list[Memo_memo_and_ta
     )
     _, existing_tag_name_to_id=existing_tag_dicts
     
+    logging.info("get_new_structures]\npreprocessed_memos: %s", str(preprocessed_memos))
     _connect_existing_tags(preprocessed_memos, existing_tag_name_to_id)
     embeddings, connect_new_tag_result=await asyncio.gather(
         _process_embeddings(preprocessed_memos),
@@ -26,12 +30,13 @@ async def get_new_structures(user_id: str, memos_and_tags: list[Memo_memo_and_ta
     _merge_processed_memos_and_embedding(preprocessed_memos, embeddings)
     current_structure_using_id=_get_current_structure_using_id(current_structure_using_name, existing_tag_name_to_id)
     new_structure, new_tags=_process_connect_new_tag_result(preprocessed_memos, existing_tag_name_to_id, current_structure_using_id, connect_new_tag_result)
+    uniqued_new_structure=_remove_duplicated_tags(new_structure)
     
     return Res_post_memo_structures(
         processed_memos=preprocessed_memos,
         new_tags=new_tags,
-        new_structure=new_structure,
-        new_reversed_structure=_get_reversed_structure(new_structure),
+        new_structure=uniqued_new_structure,
+        new_reversed_structure=_get_reversed_structure(uniqued_new_structure),
     )
 
 def _connect_existing_tags(preprocessed_memos: list[Memo_processed_memo], tag_name_to_id: dict[str, str]) -> None:
@@ -51,13 +56,13 @@ def _connect_existing_tags(preprocessed_memos: list[Memo_processed_memo], tag_na
 async def _connect_new_tags(preprocessed_memos: list[Memo_processed_memo], current_structure: dict[str, list[str]], lang) -> Connect_new_tags_output:
     return await connect_new_tags_chain(preprocessed_memos, current_structure, lang)
         
-
 async def _process_embeddings(preprocessed_memos: list[Memo_processed_memo]) -> list[tuple[list[float], list[float]]]:
-    tasks=[ 
+    logging.info("_process_embeddings] " + str(preprocess_memos))
+    tasks=[
         asyncio.gather(
-            embedder.aembed_query(memo.content),
+            embedder.aembed_query(memo.content) if memo.content else run_in_threadpool(lambda: []),
             embedder.aembed_query(memo.metadata)
-        ) for memo in preprocessed_memos
+        ) for memo in preprocessed_memos 
     ]
     
     return await asyncio.gather(*tasks)
@@ -93,6 +98,13 @@ def _process_connect_new_tag_result(preprocessed_memos: list[Memo_processed_memo
             memo.temporal_tags=None
         
     return modified_structure, new_tags
+
+def _remove_duplicated_tags(structure: dict[str, list[str]]) -> dict[str, list[str]]:
+    uniqued_structure = {}
+    for parent, childs in structure.items():
+        uniqued_structure[parent] = list(set(childs))
+    
+    return uniqued_structure
 
 def _get_current_structure_using_id(current_structure_using_name: dict[str, list[str]], existing_tag_name_to_id: dict[str, str]) -> dict[str, list[str]]:
     structure: defaultdict[str, list[str]]=defaultdict(list[str])
