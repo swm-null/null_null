@@ -46,7 +46,6 @@ async def process_metadata(content: str, image_urls: list[str], voice_record_url
     metadata=_Metadata(content=content if content else None, **metadata_dict)
     logging.info("process_metadata] metadata: " + str(metadata))
     
-    
     return metadata.model_dump_json(exclude_none=True)
 
 async def _extract_metadata_from_content(content: str, lang: str):

@@ -1,5 +1,6 @@
 import asyncio
 from collections import defaultdict
+import logging
 import uuid
 from ai.memo.structure.utils import preprocess_memos
 from ai.memo.structure.utils.chains import connect_new_tags_chain, Connect_new_tags_output
@@ -53,6 +54,7 @@ async def _connect_new_tags(preprocessed_memos: list[Memo_processed_memo], curre
     return await connect_new_tags_chain(preprocessed_memos, current_structure, lang)
         
 async def _process_embeddings(preprocessed_memos: list[Memo_processed_memo]) -> list[tuple[list[float], list[float]]]:
+    logging.info("_process_embeddings] " + str(preprocess_memos))
     tasks=[ 
         asyncio.gather(
             embedder.aembed_query(memo.content),
