@@ -57,11 +57,11 @@ async def _connect_new_tags(preprocessed_memos: list[Memo_processed_memo], curre
         
 async def _process_embeddings(preprocessed_memos: list[Memo_processed_memo]) -> list[tuple[list[float], list[float]]]:
     logging.info("_process_embeddings] " + str(preprocess_memos))
-    tasks=[ 
+    tasks=[
         asyncio.gather(
-            embedder.aembed_query(memo.content),
+            embedder.aembed_query(memo.content) if memo.content else [], # type: ignore
             embedder.aembed_query(memo.metadata)
-        ) for memo in preprocessed_memos
+        ) for memo in preprocessed_memos 
     ]
     
     return await asyncio.gather(*tasks)
