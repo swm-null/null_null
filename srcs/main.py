@@ -6,7 +6,7 @@ from routers import embedding, importer, memo, search
 app = FastAPI(
     title="Oatnote AI",
     description="after PR NULL-588 fixed: modified headers to bypass anti-crawling webs(#110), https://github.com/swm-null/null_null/pull/110",
-    version="0.2.77",
+    version="0.2.78",
 )
 init(app)
     
