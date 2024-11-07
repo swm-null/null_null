@@ -8,10 +8,15 @@ from langchain_core.prompts import PromptTemplate
 _parser = StrOutputParser()
 
 _text_summarizer_chain_prompt=PromptTemplate.from_template(textwrap.dedent("""
-    Summarize this content in a reasonable length that I can write down in a note.
-    I want to be able to look at the notes later and know what's on the original content.
+    The text you receive is the content crawled from a site.
+    You need to summarize the text you receive.
 
-    Summarize it in the user's language.
+    The summary should contain information about what this website contains, and should contain a description of the given text. I think the length of the description should be about a half of the length of the given text.
+
+    Summarize it in detail so that you can find the information you want from the content of this site by just looking at this summary later. However, unnecessary information does not have to be included in the summary.
+
+    Do not do any work such as adding headings or structuring the output, but output it as a simple line of text.
+    And summarize it in the language that the user uses.
 
     User's language: {lang}
 
