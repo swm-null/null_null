@@ -2,7 +2,7 @@ from operator import itemgetter
 import textwrap
 from langchain_core.output_parsers import PydanticOutputParser
 from pydantic import BaseModel, Field
-from ai.utils import llm4o_mini
+from ai.utils import finetunned_for_tags
 from langchain_core.prompts import PromptTemplate
 from ai.memo.tag._configs import TAG_SELECTION_COUNT
 
@@ -67,7 +67,7 @@ _determine_tag_names_chain_prompt=PromptTemplate.from_template(textwrap.dedent("
 _determine_tag_names_chain=(
     { "input_json": itemgetter("input_json") }
     | _determine_tag_names_chain_prompt
-    | llm4o_mini
+    | finetunned_for_tags
     | _parser
 )
 

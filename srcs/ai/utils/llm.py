@@ -12,4 +12,16 @@ llm4o_mini=ChatOpenAI(
     temperature=0
 )
 
+finetunned_for_tags=ChatOpenAI(
+    model="ft:gpt-4o-mini-2024-07-18:oatnote:tags:AQygLx3p"
+)
+
+finetunned_for_structures=ChatOpenAI(
+    model="ft:gpt-4o-2024-08-06:oatnote:structures:AR1jxJNW"
+)
+
+finetunned_for_structures_mini=ChatOpenAI(
+    model="ft:gpt-4o-mini-2024-07-18:oatnote:structures:AR1iRuz3"
+)
+
 openai_client=OpenAI()
