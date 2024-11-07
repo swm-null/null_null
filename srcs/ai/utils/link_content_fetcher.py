@@ -29,7 +29,6 @@ async def _fetch(session: aiohttp.ClientSession, link: str) -> Optional[str]:
     }
     try:
         async with session.get(link, headers=headers, timeout=aiohttp.ClientTimeout(3)) as response:
-            print(response)
             if response.status == 200:
                 return await response.text()
             else:
