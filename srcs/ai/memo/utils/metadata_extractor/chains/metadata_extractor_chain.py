@@ -20,6 +20,8 @@ _parser = PydanticOutputParser(pydantic_object=Metadata_extractor_chain_output)
 _metadata_extractor_chain_prompt=PromptTemplate.from_template(textwrap.dedent("""
     You will receive a memo, and your task is to summarize it briefly in the same language as the original memo. Your summary should capture the essence of the content while considering the following:
 
+    First, write something explaining what this memo is about, and then summarize the content.
+
     1. **Formatting Details**:
     If the memo contains specific elements like a social security number or phone number, identify the relevant country (based on the memo's language or content) and adapt the format to match the conventions used in that country.
     
