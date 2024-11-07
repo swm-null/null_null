@@ -64,10 +64,33 @@ _determine_tag_names_chain_prompt=PromptTemplate.from_template(textwrap.dedent("
     }
 )
 
+def capture_tag_input(s):
+    from datetime import datetime
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S_%f")  # 더 깔끔한 타임스탬프 형식
+    file_path = f"/Users/jotaesik/null_null/dataset/tag/input/{timestamp}_input.txt"
+    with open(file_path, "w", encoding='utf-8') as file:  # 인코딩 명시
+            file.write(s.to_string())
+    return s
+
+def capture_tag_output(s):
+    from datetime import datetime
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S_%f")
+    file_path = f"/Users/jotaesik/null_null/dataset/tag/output/{timestamp}_output.txt"
+    with open(file_path, "w", encoding='utf-8') as file:
+            file.write(s.content)
+    return s
+
+from langchain_core.runnables import RunnableLambda
+import os
+os.makedirs("/Users/jotaesik/null_null/dataset/tag/input", exist_ok=True)
+os.makedirs("/Users/jotaesik/null_null/dataset/tag/output", exist_ok=True)
+
 _determine_tag_names_chain=(
     { "input_json": itemgetter("input_json") }
     | _determine_tag_names_chain_prompt
+    | RunnableLambda(capture_tag_input)
     | llm4o_mini
+    | RunnableLambda(capture_tag_output)
     | _parser
 )
 
