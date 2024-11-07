@@ -86,10 +86,45 @@ _connect_new_tags_prompt=PromptTemplate.from_template(textwrap.dedent("""
     }
 )
 
+from langchain_core.runnables import RunnableLambda
+output=""
+input=""
+
+def save():
+    from datetime import datetime
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S_%f")
+    file_path = f"/Users/jotaesik/null_null/dataset/structures/sets/{timestamp}.json"
+    
+    qa_pair = {
+            "messages": [
+                {"role": "human", "content": input},
+                {"role": "assistant", "content": output}
+            ]
+        }
+    
+    import json
+    with open(file_path, "w", encoding='utf-8') as file:
+        file.write(json.dumps(qa_pair, indent=4, ensure_ascii=False))
+
+def capture_tag_input(s):
+    global input
+    input = s.to_string()
+    return s
+
+def capture_tag_output(s):
+    global output
+    output = s.content
+    
+    save()
+    
+    return s
+
 _connect_new_tags=(
     { "input_json": itemgetter("input_json") }
     | _connect_new_tags_prompt
+    | RunnableLambda(capture_tag_input)
     | llm4o
+    | RunnableLambda(capture_tag_output)
     | _parser
 )
 
