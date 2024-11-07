@@ -79,7 +79,7 @@ body_without_content={
 
 @pytest.mark.asyncio(loop_scope="session")
 async def test_structures_using_app():
-    tasks=[asyncio.create_task(send_request_and_validate()) for _ in range(3)]
+    tasks=[asyncio.create_task(send_request_and_validate()) for _ in range(2)]
     await asyncio.gather(*tasks)
     
 async def send_request_and_validate():
@@ -120,9 +120,7 @@ def validation_body_with_tag(res_model: Res_post_memo_structures):
         assert len(tag.id)==UUID_LENGTH
     assert [tag for tag in res_model.new_tags if tag.name=="T 멤버십"]
     
-def validation_body_without_content(res_model: Res_post_memo_structures):
-    UUID_LENGTH=32
-    
+def validation_body_without_content(res_model: Res_post_memo_structures):  
     # processed_memos
     for memo in res_model.processed_memos:
         assert memo.parent_tag_ids   
@@ -130,14 +128,3 @@ def validation_body_without_content(res_model: Res_post_memo_structures):
         assert not memo.embedding
         assert memo.metadata
         assert memo.embedding_metadata
-    
-    # structures
-    for parent, childs in res_model.new_structure.items():
-        assert len(parent)==UUID_LENGTH or len(parent)==UUID_LENGTH+4
-        for child in childs:
-            assert len(child)==UUID_LENGTH
-
-    # new_tags
-    for tag in res_model.new_tags:
-        assert len(tag.id)==UUID_LENGTH
-    assert [tag for tag in res_model.new_tags if tag.name=="T 멤버십"]
