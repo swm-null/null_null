@@ -8,6 +8,7 @@ from ai.memo.utils import get_tag_dict, get_current_structure
 from ai.utils import embedder
 from routers._models.memo import Memo_memo_and_tags, Memo_processed_memo, Res_post_memo_structures
 from routers._models.memo._models.tag import Memo_tag
+from fastapi.concurrency import run_in_threadpool
 
 
 async def get_new_structures(user_id: str, memos_and_tags: list[Memo_memo_and_tags], lang: str="Korean") -> Res_post_memo_structures:
@@ -59,7 +60,7 @@ async def _process_embeddings(preprocessed_memos: list[Memo_processed_memo]) -> 
     logging.info("_process_embeddings] " + str(preprocess_memos))
     tasks=[
         asyncio.gather(
-            embedder.aembed_query(memo.content) if memo.content else [], # type: ignore
+            embedder.aembed_query(memo.content) if memo.content else run_in_threadpool(lambda: []),
             embedder.aembed_query(memo.metadata)
         ) for memo in preprocessed_memos 
     ]
