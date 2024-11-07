@@ -56,7 +56,7 @@ body_with_tag={
             ]
         }
     ],
-    "user_id": "f04ca3ba-d752-43b8-b5f8-c7deceec5c99"
+    "user_id": "53fc3db2-966e-497b-943a-b275d4ff0b27"
 }
 
 @pytest.mark.asyncio(loop_scope="session")

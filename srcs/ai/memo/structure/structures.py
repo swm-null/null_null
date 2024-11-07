@@ -26,12 +26,13 @@ async def get_new_structures(user_id: str, memos_and_tags: list[Memo_memo_and_ta
     _merge_processed_memos_and_embedding(preprocessed_memos, embeddings)
     current_structure_using_id=_get_current_structure_using_id(current_structure_using_name, existing_tag_name_to_id)
     new_structure, new_tags=_process_connect_new_tag_result(preprocessed_memos, existing_tag_name_to_id, current_structure_using_id, connect_new_tag_result)
+    uniqued_new_structure=_remove_duplicated_tags(new_structure)
     
     return Res_post_memo_structures(
         processed_memos=preprocessed_memos,
         new_tags=new_tags,
-        new_structure=new_structure,
-        new_reversed_structure=_get_reversed_structure(new_structure),
+        new_structure=uniqued_new_structure,
+        new_reversed_structure=_get_reversed_structure(uniqued_new_structure),
     )
 
 def _connect_existing_tags(preprocessed_memos: list[Memo_processed_memo], tag_name_to_id: dict[str, str]) -> None:
@@ -51,7 +52,6 @@ def _connect_existing_tags(preprocessed_memos: list[Memo_processed_memo], tag_na
 async def _connect_new_tags(preprocessed_memos: list[Memo_processed_memo], current_structure: dict[str, list[str]], lang) -> Connect_new_tags_output:
     return await connect_new_tags_chain(preprocessed_memos, current_structure, lang)
         
-
 async def _process_embeddings(preprocessed_memos: list[Memo_processed_memo]) -> list[tuple[list[float], list[float]]]:
     tasks=[ 
         asyncio.gather(
@@ -93,6 +93,13 @@ def _process_connect_new_tag_result(preprocessed_memos: list[Memo_processed_memo
             memo.temporal_tags=None
         
     return modified_structure, new_tags
+
+def _remove_duplicated_tags(structure: dict[str, list[str]]) -> dict[str, list[str]]:
+    uniqued_structure = {}
+    for parent, childs in structure.items():
+        uniqued_structure[parent] = list(set(childs))
+    
+    return uniqued_structure
 
 def _get_current_structure_using_id(current_structure_using_name: dict[str, list[str]], existing_tag_name_to_id: dict[str, str]) -> dict[str, list[str]]:
     structure: defaultdict[str, list[str]]=defaultdict(list[str])
