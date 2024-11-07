@@ -17,4 +17,14 @@ finetunned_for_tag=ChatOpenAI(
     temperature=0
 )
 
+finetunned_for_structures=ChatOpenAI(
+    model="ft:gpt-4o-2024-08-06:oatnote:structures:AR1jxJNW",
+    temperature=0
+)
+
+finetunned_for_structures_mini=ChatOpenAI(
+    model="ft:gpt-4o-mini-2024-07-18:oatnote:structures:AR1iRuz3",
+    temperature=0
+)
+
 openai_client=OpenAI()

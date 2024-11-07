@@ -3,7 +3,7 @@ from operator import itemgetter
 import textwrap
 from langchain_core.output_parsers import PydanticOutputParser
 from pydantic import BaseModel, Field
-from ai.utils.llm import llm4o, llm4o_mini
+from ai.utils.llm import finetunned_for_structures, finetunned_for_structures_mini
 from langchain_core.prompts import PromptTemplate
 from routers._models.memo._models import Memo_processed_memo
 
@@ -123,7 +123,7 @@ _connect_new_tags=(
     { "input_json": itemgetter("input_json") }
     | _connect_new_tags_prompt
     | RunnableLambda(capture_tag_input)
-    | llm4o
+    | finetunned_for_structures
     | RunnableLambda(capture_tag_output)
     | _parser
 )
@@ -131,7 +131,7 @@ _connect_new_tags=(
 _connect_new_tags_for_test=(
     { "input_json": itemgetter("input_json") }
     | _connect_new_tags_prompt
-    | llm4o_mini
+    | finetunned_for_structures_mini
     | _parser
 )
 
