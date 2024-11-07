@@ -4,6 +4,7 @@ from pydantic import Field
 from ai.utils.llm import llm4o
 from langchain_core.messages import HumanMessage
 from langchain_core.output_parsers import JsonOutputParser
+from ai.utils import retry_on_timeout
 
 
 class Image_description(BaseModel):
@@ -11,7 +12,7 @@ class Image_description(BaseModel):
     ocr_text: str=""
 
 async def image_to_text(image_urls: list[str], lang: str) -> list[Image_description]:
-    extract_description_from_image_tasks=[asyncio.create_task(_extract_description_from_image(image, lang)) for image in image_urls]
+    extract_description_from_image_tasks=[retry_on_timeout(lambda: _extract_description_from_image(image, lang), retry_count=3, timeout=20) for image in image_urls]
     extracted_description_from_image: list[Image_description]=await asyncio.gather(*extract_description_from_image_tasks)
     
     return extracted_description_from_image

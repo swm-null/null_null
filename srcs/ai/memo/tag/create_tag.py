@@ -17,6 +17,7 @@ async def create_tag(user_id: str, raw_memo: Memo_raw_memo, lang: str="Korean") 
         get_current_structure(user_id)
     )
     
+    logging.info("create_tag] \ncontent: %s, \nexisting_tags: %s, \ncurrent_structure: %s", content, existing_tags, current_structure)
     selected_tag_names_by_chain: list[str]=await _determine_tag_names(content, current_structure, lang)
     tag_name_to_id: dict[str, str]=get_tag_name_to_id(existing_tags)
     assigned_tags: list[Memo_tag_name_and_id]=_assign_tag_id(selected_tag_names_by_chain, tag_name_to_id)
