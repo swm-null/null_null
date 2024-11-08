@@ -10,6 +10,7 @@ from langchain_core.prompts import PromptTemplate
 class _Keyword_query_generator_chain_input(BaseModel):
     raw_query: str
     users_lang: str
+    current_time: str
 
 class Keyword_query_generator_chain_output(BaseModel):
     query: str
@@ -19,29 +20,29 @@ class Keyword_query_generator_chain_output(BaseModel):
 _parser = PydanticOutputParser(pydantic_object=Keyword_query_generator_chain_output)
 
 _query_generator_chain_prompt=PromptTemplate.from_template(textwrap.dedent("""
-    Transform a user’s natural language query into a structured keyword-based search query for MongoDB Atlas search. Follow the instructions below to ensure the query accurately captures the user's intent, language, and any specified time frame.
+    You are a smart AI that analyzes how to search for a question in the DB to find a note with specific content when a user asks a question.
 
-    ### Instructions:
-    1. **Language Detection**:
-    - Detect the **user's language** from the query and given field(users_lang).
-    - Ensure the resulting keywords are suitable for searches in that language.
+    Users ask questions with various intentions. Users want to find specific information in a note.
 
-    2. **Keyword Extraction**:
-    - Identify key terms that represent the query’s intent.
-    - Convert these into focused keywords, emphasizing relevance and avoiding filler words.
+    However, since questions are in natural language, whether declarative or interrogative, they cannot be searched in the DB as is.
 
-    3. **Time Period Adjustment**:
-    - If the query specifies a **time frame** (e.g., "first week of last month"), determine **start_time** and **end_time**.
-    - Use current time ({current_time}) for specify the time frame.
-    - Include only start_time and end_time fields if a time frame is specified in the query.
+    For example, when a user asks a question like "Show me the notes I wrote last week," even if you search the DB for "notes I wrote last week," you will not get the results the user wants. You have to search all notes whose date of creation was last week to get the results.
+
+    Even if a user asks a question like "Tell me last month's schedule," since last month's schedule is included in the content of the note, you cannot search for last month, but simply search for schedule. You cannot search for notes with last month as the period.
+
+    You are an AI that recognizes the user's intention, analyzes what to search for in the DB, and produces results by finding out which period the notes were created in. If the user doesn't seem to want notes written during a specific period, just send start_time and end_time as null.
+
+    Since the user writes notes in their own language, we need to search in the DB in their own language. So, create a query in their own language.
+
+    Below, I'll give you the language the user uses, what the user asked, and the current time.
+    Create a query that analyzes the user's intent as much as possible and can search!
     
     {input_json}
 
     {format}
     """),
     partial_variables={
-        "format": _parser.get_format_instructions(),
-        "current_time": datetime.now(timezone.utc).strftime('%Y-%m-%dT%H:%M:%S.%f%z')
+        "format": _parser.get_format_instructions()
     }
 )
 
@@ -55,7 +56,8 @@ _keyword_query_generator_chain=(
 async def keyword_query_generator(query: str, lang: str) -> Keyword_query_generator_chain_output:
     input_json_model=_Keyword_query_generator_chain_input(
         raw_query=query,
-        users_lang=lang
+        users_lang=lang,
+        current_time=datetime.now(timezone.utc).strftime('%Y-%m-%dT%H:%M:%S.%f%z')
     )
     
     return await _keyword_query_generator_chain.ainvoke({"input_json": input_json_model.model_dump_json()})
