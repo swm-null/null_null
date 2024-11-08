@@ -10,14 +10,13 @@ from langchain_core.prompts import PromptTemplate
 
 class _Memo(BaseModel):
     id: str
-    content: str
-    metadata: str
     timestamp: datetime
+    content: str
     
 class _Similarity_result_with_memo_chain_input(BaseModel):
     question: str
+    languages_of_user: str
     memos: list[_Memo]
-    lang: str
 
 class Similarity_result_with_memo_chain_output(BaseModel):
     answerable: bool
@@ -27,34 +26,44 @@ class Similarity_result_with_memo_chain_output(BaseModel):
 _parser = PydanticOutputParser(pydantic_object=Similarity_result_with_memo_chain_output)
 
 _similarity_result_with_memo_chain_prompt=PromptTemplate.from_template(textwrap.dedent("""
-You need to answer user questions based on the provided memos. Follow these guidelines carefully:
-    ---
+    You have to answer the user's question.
+    The user wants to find specific information in the notes he or she wrote.
+    This information can be inferred from the content of the notes, or you can simply find notes that contain specific keywords.
+    There may even be cases where the answer cannot be found in the notes the user wrote.
 
-    ## **Instructions**:
+    Find the intent in the user's question and create an answer to that question.
 
-    1. **Language and Memo Usage**:
-    - Answer in the user’s language.
-    - If you use a memo to generate the response, list its ID(s) in the used_memo_ids field.
-    
-    2. **Generate answer using memos**:
-    - The information in the content field is the content of the memo entered by the user.
-    - The information in the metadata field is a description of the content of this memo. There is various information such as what the content of the memo means, a description of the image attached to the memo, etc. 
-    - Use the most of these two fields.
-    
-    3. **Handling Time-sensitive Queries**:
-    - If a user asks a time-related question, such as next week's schedule, don't use “time-related expressions” in the memo's content.
-    - Instead, use the converted “time-related expressions” in the memo's metadata to answer the question.
-    - The converted time-related expressions are the result of converting the “time-related expressions” in the memo to a specific time based on when the memo was created.
-    - As much as possible, try to analyze the user's intent in writing memos and the intent of the question so that you can provide the desired answer.
-    - Users write memos based on when they write them without thinking, but when they hear the answer, they want it in the present.
-    
-    4. **Decision Logic for Answerable Status**:
-        3.1. **If** a relevant memo matches the query based on content (such as time-based phrases), mark answerable = True.
-            - Provide the answer using the memo’s information.
-            - Include the memo ID(s) in the used_memo_ids.
-        3.2. **If no memo** provides relevant content, mark answerable = False.
-    
-    ## **Current Time**: {current_time}
+    To do this, you will be provided with the following information:
+    The user's question, the language the user uses, and the user's notes.
+    The user's notes consist of the note's ID, the time the note was written, the content of the note, and a description of the content.
+
+    There are a few things to keep in mind when answering the user's question.
+
+    1. Recognize exactly what the user asked and answer.
+    The notes given may not be related to the user's question.
+    If they seem unrelated to the question, do not try to use the notes. 
+    Create an answer using only the notes that can answer the user's question.
+
+    2. The user may not use time-related expressions properly. 
+    Even if the user uses the expression "next week" in the memo, this "next week" means "next week from the time the memo was written", not "next week from now, when the question is answered". Therefore, create an answer considering the current time when the question is answered and the time when the user wrote the memo.
+    The current time for this is as follows.
+    Current Time: {current_time}
+
+    For this, the memo description can have a field called "relative_time".
+    This is the result of converting the relative time expression written in the memo to an absolute time based on the time of writing at the time of writing the memo.
+    This result may or may not be accurate. You should judge for yourself whether the result is accurate, and if it is, use this field as well.
+
+    3. Even if the content cannot be answered, the user should receive an answer.
+    The given memo may not provide the information the user wants. In addition, the user may not be asking a 'question'.
+    Even so, the result you created will be shown to the user. The user cannot receive an empty answer.
+    Even if it is not a question that can be answered, please write an appropriate message that you cannot answer in the "answer" field of the output.
+
+    4. Organize the memos used in the answer.
+    When the user receives an answer, he or she may want to know which information was used to create the answer. Therefore, please select the memos used to create the answer and put them in the "used_memo_ids" field of the output.
+
+    The answer must be created based on the language used by the user.
+
+    Now, I will attach the question and memos below. Please take care.
 
     {input_json}
 
@@ -79,12 +88,11 @@ def similarity_result_with_memo(question: str, memos: list[Memo], lang: str) -> 
         memos=[
             _Memo(
                 id=memo.id,
-                content=memo.content,
-                metadata=memo.metadata,
+                content=memo.metadata,
                 timestamp=memo.timestamp
             ) for memo in memos
         ],
-        lang=lang
+        languages_of_user=lang
     )
     
     return _similarity_result_with_memo_chain.invoke({"input_json": input_json_model.model_dump_json()})
@@ -95,12 +103,11 @@ async def asimilarity_result_with_memo(question: str, memos: list[Memo], lang: s
         memos=[
             _Memo(
                 id=memo.id,
-                content=memo.content,
-                metadata=memo.metadata,
+                content=memo.metadata,
                 timestamp=memo.timestamp
             ) for memo in memos
         ],
-        lang=lang
+        languages_of_user=lang
     )
     
     return await _similarity_result_with_memo_chain.ainvoke({"input_json": input_json_model.model_dump_json()})

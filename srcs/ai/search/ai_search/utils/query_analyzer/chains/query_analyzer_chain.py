@@ -12,7 +12,7 @@ class _Query_analyzer_chain_input(BaseModel):
     lang: str
 
 class _Query_analyzer_chain_output(BaseModel):
-    type: Search_query_type=Field("type of query")
+    type: Search_query_type=Field(description="type of query", default=Search_query_type.similarity)
 
 _parser = PydanticOutputParser(pydantic_object=_Query_analyzer_chain_output)
 
