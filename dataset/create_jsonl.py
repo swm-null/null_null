@@ -21,7 +21,7 @@ def combine_json_to_jsonl(input_folder, output_file):
     
     print(f"\n{output_file}")
 
-input_folder = "/Users/jotaesik/null_null/dataset/structures/sets"
-output_file = "/Users/jotaesik/null_null/dataset/structures/training_data.jsonl"
+input_folder = "/Users/jotaesik/null_null/dataset/tags/sets"
+output_file = "/Users/jotaesik/null_null/dataset/tags/training_data.jsonl"
 
 combine_json_to_jsonl(input_folder, output_file)
