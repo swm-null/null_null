@@ -18,7 +18,6 @@ async def get_contents_from_link(links: list[str]) -> list[str]:
         ])
         for fetched_result in fetched_results if fetched_result
     ]
-    logging.info("get_contents_from_link] %s\n", texts)
     
     return [text for text in texts if text]
 
@@ -31,6 +30,8 @@ async def _fetch(session: aiohttp.ClientSession, link: str) -> Optional[str]:
     }
     try:
         async with session.get(link, headers=headers, timeout=aiohttp.ClientTimeout(3)) as response:
+            logging.info("_fetch] %s\n", response)
+            logging.info("_fetch] %s\n", response.content)
             if response.status == 200:
                 return await response.text()
             else:
