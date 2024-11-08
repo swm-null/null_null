@@ -43,7 +43,11 @@ _similarity_result_with_memo_chain_prompt=PromptTemplate.from_template(textwrap.
     The notes given may not be related to the user's question.
     If they seem unrelated to the question, do not try to use the notes. 
     Understand the intent of the question and do not include information unrelated to the question in your answer.
+    If a user asks a question about a specific category, you might be able to answer it using notes from the user's notes about things that fall into that specific category.
     Create an answer using only the notes that can answer the user's question.
+    
+    When creating a result, you should utilize all the information in the memo. The metadata of the memo contains additional information about the memo. Actively utilize this information to create an answer.
+    But don't give users information like the ID of the note. This is information that is only used in the database.
 
     2. The user may not use time-related expressions properly. 
     Even if the user uses the expression "next week" in the memo, this "next week" means "next week from the time the memo was written", not "next week from now, when the question is answered". Therefore, create an answer considering the current time when the question is answered and the time when the user wrote the memo.
