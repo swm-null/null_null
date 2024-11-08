@@ -8,7 +8,7 @@ from ai.utils import retry_on_timeout
 
 
 class Image_description(BaseModel):
-    image_description: str=Field("Description of image in user's language")
+    image_description: str=Field(description="Description of image in user's language")
     ocr_text: str=""
 
 async def image_to_text(image_urls: list[str], lang: str) -> list[Image_description]:
