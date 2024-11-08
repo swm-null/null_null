@@ -13,11 +13,11 @@ llm4o_mini=ChatOpenAI(
 )
 
 finetunned_for_tags=ChatOpenAI(
-    model="ft:gpt-4o-mini-2024-07-18:oatnote:tags:AQygLx3p"
+    model="ft:gpt-4o-mini-2024-07-18:oatnote::AR9sfEIQ"
 )
 
 finetunned_for_structures=ChatOpenAI(
-    model="ft:gpt-4o-2024-08-06:oatnote:structures:AR1jxJNW"
+    model="ft:gpt-4o-2024-08-06:oatnote::AR9p5xxL"
 )
 
 finetunned_for_structures_mini=ChatOpenAI(
