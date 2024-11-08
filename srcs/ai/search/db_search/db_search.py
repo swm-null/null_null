@@ -1,4 +1,5 @@
 import asyncio
+import logging
 from fastapi.concurrency import run_in_threadpool
 from ai.search.db_search._models import Search_result
 from ai.utils import embedder
@@ -28,11 +29,12 @@ def _combine_results(keyword_results: list[Search_result], vector_results: list[
     keyword_id_to_score: dict[str, float]={result.memo_id: result.score for result in keyword_results}
     vector_id_to_score: dict[str, float]={result.memo_id: result.score for result in vector_results}
 
+    logging.info("search_db]\nkeyword score: %s,\nvector score: %s", keyword_id_to_score, vector_id_to_score)
     combined_result: list[Search_result]=[]
     for key in keyword_id_to_score.keys():
         combined_result.append(Search_result(
             memo_id=key,
-            score=keyword_id_to_score.get(key, 0)*1+vector_id_to_score.get(key, 0)*3
+            score=keyword_id_to_score.get(key, 0)*1+vector_id_to_score.get(key, 0)*5
         ))
         
     return sorted(combined_result, key=lambda result: result.score, reverse=True)
