@@ -14,4 +14,4 @@ async def search_memo_using_ai(query: str, user_id: str, lang: str="Korean") -> 
     if query_Type==Search_query_type.regex:
         return await regex(query, lang)
     else:
-        return await similarity(query, user_id, start_time, end_time, lang)
+        return await similarity(query, user_id, generated_query.query, start_time, end_time, lang)
