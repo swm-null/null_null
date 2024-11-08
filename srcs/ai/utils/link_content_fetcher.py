@@ -1,4 +1,5 @@
 import asyncio
+import logging
 from typing import Optional
 import aiohttp
 import bs4
@@ -17,6 +18,7 @@ async def get_contents_from_link(links: list[str]) -> list[str]:
         ])
         for fetched_result in fetched_results if fetched_result
     ]
+    logging.info("get_contents_from_link] %s\n", texts)
     
     return [text for text in texts if text]
 

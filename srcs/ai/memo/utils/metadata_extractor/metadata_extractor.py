@@ -38,7 +38,6 @@ async def process_metadata(content: str, image_urls: list[str], voice_record_url
     
     logging.info("process_metadata] tasks: " + str(tasks))
     completed_tasks=await asyncio.gather(*tasks)
-    logging.info("process_metadata] completed tasks: " + str(completed_tasks))
     metadata_dict={
         tasks_mapping[task]: result
         for task, result in zip(tasks, completed_tasks)
