@@ -59,7 +59,7 @@ _connect_new_tags_prompt=PromptTemplate.from_template(textwrap.dedent("""
     When creating a new tag, use only what is in the content. However, use description only when you cannot create a tag with only what is in the content.
     When creating a tag name, make it equal or less than two words, and make it in the user's language.
 
-    There are two things to be careful of:
+    There are four things to be careful of:
 
     First, I'll explain the rules for tags that exist as children of the root tag.
     The children of the root tag are divided into large units such as "schedule" (contains notes about things to do, or notes about someone's birthday party, etc.), "study" (contains notes related to what user studied), and "memos" (contains notes that user need to check later, such as birthdays and phone numbers).
@@ -72,7 +72,13 @@ _connect_new_tags_prompt=PromptTemplate.from_template(textwrap.dedent("""
     Third, when a new tag is created, you need to check if there are multiple things that can be the tag's parents.
     I mentioned earlier that a tag can have multiple parents. Therefore, if you determine that a new tag I provided or an intermediate tag you created can have multiple parents, connect the parents.
 
+    Fourth, The tag given as input has a note attached to it. Also, the tags that already existed in the structure have notes attached to their children.
+    When a new tag is created, there must be a note attached to the child of that tag. Therefore, the leaf of the newly created tag must have the new tag given as input,
+    or a tag that already existed in the structure.
+    
     All tags except the root tag should have at least one parent.
+    If you create a new tag, that tag must be reachable from the root.
+    
     All of the given tags must be included in the results, without any omissions and with their names unchanged.
 
     Here is the information about the tag and notes you need to work with.
