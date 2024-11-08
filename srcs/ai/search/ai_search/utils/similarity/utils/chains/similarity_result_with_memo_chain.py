@@ -42,6 +42,7 @@ _similarity_result_with_memo_chain_prompt=PromptTemplate.from_template(textwrap.
     1. Recognize exactly what the user asked and answer.
     The notes given may not be related to the user's question.
     If they seem unrelated to the question, do not try to use the notes. 
+    Understand the intent of the question and do not include information unrelated to the question in your answer.
     Create an answer using only the notes that can answer the user's question.
 
     2. The user may not use time-related expressions properly. 
