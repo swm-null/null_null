@@ -23,10 +23,9 @@ async def get_contents_from_link(links: list[str]) -> list[str]:
 
 async def _fetch(session: aiohttp.ClientSession, link: str) -> Optional[str]:
     headers={
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
-        "Accept-Language": "ko-KR,ko;q=0.9",
-        "Accept-Encoding": "gzip, deflate, br",
-        "Connection": "keep-alive"
+        "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36",
+        "Accept-Language": "ko-KR,ko;q=0.9,en-NL;q=0.8,en;q=0.7,en-US;q=0.6",
+        "Accept-Encoding": "gzip, deflate, br, zstd"
     }
     try:
         async with session.get(link, headers=headers, timeout=aiohttp.ClientTimeout(3)) as response:
