@@ -56,7 +56,7 @@ body_with_tag={
             ]
         }
     ],
-    "user_id": "53fc3db2-966e-497b-943a-b275d4ff0b27"
+    "user_id": "ecc2fbea-b0c7-4889-a613-d8f4a6cff108"
 }
 
 body_without_content={
@@ -74,7 +74,7 @@ body_without_content={
             ]
         }
     ],
-    "user_id": "53fc3db2-966e-497b-943a-b275d4ff0b27"
+    "user_id": "ecc2fbea-b0c7-4889-a613-d8f4a6cff108"
 }
 
 @pytest.mark.asyncio(loop_scope="session")
