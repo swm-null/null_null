@@ -8,17 +8,17 @@ from routers._models.search import Res_post_search_db
 
 similarity_body={
     "query": "요금제 관련 정보 좀 찾아줘",
-    "user_id": "53fc3db2-966e-497b-943a-b275d4ff0b27"
+    "user_id": "ecc2fbea-b0c7-4889-a613-d8f4a6cff108"
 }
 
 regex_body={
     "query": "주민등록번호 좀 찾아줘",
-    "user_id": "53fc3db2-966e-497b-943a-b275d4ff0b27"
+    "user_id": "ecc2fbea-b0c7-4889-a613-d8f4a6cff108"
 }
 
 db_body={
     "query": "주민등록번호 좀 찾아줘",
-    "user_id": "53fc3db2-966e-497b-943a-b275d4ff0b27"
+    "user_id": "ecc2fbea-b0c7-4889-a613-d8f4a6cff108"
 }
 
 @pytest.mark.asyncio(loop_scope="session")
