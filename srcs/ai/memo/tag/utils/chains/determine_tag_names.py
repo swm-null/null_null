@@ -13,8 +13,8 @@ class _Determine_tag_names_chain_input(BaseModel):
     language_of_user: str
     
 class Determine_tag_names_chain_output(BaseModel):
-    selected_tag_names: list[str]=Field(description="Tag names selected as being associated with a memo in the current tag structure")
-    new_tag_names: list[str]=Field(description="Tags that are not in the current tag structure but should be added to organize this memo")
+    selected_tag_names: list[str]=Field(description="Tag names selected as being associated with a memo in the current tag structure", default=[])
+    new_tag_names: list[str]=Field(description="Tags that are not in the current tag structure but should be added to organize this memo", default=[])
 
 _parser = PydanticOutputParser(pydantic_object=Determine_tag_names_chain_output)
 
