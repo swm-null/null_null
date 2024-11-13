@@ -34,7 +34,7 @@ def _combine_results(keyword_results: list[Search_result], vector_results: list[
     for key in keyword_id_to_score.keys():
         combined_result.append(Search_result(
             memo_id=key,
-            score=keyword_id_to_score.get(key, 0)*1+vector_id_to_score.get(key, 0)*5
+            score=keyword_id_to_score.get(key, 0)*1+vector_id_to_score.get(key, 0)*3
         ))
         
     return sorted(combined_result, key=lambda result: result.score, reverse=True)
