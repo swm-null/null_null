@@ -20,6 +20,7 @@ async def search_memo_using_db(query: str, user_id: str, lang: str="Korean") -> 
         perform_query_by_vector(embedding, start_time, end_time, user_id),
     )
     combined_results=_combine_results(keyword_results, vector_results)
+    logging.info("search_db]\ncombined_results: %s\n", combined_results)    
     
     return Res_post_search_db(
         memo_ids=[result.memo_id for result in combined_results]
@@ -32,9 +33,11 @@ def _combine_results(keyword_results: list[Search_result], vector_results: list[
     logging.info("search_db]\nkeyword score: %s,\nvector score: %s", keyword_id_to_score, vector_id_to_score)
     combined_result: list[Search_result]=[]
     for key in keyword_id_to_score.keys():
-        combined_result.append(Search_result(
-            memo_id=key,
-            score=keyword_id_to_score.get(key, 0)*1+vector_id_to_score.get(key, 0)*3
-        ))
+        combined_score=keyword_id_to_score.get(key, 0)*1+vector_id_to_score.get(key, 0)*3
+        if combined_score > 5:
+            combined_result.append(Search_result(
+                memo_id=key,
+                score=combined_score
+            ))
         
     return sorted(combined_result, key=lambda result: result.score, reverse=True)
