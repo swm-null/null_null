@@ -26,7 +26,7 @@ metadata_body={
         "https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png"
     ],
     "voice_urls": [
-        "https://sample-files-online.com/ko/samples/countdownload/17"
+        "https://dl11.webmfiles.org/big-buck-bunny_trailer.webm"
     ]
 }
 
@@ -48,7 +48,7 @@ metadata_without_image_body={
         https://asdf.com/this_is_invalid_link"""),
     "image_urls": [],
     "voice_urls": [
-        "https://sample-files-online.com/ko/samples/countdownload/17"
+        "https://dl11.webmfiles.org/big-buck-bunny_trailer.webm"
     ]
 }
 
