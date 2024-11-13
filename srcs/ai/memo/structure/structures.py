@@ -31,6 +31,7 @@ async def get_new_structures(user_id: str, memos_and_tags: list[Memo_memo_and_ta
     current_structure_using_id=_get_current_structure_using_id(current_structure_using_name, existing_tag_name_to_id)
     new_structure, new_tags=_process_connect_new_tag_result(preprocessed_memos, existing_tag_name_to_id, current_structure_using_id, connect_new_tag_result)
     uniqued_new_structure=_remove_duplicated_tags(new_structure)
+    logging.info("get_new_structures]\nprev_structures:\n%s,\nnew_structures:\n%s,\nnew_tags:\n%s\n", str(current_structure_using_name), str(uniqued_new_structure), str(new_tags))
     
     return Res_post_memo_structures(
         processed_memos=preprocessed_memos,
@@ -102,7 +103,9 @@ def _process_connect_new_tag_result(preprocessed_memos: list[Memo_processed_memo
 def _remove_duplicated_tags(structure: dict[str, list[str]]) -> dict[str, list[str]]:
     uniqued_structure = {}
     for parent, childs in structure.items():
-        uniqued_structure[parent] = list(set(childs))
+        uniqued_childs=set(childs)
+        uniqued_childs.discard(parent)
+        uniqued_structure[parent] = list(uniqued_childs)
     
     return uniqued_structure
 

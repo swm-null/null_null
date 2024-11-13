@@ -22,6 +22,8 @@ def _get_structure(graph: dict[str, list[str]], structure_dict: defaultdict[str,
         return
     
     for next_id in next_ids:
+        if next_id==now_id:
+            continue
         next_name=tag_id_to_name[next_id]
         structure_dict[now_name].append(next_name)
         _get_structure(graph, structure_dict, tag_id_to_name, next_id)

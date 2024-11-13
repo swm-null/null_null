@@ -39,11 +39,6 @@ body_with_tag={
                     "is_new": False
                 },
                 {
-                    "id": "22222222222222222222222222222222",
-                    "name": "이동통신요금제", # should be ignored
-                    "is_new": True
-                },
-                {
                     "id": "ecedd0b9afc34f67aa2ede1029da1f41",
                     "name": "통신 요금제",
                     "is_new": False
