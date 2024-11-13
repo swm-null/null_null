@@ -33,7 +33,7 @@ def _get_memos_from_db_using_content(query: str, user_id: str, start_time: datet
                 'path': MEMO_CONTENT_EMBEDDING_PATH,
                 'queryVector': embedder.embed_query(query),
                 'numCandidates': 1000,
-                'limit': 12,
+                'limit': 10,
                 'filter': {
                     "$and": [
                         { MEMO_UID_NAME: user_id },
@@ -76,7 +76,7 @@ def _get_memos_from_db_using_metadata(query: str, user_id: str, start_time: date
                 'path': MEMO_METADATA_EMBEDDING_PATH,
                 'queryVector': embedder.embed_query(query),
                 'numCandidates': 1000,
-                'limit': 12,
+                'limit': 10,
                 'filter': {
                     "$and": [
                         { MEMO_UID_NAME: user_id },
@@ -150,7 +150,7 @@ def _perform_keyword_query(query: str, start_time: datetime, end_time: datetime,
                 }
             }
         },
-        { "$limit": 12 },
+        { "$limit": 10 },
         {
             "$project": {
                 MEMO_ID_NAME: 1,
