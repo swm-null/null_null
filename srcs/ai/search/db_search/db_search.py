@@ -33,8 +33,8 @@ def _combine_results(keyword_results: list[Search_result], vector_results: list[
     logging.info("search_db]\nkeyword score: %s,\nvector score: %s", keyword_id_to_score, vector_id_to_score)
     combined_result: list[Search_result]=[]
     for key in keyword_id_to_score.keys():
-        combined_score=keyword_id_to_score.get(key, 0)*1+vector_id_to_score.get(key, 0)*3
-        if combined_score > 5:
+        combined_score=keyword_id_to_score.get(key, 0)*1+vector_id_to_score.get(key, 0)*4
+        if combined_score > 4:
             combined_result.append(Search_result(
                 memo_id=key,
                 score=combined_score
