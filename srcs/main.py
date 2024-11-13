@@ -5,8 +5,8 @@ from routers import embedding, importer, memo, search
 
 app = FastAPI(
     title="Oatnote AI",
-    description="after PR NULL-601 modified: prompt(#122), https://github.com/swm-null/null_null/pull/122",
-    version="0.2.102",
+    description="after PR NULL-639-remove-redundant-results-on-db-search(#124), https://github.com/swm-null/null_null/pull/124",
+    version="0.2.103",
 )
 init(app)
     
