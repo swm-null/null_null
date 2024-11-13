@@ -18,7 +18,6 @@ async def voice_record_to_text(voice_record_urls: list[str], lang: str) -> list[
 async def _extract_description_from_voice_record(url: str, lang: str) -> Voice_record_summarizer_chain_output:
     voice_record_file: bytes=await run_in_threadpool(_get_voice_record_from_url, url)
     file_extension: str=_get_file_extension_from_url(url)
-    print(f"record{file_extension}")
     raw_transcript=await run_in_threadpool(_get_transcript_from_voice_record, voice_record_file, file_extension, lang)
     result=await voice_record_summarizer(raw_transcript, lang)
 
