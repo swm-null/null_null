@@ -99,13 +99,6 @@ _connect_new_tags=(
     | _parser
 )
 
-_connect_new_tags_for_test=(
-    { "input_json": itemgetter("input_json") }
-    | _connect_new_tags_prompt
-    | finetunned_for_structures_mini
-    | _parser
-)
-
 async def connect_new_tags_chain(preprocessed_memos: list[Memo_processed_memo], current_structure: dict[str, list[str]], lang: str) -> Connect_new_tags_output:
     memo_idx=0
     new_tags: dict[str, _Tag]={}
@@ -131,10 +124,6 @@ async def connect_new_tags_chain(preprocessed_memos: list[Memo_processed_memo], 
     )
     
     if new_tags and memos:
-        result, _=await asyncio.gather(
-            _connect_new_tags.ainvoke({"input_json": input_json_model.model_dump_json()}),
-            _connect_new_tags_for_test.ainvoke({"input_json": input_json_model.model_dump_json()})
-        )
-        return result
+        return await _connect_new_tags.ainvoke({"input_json": input_json_model.model_dump_json()})
     else:
         return Connect_new_tags_output()
