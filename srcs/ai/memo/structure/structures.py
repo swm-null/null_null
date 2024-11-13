@@ -102,7 +102,9 @@ def _process_connect_new_tag_result(preprocessed_memos: list[Memo_processed_memo
 def _remove_duplicated_tags(structure: dict[str, list[str]]) -> dict[str, list[str]]:
     uniqued_structure = {}
     for parent, childs in structure.items():
-        uniqued_structure[parent] = list(set(childs))
+        uniqued_childs=set(childs)
+        uniqued_childs.discard(parent)
+        uniqued_structure[parent] = list(uniqued_childs)
     
     return uniqued_structure
 
