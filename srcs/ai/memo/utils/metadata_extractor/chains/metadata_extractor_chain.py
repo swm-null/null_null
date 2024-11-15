@@ -37,6 +37,7 @@ _metadata_extractor_chain_prompt=PromptTemplate.from_template(textwrap.dedent(""
     2. Extract keywords so that the user can search the memo.
     The user may need this memo to find some information later. Extract keywords for that purpose.
     Think about what keywords the user might use to find this memo.
+    For example, if this memo is related to a schedule, you can select 'schedule' as a keyword.
 
     3. Extract and convert words that indicate relative time.
     memos such as schedules may use words that indicate relative time, such as "next week." These should be converted based on the current time so that the user can find them later.
