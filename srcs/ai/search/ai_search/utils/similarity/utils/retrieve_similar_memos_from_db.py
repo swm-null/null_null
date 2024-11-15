@@ -1,24 +1,28 @@
 import asyncio
 from datetime import datetime
 import logging
+from re import Pattern
+from typing import Optional
 from ai.search._models import Memo
 from ai.utils.database import *
 from ai.utils import embedder
 from fastapi.concurrency import run_in_threadpool
 
-def retrieve_similar_memos_from_db(query: str, keyword: str, user_id: str, start_time: datetime, end_time: datetime,) -> list[Memo]:
+def retrieve_similar_memos_from_db(query: str, keyword: str, user_id: str, start_time: datetime, end_time: datetime, regex: Optional[Pattern[str]]=None) -> list[Memo]:
     memos: set[Memo]=_get_memos_from_db_using_content(query, user_id, start_time, end_time) \
                     | _get_memos_from_db_using_metadata(query, user_id, start_time, end_time) \
-                    | _perform_keyword_query(keyword, start_time, end_time, user_id)
+                    | _perform_keyword_query(keyword, start_time, end_time, user_id) \
+                    | _perform_regex_query(regex, start_time, end_time, user_id) if regex else set()
     logging.info("[retrieved memos]\n## %s\n%s\n\n", user_id, memos)
     
     return list(memos)
     
-async def aretrieve_similar_memos_from_db(query: str, keyword: str, user_id: str, start_time: datetime, end_time: datetime,) -> list[Memo]:
+async def aretrieve_similar_memos_from_db(query: str, keyword: str, user_id: str, start_time: datetime, end_time: datetime, regex: Optional[Pattern[str]]=None) -> list[Memo]:
     memos: set[Memo]=set().union(*(await asyncio.gather(
         run_in_threadpool(_get_memos_from_db_using_content, query, user_id, start_time, end_time),
         run_in_threadpool(_get_memos_from_db_using_metadata, query, user_id, start_time, end_time),
-        run_in_threadpool(_perform_keyword_query, keyword, start_time, end_time, user_id)
+        run_in_threadpool(_perform_keyword_query, keyword, start_time, end_time, user_id),
+        run_in_threadpool(_perform_regex_query, regex, start_time, end_time, user_id) if regex else run_in_threadpool(set),
     )))
     logging.info("[retrieved memos]\n## %s\n%s\n\n", user_id, memos)
     
@@ -169,3 +173,23 @@ def _perform_keyword_query(query: str, start_time: datetime, end_time: datetime,
             timestamp=memo[MEMO_UTIME_NAME],
         ) for memo in raw_memos
     }
+
+def _perform_regex_query(regex: Pattern[str], start_time: datetime, end_time: datetime, user_id: str) -> set[Memo]:
+    raw_memos=memo_collection.find({
+        MEMO_UID_NAME: user_id,
+        MEMO_CONTENT_NAME: {"$regex": regex},
+        MEMO_UTIME_NAME: {
+            "$gte": start_time,
+            "$lte": end_time
+        }
+    })
+    
+    return {
+        Memo(
+            id=memo[MEMO_ID_NAME],
+            metadata=memo[MEMO_METADATA_NAME],
+            content=memo[MEMO_CONTENT_NAME],
+            timestamp=memo[MEMO_UTIME_NAME],
+        ) for memo in raw_memos
+    }
+    
