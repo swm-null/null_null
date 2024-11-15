@@ -31,21 +31,7 @@ metadata_body={
 }
 
 metadata_without_image_body={
-    "content": textwrap.dedent("""
-        5GX 플래티넘(넷플릭스)
-        무제한
-        테더링/공유 120GB 집/이동전화 무제한, 영상/부가통화 300분 문자 기본 제공
-        T 우주 Netflix
-        넷플릭스 프리미엄 제공
-        T 멤버십
-        T 멤버십 VIP 혜택
-        스마트기기 이용요금
-        스마트기기 2회선 이용요금 무료
-        월 125,000원
-        선택약정 반영 시 93,705원
-
-        https://www.tworld.co.kr/web/product/callplan/NA00008719
-        https://asdf.com/this_is_invalid_link"""),
+    "content": textwrap.dedent(""""""),
     "image_urls": [],
     "voice_urls": [
         "https://dl11.webmfiles.org/big-buck-bunny_trailer.webm"
@@ -82,8 +68,8 @@ def validate_metadata_with_all(res_model):
     assert "voice_record_descriptions" in res_model.metadata
     
 def validate_metadata_without_image(res_model):
-    assert "content_description" in res_model.metadata
-    assert "link_descriptions" in res_model.metadata
+    assert "content_description" not in res_model.metadata
+    assert "link_descriptions" not in res_model.metadata
     assert "image_descriptions" not in res_model.metadata
     assert "voice_record_descriptions" in res_model.metadata
     
