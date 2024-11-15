@@ -1,10 +1,12 @@
 from datetime import datetime
+from re import Pattern
+from typing import Optional
 from ai.search.ai_search.utils.similarity.utils import generate_similarity_result
 from routers._models import Res_post_search_ai, Search_query_type
 
 
-async def similarity(query: str, user_id: str, keyword: str, start_time: datetime, end_time: datetime, lang: str="Korean") -> Res_post_search_ai:
-    generated_answer, used_memo_ids=await generate_similarity_result(user_id, query, keyword, start_time, end_time, lang)
+async def similarity(query: str, user_id: str, keyword: str, start_time: datetime, end_time: datetime, lang: str="Korean", regex: Optional[Pattern[str]]=None) -> Res_post_search_ai:
+    generated_answer, used_memo_ids=await generate_similarity_result(user_id, query, keyword, start_time, end_time, lang, regex)
     
     return Res_post_search_ai(
         type=Search_query_type.similarity,

@@ -1,4 +1,6 @@
 from datetime import datetime
+from re import Pattern
+from typing import Optional
 from langchain_core.tools import tool
 from openai import BaseModel
 from pydantic import Field
@@ -14,14 +16,14 @@ class _memo_answer_args(BaseModel):
     language: str=Field(description="user's language")
 
 @tool("memo_answerer", args_schema=_memo_answer_args, return_direct=False)
-def memo_answerer(user_id: str, question: str, keyword: str, start_time: datetime, end_time: datetime, language: str) -> Similarity_result_with_memo_chain_output:
+def memo_answerer(user_id: str, question: str, keyword: str, start_time: datetime, end_time: datetime, language: str, regex: Optional[Pattern[str]]=None) -> Similarity_result_with_memo_chain_output:
     """Use the user's memos to check if the given question can be answered, and if so, obtain the answer."""
-    retrieved_memos: list[Memo]=retrieve_similar_memos_from_db(question, keyword, user_id, start_time, end_time)
+    retrieved_memos: list[Memo]=retrieve_similar_memos_from_db(question, keyword, user_id, start_time, end_time, regex)
     
     return similarity_result_with_memo(question, retrieved_memos, language)
 
-async def amemo_answerer(user_id: str, question: str, keyword: str, start_time: datetime, end_time: datetime, language: str) -> Similarity_result_with_memo_chain_output:
+async def amemo_answerer(user_id: str, question: str, keyword: str, start_time: datetime, end_time: datetime, language: str, regex: Optional[Pattern[str]]=None) -> Similarity_result_with_memo_chain_output:
     """Use the user's memos to check if the given question can be answered, and if so, obtain the answer."""
-    retrieved_memos: list[Memo]=await aretrieve_similar_memos_from_db(question, keyword, user_id, start_time, end_time)
+    retrieved_memos: list[Memo]=await aretrieve_similar_memos_from_db(question, keyword, user_id, start_time, end_time, regex)
     
     return await asimilarity_result_with_memo(question, retrieved_memos, language)
