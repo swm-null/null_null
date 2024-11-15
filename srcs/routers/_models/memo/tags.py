@@ -1,5 +1,6 @@
 from pydantic import BaseModel, Field
 from routers._models.memo import Memo_raw_memo, Memo_tag_name_and_id
+from routers._models.memo.tag import Res_post_memo_tag
 
 
 class Body_post_memo_tags(BaseModel):
@@ -7,4 +8,4 @@ class Body_post_memo_tags(BaseModel):
     raw_memos: list[Memo_raw_memo]
     
 class Res_post_memo_tags(BaseModel):
-    tags: list[list[Memo_tag_name_and_id]]
+    tags_and_metadata: list[Res_post_memo_tag]

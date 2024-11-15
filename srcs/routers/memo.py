@@ -8,11 +8,19 @@ router=APIRouter(tags=["memo"])
 
 @router.post("/memo/tags", response_model=Res_post_memo_tags)
 async def post_memo_tags(body: Body_post_memo_tags):
-    return Res_post_memo_tags(tags=await create_tags(body.user_id, body.raw_memos))
+    tags_and_metadatas=await create_tags(body.user_id, body.raw_memos)
+    return Res_post_memo_tags(
+        tags_and_metadata=[
+            Res_post_memo_tag(
+                tags=tags,
+                metadata=metadata
+        ) for tags, metadata in tags_and_metadatas
+    ])
 
 @router.post("/memo/tag", response_model=Res_post_memo_tag)
 async def post_memo_tag(body: Body_post_memo_tag):
-    return Res_post_memo_tag(tags=await create_tag(body.user_id, body.raw_memo))
+    tags, metadata=await create_tag(body.user_id, body.raw_memo)
+    return Res_post_memo_tag(tags=tags, metadata=metadata)
 
 @router.post("/memo/structures", response_model=Res_post_memo_structures)
 async def post_memo_structures(body: Body_post_memo_structures):

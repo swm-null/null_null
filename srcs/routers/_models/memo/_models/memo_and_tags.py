@@ -10,3 +10,4 @@ class Memo_memo_and_tags(BaseModel):
     voice_urls: list[str]=[]
     timestamp: Optional[datetime]=None
     tags: list[Memo_tag_name_and_id]
+    metadata: str
