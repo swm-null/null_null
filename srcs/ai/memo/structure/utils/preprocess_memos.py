@@ -11,11 +11,11 @@ async def preprocess_memos(memos_and_tags: list[Memo_memo_and_tags], lang: str) 
     
 
 async def _preprocess_memo(memo_and_tag: Memo_memo_and_tags, lang: str) -> Memo_processed_memo:
-    metadata_task=asyncio.create_task(process_metadata(memo_and_tag.content, memo_and_tag.image_urls, memo_and_tag.voice_urls, lang))
+    # metadata_task=asyncio.create_task(process_metadata(memo_and_tag.content, memo_and_tag.image_urls, memo_and_tag.voice_urls, lang))
     
     return Memo_processed_memo(
         content=memo_and_tag.content,
-        metadata=await metadata_task,
+        metadata=memo_and_tag.metadata,
         image_urls=memo_and_tag.image_urls,
         voice_urls=memo_and_tag.voice_urls,
         timestamp=datetime.now(),
