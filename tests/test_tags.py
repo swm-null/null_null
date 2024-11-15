@@ -3,6 +3,7 @@ import textwrap
 import pytest
 from httpx import ASGITransport, AsyncClient
 from main import app
+from routers._models.memo.tag import Res_post_memo_tag
 from routers._models.memo.tags import Res_post_memo_tags
 
 
@@ -49,8 +50,10 @@ async def send_request_and_validate():
     validation(res_model)
     
 def validation(res_model: Res_post_memo_tags):
+    res: list[Res_post_memo_tag]=res_model.tags_and_metadata
     # tags
-    assert len(res_model.tags)
-    for tags in res_model.tags:
-        for tag in tags:
+    assert len(res)
+    for tags_and_metadata in res:
+        for tag in tags_and_metadata.tags:
             assert len(tag.id)==UUID_LENGTH
+        assert tags_and_metadata.metadata
