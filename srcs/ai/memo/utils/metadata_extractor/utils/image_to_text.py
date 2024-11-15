@@ -8,6 +8,7 @@ from ai.utils import retry_on_timeout
 
 
 class Image_description(BaseModel):
+    simple_description: str=Field(description="Simple text to be provided with a preview. So that users know what this image is about. Words rather than sentences.")
     image_description: str=Field(description="Description of image in user's language")
     ocr_text: str=""
 
@@ -25,7 +26,7 @@ async def _extract_description_from_image(url: str, lang: str) -> Image_descript
                 content=[
                     {
                         "type": "text", 
-                        "text": f"Analyze this image and provide output in the following format and use {lang}:\n{parser.get_format_instructions()}"
+                        "text": f"Analyze thi s image and provide output in the following format and use {lang}:\n{parser.get_format_instructions()}"
                     },
                     {
                         "type": "image_url",

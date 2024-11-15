@@ -9,19 +9,21 @@ import trafilatura
 async def get_contents_from_link(links: list[str]) -> list[str]:
     async with aiohttp.ClientSession() as session:
         fetch_tasks=[_fetch(session, link) for link in links]
-        fetched_results=await asyncio.gather(*fetch_tasks)
+        fetched_results: list[Optional[tuple[str, str]]]=await asyncio.gather(*fetch_tasks)
+        filtered_results: list[tuple[str, str]] = list(filter(None, fetched_results))
     
     texts=[
         "\n".join([
+            link,
             _extract_og_data(fetched_result),
             trafilatura.extract(fetched_result) or ""
         ])
-        for fetched_result in fetched_results if fetched_result
+        for link, fetched_result in filtered_results
     ]
     
     return [text for text in texts if text]
 
-async def _fetch(session: aiohttp.ClientSession, link: str) -> Optional[str]:
+async def _fetch(session: aiohttp.ClientSession, link: str) -> Optional[tuple[str, str]]:
     headers={
         "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36",
         "Accept-Language": "ko-KR,ko;q=0.9,en-NL;q=0.8,en;q=0.7,en-US;q=0.6",
@@ -32,7 +34,7 @@ async def _fetch(session: aiohttp.ClientSession, link: str) -> Optional[str]:
             logging.info("_fetch] %s\n", response)
             logging.info("_fetch] %s\n", response.content)
             if response.status == 200:
-                return await response.text()
+                return link, await response.text()
             else:
                 return None
     except:

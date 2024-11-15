@@ -4,6 +4,7 @@ from openai import BaseModel
 from ai.memo.utils.metadata_extractor.chains import metadata_extractor, Metadata_extractor_chain_output, Voice_record_summarizer_chain_output
 from ai.memo.utils.metadata_extractor.utils import *
 from ai.memo.utils.link_extractor import extract_link
+from ai.memo.utils.text_summarizer.chains.text_summarizer_chain import Text_summarizer_chain_output
 
 
 class _Metadata(BaseModel):
@@ -11,7 +12,7 @@ class _Metadata(BaseModel):
     content_description: Metadata_extractor_chain_output | None=None
     image_descriptions: list[Image_description] | None=None
     voice_record_descriptions: list[Voice_record_summarizer_chain_output] | None=None
-    link_descriptions: list[str] | None=None
+    link_descriptions: list[Text_summarizer_chain_output] | None=None
     
 async def process_metadata(content: str, image_urls: list[str], voice_record_urls: list[str], lang: str="Korean") -> str:
     extracted_links: list[str]=extract_link(content)
