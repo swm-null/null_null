@@ -8,7 +8,10 @@ router=APIRouter(tags=["embedding"])
 
 @router.post("/get-embedding", response_model=Res_get_embedding)
 def get_embedding(body: Body_get_embedding):
-    return Res_get_embedding(embedding=embedder.embed_query(body.content))
+    if body.content:
+        return Res_get_embedding(embedding=embedder.embed_query(body.content))
+    else:
+        return Res_get_embedding(embedding=([0] * 512))
 
 @router.post("/get-metadata-with-embedding", response_model=Res_get_metadata_with_embedding)
 async def post_get_metadata_with_embedding(body: Body_get_metadata_with_embedding):
