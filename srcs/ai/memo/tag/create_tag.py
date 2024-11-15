@@ -9,7 +9,7 @@ from fastapi.concurrency import run_in_threadpool
 from fastapi.concurrency import run_in_threadpool
 
 
-async def create_tag(user_id: str, raw_memo: Memo_raw_memo, lang: str="Korean") -> list[Memo_tag_name_and_id]:    
+async def create_tag(user_id: str, raw_memo: Memo_raw_memo, lang: str="Korean") -> tuple[list[Memo_tag_name_and_id], str]:    
     logging.info("create_tag] \nuser_id: %s, \nraw_memo: %s", user_id, raw_memo)
     content, existing_tags, current_structure=await asyncio.gather(
         process_metadata(raw_memo.content, raw_memo.image_urls, raw_memo.voice_urls, lang),
@@ -22,7 +22,7 @@ async def create_tag(user_id: str, raw_memo: Memo_raw_memo, lang: str="Korean") 
     tag_name_to_id: dict[str, str]=get_tag_name_to_id(existing_tags)
     assigned_tags: list[Memo_tag_name_and_id]=_assign_tag_id(selected_tag_names_by_chain, tag_name_to_id)
     
-    return assigned_tags
+    return assigned_tags, content
 
 async def _determine_tag_names(content: str, current_structure: dict[str, list[str]], lang: str) -> list[str]:
     determined_tag_names: Determine_tag_names_chain_output=await determine_tag_names_chain(content, current_structure, lang)

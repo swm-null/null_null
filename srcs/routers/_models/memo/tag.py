@@ -8,3 +8,4 @@ class Body_post_memo_tag(BaseModel):
     
 class Res_post_memo_tag(BaseModel):
     tags: list[Memo_tag_name_and_id]
+    metadata: str
