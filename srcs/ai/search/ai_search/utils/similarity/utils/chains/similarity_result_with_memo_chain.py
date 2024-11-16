@@ -22,6 +22,8 @@ class Similarity_result_with_memo_chain_output(BaseModel):
     answerable: bool
     answer: str=Field(description="answer to the user's question", default=[""])
     used_memo_ids: list[str]=Field(description="used memo ids", default=[[]])
+    
+_weekday = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
 
 _parser = PydanticOutputParser(pydantic_object=Similarity_result_with_memo_chain_output)
 
@@ -54,6 +56,7 @@ _similarity_result_with_memo_chain_prompt=PromptTemplate.from_template(textwrap.
     The current time for this is as follows.
     The week starts on Monday. When the user ask about a week, think about Monday through Sunday.
     Current Time: {current_time}
+    Current day of the week: {current_day_of_the_week}
 
     For this, the memo description can have a field called "relative_time".
     This is the result of converting the relative time expression written in the memo to an absolute time based on the time of writing at the time of writing the memo.
@@ -78,6 +81,7 @@ _similarity_result_with_memo_chain_prompt=PromptTemplate.from_template(textwrap.
     partial_variables={
         "format": _parser.get_format_instructions(),
         "current_time": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+        "current_day_of_the_week": _weekday[datetime.now().weekday()]
     }
 )
 
