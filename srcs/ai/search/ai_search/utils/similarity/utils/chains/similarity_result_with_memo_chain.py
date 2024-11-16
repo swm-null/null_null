@@ -4,7 +4,7 @@ import textwrap
 from langchain_core.output_parsers import PydanticOutputParser
 from pydantic import BaseModel, Field
 from ai.search._models.memo import Memo
-from ai.utils.llm import llm4o_mini
+from ai.utils.llm import llm4o
 from langchain_core.prompts import PromptTemplate
 
 
@@ -54,20 +54,22 @@ _similarity_result_with_memo_chain_prompt=PromptTemplate.from_template(textwrap.
     2. The user may not use time-related expressions properly. 
     Even if the user uses the expression "next week" in the memo, this "next week" means "next week from the time the memo was written", not "next week from now, when the question is answered". Therefore, create an answer considering the current time when the question is answered and the time when the user wrote the memo.
     The current time for this is as follows.
-    The week starts on Monday. When the user ask about a week, think about Monday through Sunday.
     Current Time: {current_time}
-    Current day of the week: {current_day_of_the_week}
 
     For this, the memo description can have a field called "relative_time".
     This is the result of converting the relative time expression written in the memo to an absolute time based on the time of writing at the time of writing the memo.
     This result may or may not be accurate. You should judge for yourself whether the result is accurate, and if it is, use this field as well.
+    
+    3. For information related to the days of the week, do not follow the notes.
+    But use the general information about the days of the week. 
+    The week starts with Monday and ends with Sunday, and today is {current_day_of_the_week}.
 
-    3. Even if the content cannot be answered, the user should receive an answer.
+    4. Even if the content cannot be answered, the user should receive an answer.
     The given memo may not provide the information the user wants. In addition, the user may not be asking a 'question'.
     Even so, the result you created will be shown to the user. The user cannot receive an empty answer.
     Even if it is not a question that can be answered, please write an appropriate message that you cannot answer in the "answer" field of the output.
 
-    4. Organize the memos used in the answer.
+    5. Organize the memos used in the answer.
     When the user receives an answer, he or she may want to know which information was used to create the answer. Therefore, please select the memos used to create the answer and put them in the "used_memo_ids" field of the output.
 
     The answer must be created based on the language used by the user.
@@ -88,7 +90,7 @@ _similarity_result_with_memo_chain_prompt=PromptTemplate.from_template(textwrap.
 _similarity_result_with_memo_chain=(
     { "input_json": itemgetter("input_json") }
     | _similarity_result_with_memo_chain_prompt
-    | llm4o_mini
+    | llm4o
     | _parser
 )
 
