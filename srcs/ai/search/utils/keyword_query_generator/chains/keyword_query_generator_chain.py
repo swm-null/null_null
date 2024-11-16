@@ -3,7 +3,7 @@ from operator import itemgetter
 import textwrap
 from langchain_core.output_parsers import PydanticOutputParser
 from pydantic import BaseModel
-from ai.utils import llm4o_mini
+from ai.utils import llm4o
 from langchain_core.prompts import PromptTemplate
 
 
@@ -28,8 +28,9 @@ _query_generator_chain_prompt=PromptTemplate.from_template(textwrap.dedent("""
 
     For example, when a user asks a question like "Show me the notes I wrote last week," even if you search the DB for "notes I wrote last week," you will not get the results the user wants. You have to search all notes whose date of creation was last week to get the results.
 
-    Even if a user asks a question like "Tell me last month's schedule," since last month's schedule is included in the content of the note, you cannot search for last month, but simply search for schedule. You cannot search for notes with last month as the period.
-
+    However, if a user asks a question like "Collect my schedule for next month", keep in mind that the user wants to know about the schedule for next month written in the notes, not the notes written about the schedule for next month.
+    Also, when organizing schedules, etc., sort them in chronological order.
+    
     You are an AI that recognizes the user's intention, analyzes what to search for in the DB, and produces results by finding out which period the notes were created in. If the user doesn't seem to want notes written during a specific period, just send start_time and end_time as null.
 
     Since the user writes notes in their own language, we need to search in the DB in their own language. So, create a query in their own language.
@@ -49,7 +50,7 @@ _query_generator_chain_prompt=PromptTemplate.from_template(textwrap.dedent("""
 _keyword_query_generator_chain=(
     { "input_json": itemgetter("input_json") }
     | _query_generator_chain_prompt
-    | llm4o_mini
+    | llm4o
     | _parser
 )
 
