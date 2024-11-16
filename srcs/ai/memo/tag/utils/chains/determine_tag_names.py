@@ -51,6 +51,8 @@ _determine_tag_names_chain_prompt=PromptTemplate.from_template(textwrap.dedent("
     
     Select up to {selection_count} new tags and a combination of existing tags.
     Do not create more than two new tags.
+
+    Select at least one existing tag, or create a new tag. Therefore, the result must contain any tags.
     
     Here is the information.
 
