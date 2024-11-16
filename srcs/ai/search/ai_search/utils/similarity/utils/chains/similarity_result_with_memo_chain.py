@@ -52,6 +52,7 @@ _similarity_result_with_memo_chain_prompt=PromptTemplate.from_template(textwrap.
     2. The user may not use time-related expressions properly. 
     Even if the user uses the expression "next week" in the memo, this "next week" means "next week from the time the memo was written", not "next week from now, when the question is answered". Therefore, create an answer considering the current time when the question is answered and the time when the user wrote the memo.
     The current time for this is as follows.
+    The week starts on Monday. When the user ask about a week, think about Monday through Sunday.
     Current Time: {current_time}
 
     For this, the memo description can have a field called "relative_time".
