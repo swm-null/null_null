@@ -3,7 +3,7 @@ from fastapi import APIRouter
 from ai.memo.tag import create_tags
 from ai.parser import kakao_parser
 from routers._models import *
-from routers.memo import post_memo_structures
+from routers.memo import post_memo_structures, post_memo_tags
 
 
 router=APIRouter(tags=["importer"])
@@ -15,18 +15,24 @@ async def post_kakao_parser(body: Body_post_kakao_parser):
         Memo_raw_memo(content=content, timestamp=timestamp)
         for content, timestamp in parsed_contents
     ]
-    tag_results: list[list[Memo_tag_name_and_id]]=Res_post_memo_tags(tags=await create_tags(body.user_id, raw_memos)).tags
+    tag_results: Res_post_memo_tags=await post_memo_tags(
+        Body_post_memo_tags(
+            user_id=body.user_id,
+            raw_memos=raw_memos
+        )
+    )
     
-    return post_memo_structures(
+    return await post_memo_structures(
         Body_post_memo_structures(
             user_id=body.user_id,
             memos=[
                 Memo_memo_and_tags(
                     content=memo.content,
                     timestamp=memo.timestamp,
-                    tags=tags
+                    metadata=tags.metadata,
+                    tags=tags.tags
                 )
-                for memo, tags in zip(raw_memos, tag_results)
+                for memo, tags in zip(raw_memos, tag_results.tags_and_metadata)
             ]
         )
     )
