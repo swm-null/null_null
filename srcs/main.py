@@ -5,8 +5,8 @@ from routers import embedding, importer, memo, search
 
 app = FastAPI(
     title="Oatnote AI",
-    description="after PR NULL-651-make-metadata-great-again(#129), https://github.com/swm-null/null_null/pull/129",
-    version="0.2.116",
+    description="after PR NULL-672 fixed: kakao parser(#130), https://github.com/swm-null/null_null/pull/130",
+    version="0.2.117",
 )
 init(app)
     
