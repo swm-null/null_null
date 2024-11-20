@@ -85,6 +85,10 @@ _connect_new_tags_prompt=PromptTemplate.from_template(textwrap.dedent("""
     
     {input_json}
 
+    All tags included in new_tags, without any exception, must be included in the result with their names unchanged. 
+    It is important to note that each and every tag must be included in new_structures.
+    Remember, otherwise the program will terminate unexpectedly.
+    
     {format}
     """),
     partial_variables={
