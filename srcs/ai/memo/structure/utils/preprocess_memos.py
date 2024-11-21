@@ -1,6 +1,5 @@
 import asyncio
 from datetime import datetime
-from ai.memo.utils import process_metadata
 from routers._models.memo._models import Memo_memo_and_tags, Memo_processed_memo
 
 
@@ -18,7 +17,7 @@ async def _preprocess_memo(memo_and_tag: Memo_memo_and_tags, lang: str) -> Memo_
         metadata=memo_and_tag.metadata,
         image_urls=memo_and_tag.image_urls,
         voice_urls=memo_and_tag.voice_urls,
-        timestamp=datetime.now(),
+        timestamp=memo_and_tag.timestamp if memo_and_tag.timestamp else datetime.now(),
         temporal_tags=memo_and_tag.tags,
         parent_tag_ids=[],
         embedding=[],
