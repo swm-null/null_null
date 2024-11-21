@@ -1,6 +1,7 @@
 import asyncio
 from operator import itemgetter
 import textwrap
+from fastapi import HTTPException
 from langchain_core.output_parsers import PydanticOutputParser
 from pydantic import BaseModel, Field
 from ai.utils.llm import finetunned_for_structures, finetunned_for_structures_mini
@@ -99,6 +100,13 @@ _connect_new_tags=(
     | _parser
 )
 
+def _validate_result(result: Connect_new_tags_output, new_tags: dict[str, _Tag]) -> bool:
+    processed_tags_in_result: set[str]=set(
+        relation.child_name for relation in result.relations
+    )
+    
+    return all(tag_name in processed_tags_in_result for tag_name in new_tags)
+
 async def connect_new_tags_chain(preprocessed_memos: list[Memo_processed_memo], current_structure: dict[str, list[str]], lang: str) -> Connect_new_tags_output:
     memo_idx=0
     new_tags: dict[str, _Tag]={}
@@ -123,7 +131,12 @@ async def connect_new_tags_chain(preprocessed_memos: list[Memo_processed_memo], 
         users_language=lang
     )
     
-    if new_tags and memos:
-        return await _connect_new_tags.ainvoke({"input_json": input_json_model.model_dump_json()})
-    else:
+    if not (new_tags and memos):
         return Connect_new_tags_output()
+    else:
+        for _ in range(3):
+            result: Connect_new_tags_output=await _connect_new_tags.ainvoke({"input_json": input_json_model.model_dump_json()})
+            if _validate_result(result, new_tags):
+                return result
+        
+        raise HTTPException(status_code=500, headers={"/memo/structures": "structure is not genarated"})
