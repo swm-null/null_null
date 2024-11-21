@@ -1,6 +1,7 @@
 from datetime import datetime
 from operator import itemgetter
 import textwrap
+from fastapi import HTTPException
 from langchain_core.output_parsers import PydanticOutputParser
 from pydantic import BaseModel, Field
 from ai.search._models.memo import Memo
@@ -107,7 +108,13 @@ def similarity_result_with_memo(question: str, memos: list[Memo], lang: str) -> 
         languages_of_user=lang
     )
     
-    return _similarity_result_with_memo_chain.invoke({"input_json": input_json_model.model_dump_json()})
+    for _ in range(3):
+        try:
+            return  _similarity_result_with_memo_chain.invoke({"input_json": input_json_model.model_dump_json()})
+        except:
+            pass
+    
+    raise HTTPException(status_code=500, headers={"similarity_result_with_memo]": "failed"})
 
 async def asimilarity_result_with_memo(question: str, memos: list[Memo], lang: str) -> Similarity_result_with_memo_chain_output:
     input_json_model=_Similarity_result_with_memo_chain_input(
@@ -122,4 +129,10 @@ async def asimilarity_result_with_memo(question: str, memos: list[Memo], lang: s
         languages_of_user=lang
     )
     
-    return await _similarity_result_with_memo_chain.ainvoke({"input_json": input_json_model.model_dump_json()})
+    for _ in range(3):
+        try:
+            return await _similarity_result_with_memo_chain.ainvoke({"input_json": input_json_model.model_dump_json()})
+        except:
+            pass
+    
+    raise HTTPException(status_code=500, headers={"similarity_result_with_memo]": "failed"})

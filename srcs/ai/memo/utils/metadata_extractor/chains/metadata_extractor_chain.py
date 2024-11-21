@@ -1,6 +1,7 @@
 from datetime import datetime
 from operator import itemgetter
 import textwrap
+from fastapi import HTTPException
 from langchain_core.output_parsers import PydanticOutputParser
 from pydantic import BaseModel
 from ai.utils.llm import llm4o_mini
@@ -73,4 +74,10 @@ async def metadata_extractor(content: str, lang: str) -> Metadata_extractor_chai
         timestamp=datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     )
 
-    return await _metadata_extractor_chain.ainvoke({"input_json": input_json_model.model_dump_json()})
+    for _ in range(3):
+        try:
+            return await _metadata_extractor_chain.ainvoke({"input_json": input_json_model.model_dump_json()})
+        except:
+            pass
+
+    raise HTTPException(status_code=500, headers={"metadata_extractor]": "failed"})

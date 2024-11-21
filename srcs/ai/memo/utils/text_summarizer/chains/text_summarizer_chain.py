@@ -1,5 +1,6 @@
 from operator import itemgetter
 import textwrap
+from fastapi import HTTPException
 from langchain_core.output_parsers import PydanticOutputParser
 from openai import BaseModel
 from pydantic import Field
@@ -48,4 +49,10 @@ async def text_summarizer(text: str, lang: str) -> Text_summarizer_chain_output:
         users_language=lang
     )
     
-    return await text_summarizer_chain.ainvoke({"input_json": input_json_model.model_dump_json()})
+    for _ in range(3):
+        try:
+            return await text_summarizer_chain.ainvoke({"input_json": input_json_model.model_dump_json()})
+        except:
+            pass
+        
+    raise HTTPException(status_code=500, headers={"text_summarizer]": "failed"})

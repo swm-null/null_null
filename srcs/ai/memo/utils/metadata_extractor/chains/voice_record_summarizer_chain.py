@@ -1,5 +1,6 @@
 from operator import itemgetter
 import textwrap
+from fastapi import HTTPException
 from langchain_core.output_parsers import PydanticOutputParser
 from pydantic import BaseModel, Field
 from ai.utils.llm import llm4o_mini
@@ -58,4 +59,10 @@ async def voice_record_summarizer(raw_transcript: str, lang: str) -> Voice_recor
         users_language=lang
     )
 
-    return await _record_summarizer_chain.ainvoke({"input_json": input_json_model.model_dump_json()})
+    for _ in range(3):
+        try:
+            return await _record_summarizer_chain.ainvoke({"input_json": input_json_model.model_dump_json()})
+        except:
+            pass
+        
+    raise HTTPException(status_code=500, headers={"voice_record_summarizer]": "failed"})

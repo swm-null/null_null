@@ -1,5 +1,6 @@
 from operator import itemgetter
 import textwrap
+from fastapi import HTTPException
 from langchain_core.output_parsers import PydanticOutputParser
 from pydantic import BaseModel, Field
 from ai.utils import llm4o_mini
@@ -52,4 +53,10 @@ async def query_analyzer_using_chain(query: str, lang: str) -> _Query_analyzer_c
         lang=lang
     )
     
-    return await _query_analyzer_chain.ainvoke({"input_json": input_json_model.model_dump_json()})
+    for _ in range(3):
+        try:
+            return await _query_analyzer_chain.ainvoke({"input_json": input_json_model.model_dump_json()})
+        except:
+            pass
+    
+    raise HTTPException(status_code=500, headers={"query_analyzer]": "failed"})
