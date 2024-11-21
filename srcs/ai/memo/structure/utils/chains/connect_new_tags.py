@@ -139,8 +139,11 @@ async def connect_new_tags_chain(preprocessed_memos: list[Memo_processed_memo], 
         return Connect_new_tags_output()
     else:
         for _ in range(3):
-            result: Connect_new_tags_output=await _connect_new_tags.ainvoke({"input_json": input_json_model.model_dump_json()})
-            if _validate_result(result, new_tags):
-                return result
+            try:
+                result: Connect_new_tags_output=await _connect_new_tags.ainvoke({"input_json": input_json_model.model_dump_json()})
+                if _validate_result(result, new_tags):
+                    return result
+            except:
+                pass
         
         raise HTTPException(status_code=500, headers={"/memo/structures": "structure is not genarated"})

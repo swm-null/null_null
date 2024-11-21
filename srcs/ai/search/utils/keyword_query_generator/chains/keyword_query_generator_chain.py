@@ -1,6 +1,7 @@
 from datetime import datetime, timezone
 from operator import itemgetter
 import textwrap
+from fastapi import HTTPException
 from langchain_core.output_parsers import PydanticOutputParser
 from pydantic import BaseModel
 from ai.utils import llm4o
@@ -61,4 +62,10 @@ async def keyword_query_generator(query: str, lang: str) -> Keyword_query_genera
         current_time=datetime.now(timezone.utc).strftime('%Y-%m-%dT%H:%M:%S.%f%z')
     )
     
-    return await _keyword_query_generator_chain.ainvoke({"input_json": input_json_model.model_dump_json()})
+    for _ in range(3):
+        try:
+            return await _keyword_query_generator_chain.ainvoke({"input_json": input_json_model.model_dump_json()})
+        except:
+            pass
+    
+    raise HTTPException(status_code=500, headers={"keyword_query_generator]": "failed"})

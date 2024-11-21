@@ -1,6 +1,7 @@
 from operator import itemgetter
 from re import Pattern
 import textwrap
+from fastapi import HTTPException
 from langchain_core.output_parsers import PydanticOutputParser
 from pydantic import BaseModel, Field
 from ai.utils.llm import llm4o
@@ -64,4 +65,10 @@ _generate_regex_chain=(
 async def generate_regex_using_chain(query: str, lang: str) -> _Generate_regex_chain_output:
     input_json_model=_Generate_regex_chain_input(query=query)
     
-    return await _generate_regex_chain.ainvoke({"input_json": input_json_model.model_dump_json(), "lang": lang})
+    for _ in range(3):
+        try:
+            return await _generate_regex_chain.ainvoke({"input_json": input_json_model.model_dump_json(), "lang": lang})
+        except:
+            pass
+        
+    raise HTTPException(status_code=500, headers={"generate_regex]": "failed"})

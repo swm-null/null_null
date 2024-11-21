@@ -1,6 +1,7 @@
 import json
 import textwrap
 from typing import Any, Optional
+from fastapi import HTTPException
 from langchain.agents import create_react_agent, AgentExecutor
 from pydantic import BaseModel, Field
 from ai.utils.llm import llm4o
@@ -101,7 +102,12 @@ async def invoke_similarity_search_agent(user_id: str, query: str, lang: str) ->
         question=query,
         lang=lang
     )
-        
-    agent_result: dict[str, Any]=await similarity_search_executor.ainvoke({"input_json": input_json_model.model_dump_json()})
     
-    return agent_result["answer"], agent_result["used_memo_ids"]
+    for _ in range(3):
+        try:
+            agent_result: dict[str, Any]=await similarity_search_executor.ainvoke({"input_json": input_json_model.model_dump_json()})
+            return agent_result["answer"], agent_result["used_memo_ids"]
+        except:
+            pass
+        
+    raise HTTPException(status_code=500, headers={"similarity_search_agent]": "failed"})
