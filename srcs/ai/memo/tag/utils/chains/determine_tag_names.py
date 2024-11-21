@@ -1,5 +1,6 @@
 from operator import itemgetter
 import textwrap
+from fastapi import HTTPException
 from langchain_core.output_parsers import PydanticOutputParser
 from pydantic import BaseModel, Field
 from ai.utils import finetunned_for_tags
@@ -59,6 +60,8 @@ _determine_tag_names_chain_prompt=PromptTemplate.from_template(textwrap.dedent("
     {input_json}
 
     {format}
+    
+    Remember, the result must contain at least one tag, otherwise the note service will have problems.
     """),
     partial_variables={
         "format": _parser.get_format_instructions(),
@@ -73,6 +76,9 @@ _determine_tag_names_chain=(
     | _parser
 )
 
+def _validate_result(result: Determine_tag_names_chain_output) -> bool:
+    return True if result.selected_tag_names or result.new_tag_names else False
+
 async def determine_tag_names_chain(content: str, current_tag_structure: dict[str, list[str]], lang: str) -> Determine_tag_names_chain_output:
     input_json_model=_Determine_tag_names_chain_input(
         memo_infomation=content,
@@ -80,4 +86,9 @@ async def determine_tag_names_chain(content: str, current_tag_structure: dict[st
         language_of_user=lang
     )
     
-    return await _determine_tag_names_chain.ainvoke({"input_json": input_json_model.model_dump_json()})
+    for _ in range(3):
+        result: Determine_tag_names_chain_output=await _determine_tag_names_chain.ainvoke({"input_json": input_json_model.model_dump_json()})
+        if _validate_result(result):
+            return result
+        
+    raise HTTPException(status_code=500, headers={"/memo/tag(s)": "tag is not genarated"})
