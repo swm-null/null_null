@@ -30,6 +30,8 @@ _parser = PydanticOutputParser(pydantic_object=Similarity_result_with_memo_chain
 
 _similarity_result_with_memo_chain_prompt=PromptTemplate.from_template(textwrap.dedent("""
     You have to answer the user's question.
+    You can use markdown syntax.
+    
     The user wants to find specific information in the notes he or she wrote.
     This information can be inferred from the content of the notes, or you can simply find notes that contain specific keywords.
     There may even be cases where the answer cannot be found in the notes the user wrote.
