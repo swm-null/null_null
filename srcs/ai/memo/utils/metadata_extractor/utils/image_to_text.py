@@ -1,7 +1,7 @@
 import asyncio
 from openai import BaseModel
 from pydantic import Field
-from ai.utils.llm import llm4o_mini
+from ai.utils.llm import llm4o
 from langchain_core.messages import HumanMessage
 from langchain_core.output_parsers import JsonOutputParser
 from ai.utils import retry_on_timeout
@@ -20,7 +20,7 @@ async def image_to_text(image_urls: list[str], lang: str) -> list[Image_descript
 
 async def _extract_description_from_image(url: str, lang: str) -> Image_description:
     parser = JsonOutputParser(pydantic_object=Image_description)
-    result = await llm4o_mini.ainvoke(
+    result = await llm4o.ainvoke(
         [
             HumanMessage(
                 content=[
